@@ -7,5 +7,6 @@ import drz.oddb.parse.parse;
 public class TransAction {
     public String query(String s){
         return s;
+        ;
     }
 }
