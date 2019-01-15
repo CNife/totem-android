@@ -78,8 +78,8 @@ public class TransAction {
         return null;
     }
 
-    private void InsertTuple(Tuple tuple){
-
+    private int[] InsertTuple(Tuple tuple){
+        return null;
     }
 
     private void DeleteTuple(int id, int offset){
