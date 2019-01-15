@@ -276,9 +276,9 @@ String condition() :
 	Token s;
 }
 {
-    (attr_s = attr() <EQUAL> s = <INT>) {cond = attr_s+"="+s.image; return cond;}
+    (attr_s = attr() <EQUAL> s = <INT>) {cond = attr_s+",=,"+s.image; return cond;}
     |
-    (attr_s = attr() <EQUAL> s = <STRING>) { cond = attr_s+"="+s.image; return cond;}
+    (attr_s = attr() <EQUAL> s = <STRING>) { cond = attr_s+",=,"+s.image; return cond;}
 }
 
 String value() :

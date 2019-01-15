@@ -27,7 +27,6 @@ public class TransAction {
                     CreateOriginClass(aa);
                     break;
                 case parse.OPT_CREATE_SELECTDEPUTY:
-
                     break;
                 case parse.OPT_DROP:
                     break;
@@ -58,12 +57,32 @@ public class TransAction {
         int count = Integer.parseInt(p[2]);
         classt.maxid++;
         int classid = classt.maxid;
-        for (int i = 0;i<count;i++){
-            classt.classTable.add(new ClassTableItem(classname,classid,count,p[2*i+3],p[2*i+4]));
+        for (int i = 0; i < count; i++) {
+            classt.classTable.add(new ClassTableItem(classname, classid, count, p[2 * i + 3], p[2 * i + 4]));
         }
     }
 
-    private void CreateSelectDeputy(String[] p){
+    private void CreateSelectDeputy(String[] p) {
+
+    }
+
+
+    private void Delete(String[] p) {
+        String classname = p[1];
+
+
+    }
+
+
+    private Tuple GetTuple(int id, int offset) {
+        return null;
+    }
+
+    private void InsertTuple(Tuple tuple){
+
+    }
+
+    private void DeleteTuple(int id, int offset){
 
     }
 
