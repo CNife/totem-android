@@ -58,7 +58,7 @@ public class TransAction {
         classt.maxid++;
         int classid = classt.maxid;
         for (int i = 0; i < count; i++) {
-            classt.classTable.add(new ClassTableItem(classname, classid, count, p[2 * i + 3], p[2 * i + 4]));
+            classt.classTable.add(new ClassTableItem(classname, classid, count,i,p[2 * i + 3], p[2 * i + 4]));
         }
     }
 
@@ -69,29 +69,38 @@ public class TransAction {
 
     private void Delete(String[] p) {
         String classname = p[1];
+        String attrname = p[2];
         int classid = 0;
-        for (ClassTableItem item:classt.classTable){
-            if (item.classname.equals(classname)){
+        int attrid=0;
+        String attrtype=null;
+        for (ClassTableItem item:classt.classTable) {
+            if (item.classname == classname && item.attrname.equals(attrname)) {
                 classid = item.classid;
+                attrid = item.attrid;
+                attrtype = item.attrtype;
                 break;
             }
         }
+        switch (attrtype){
+            case "int":
+                int value = Integer.parseInt(p[4]);
+                DeleteE(classid,attrid,value);
+            case "char":
+                DeleteE(classid,attrid,p[4]);
 
-        for (ClassTableItem item:classt.classTable){
-            if (item.classid==classid){
-
-                break;
-            }
-        }
-        for (TopTableItem item:topt.topTable){
-            if(item.classid == classid){
-                Tuple tuple = GetTuple(item.dbid,item.offset);
-
-            }
         }
 
     }
 
+
+    private <E> void DeleteE(int classid,int attrid,E value){
+        for (TopTableItem item:topt.topTable){
+            if(item.classid == classid){
+                Tuple tuple = GetTuple(item.dbid,item.offset);
+                if(tuple.tuple[attrid].equals())
+            }
+        }
+    }
 
     private Tuple GetTuple(int id, int offset) {
         return null;

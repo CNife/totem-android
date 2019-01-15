@@ -5,10 +5,10 @@ import java.util.Dictionary;
 import java.util.List;
 
 public class Tuple {
-    int tupleHeader;
-    String[] tuple;
+    public int tupleHeader;
+    public Object[] tuple;
 
-    public Tuple(String[] values) {
+    public Tuple(Object[] values) {
         tuple = values.clone();
         tupleHeader = values.length;
     }
