@@ -1,5 +1,12 @@
 package drz.oddb.Transaction;
 
-public class TransAction {
+import java.io.InputStream;
 
+import drz.oddb.parse.parse;
+
+public class TransAction {
+    public String query(String s){
+        return s;
+        ;
+    }
 }
