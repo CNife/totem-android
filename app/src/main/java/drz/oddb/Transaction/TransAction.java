@@ -69,7 +69,26 @@ public class TransAction {
 
     private void Delete(String[] p) {
         String classname = p[1];
+        int classid = 0;
+        for (ClassTableItem item:classt.classTable){
+            if (item.classname.equals(classname)){
+                classid = item.classid;
+                break;
+            }
+        }
 
+        for (ClassTableItem item:classt.classTable){
+            if (item.classid==classid){
+
+                break;
+            }
+        }
+        for (TopTableItem item:topt.topTable){
+            if(item.classid == classid){
+                Tuple tuple = GetTuple(item.dbid,item.offset);
+
+            }
+        }
 
     }
 
