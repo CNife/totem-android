@@ -2,12 +2,17 @@ package drz.oddb.Memory;
 
 
 import java.io.File;
+import java.util.List;
 
 class TopTable{       //数据库id，表id关系表
-    int dbid = 0;       //数据库id
-    int tableid = 0;    //表id
-    int tupleid = 0;    //元组id
-    int blockid = 0;    //块id
+    List<TopTableItem> topTable;
+    class TopTableItem{
+        int dbid = 0;       //数据库id
+        int tableid = 0;    //表id
+        int tupleid = 0;    //元组id
+        int blockid = 0;    //块id
+    }
+
 
     //public boolean write(){
 
