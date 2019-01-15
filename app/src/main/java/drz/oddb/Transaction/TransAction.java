@@ -97,7 +97,10 @@ public class TransAction {
         for (TopTableItem item:topt.topTable){
             if(item.classid == classid){
                 Tuple tuple = GetTuple(item.dbid,item.offset);
-                if(tuple.tuple[attrid].equals())
+                if(value.equals(tuple.tuple[attrid])){
+                    DeleteTuple(item.dbid,item.offset);
+                    topt.topTable.remove(item);
+                }
             }
         }
     }
