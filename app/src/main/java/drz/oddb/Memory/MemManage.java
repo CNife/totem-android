@@ -1,11 +1,14 @@
 package drz.oddb.Memory;
 
 import org.w3c.dom.Attr;
+
+import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.OutputStream;
 import java.lang.reflect.Array;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
@@ -49,14 +52,8 @@ public class MemManage {
         DeputyTable ret = new DeputyTable();
         DeputyTableItem temp=null;
         File deputytab=new File("/data/data/drz.doob/transaction/deputytable");
-        File path=deputytab.getParentFile();
-        if(!path.exists()){
-            path.mkdirs();
-            try {
-                deputytab.createNewFile();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
+        if(!deputytab.exists()){
+            return null;
         }
         try {
             FileInputStream input=new FileInputStream(deputytab);
@@ -76,18 +73,44 @@ public class MemManage {
         return ret;
     }
 
+    public static boolean saveDeputyTable(DeputyTable tab){
+        File deputytab=new File("/data/data/drz.doob/transaction/deputytable");
+        File path=deputytab.getParentFile();
+        if(!path.exists()){
+            path.mkdirs();
+            try {
+                deputytab.createNewFile();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+        try {
+            BufferedOutputStream output=new BufferedOutputStream(new FileOutputStream(deputytab));
+            for(int i=0;i<tab.deputyTable.size();i++){
+                byte[] i1=int2Bytes(tab.deputyTable.get(i).classid,4);
+                output.write(i1);
+                byte[] i2=int2Bytes(tab.deputyTable.get(i).deputyid,4);
+                output.write(i2);
+                byte[] s1=tab.deputyTable.get(i).deputyname.getBytes();
+                output.write(s1);
+            }
+            output.flush();
+            output.close();
+            return true;
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+
     public static  ClassTable loadClassTable(){
         ClassTable ret = new ClassTable();
         ClassTableItem temp=null;
         File classtab=new File("/data/data/drz.doob/transaction/classtable");
-        File path=classtab.getParentFile();
-        if(!path.exists()){
-            path.mkdirs();
-            try {
-                classtab.createNewFile();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
+        if(!classtab.exists()){
+            return null;
         }
         try {
             FileInputStream input=new FileInputStream(classtab);
@@ -110,18 +133,50 @@ public class MemManage {
         return ret;
     }
 
+    public static  boolean saveClassTable(ClassTable tab) {
+        File classtab=new File("/data/data/drz.doob/transaction/classtable");
+        File path=classtab.getParentFile();
+        if(!path.exists()){
+            path.mkdirs();
+            try {
+                classtab.createNewFile();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+        try {
+            BufferedOutputStream output=new BufferedOutputStream(new FileOutputStream(classtab));
+            for(int i=0;i<tab.classTable.size();i++){
+                byte[] s1=tab.classTable.get(i).classname.getBytes();
+                output.write(s1);
+                byte[] i1=int2Bytes(tab.classTable.get(i).classid,4);
+                output.write(i1);
+                byte[] i2=int2Bytes(tab.classTable.get(i).attrnum,4);
+                output.write(i2);
+                byte[] i3=int2Bytes(tab.classTable.get(i).attrid,4);
+                output.write(i3);
+                byte[] s2=tab.classTable.get(i).attrname.getBytes();
+                output.write(s2);
+                byte[] s3=tab.classTable.get(i).attrtype.getBytes();
+                output.write(s3);
+            }
+            output.flush();
+            output.close();
+            return true;
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+
     public static  TopTable loadTopTable(){
         TopTable ret = new TopTable();
         TopTableItem temp=null;
         File toptab=new File("/data/data/drz.doob/transaction/toptable");
-        File path=toptab.getParentFile();
-        if(!path.exists()){
-            path.mkdirs();
-            try {
-                toptab.createNewFile();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
+        if(!toptab.exists()){
+            return null;
         }
         try {
             FileInputStream input=new FileInputStream(toptab);
@@ -142,6 +197,44 @@ public class MemManage {
             e.printStackTrace();
         }
         return ret;
+    }
+
+    public static boolean saveTopTable(TopTable tab){
+        File toptab=new File("/data/data/drz.doob/transaction/toptable");
+        File path=toptab.getParentFile();
+        if(!path.exists()){
+            path.mkdirs();
+            try {
+                toptab.createNewFile();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+        try {
+            BufferedOutputStream output=new BufferedOutputStream(new FileOutputStream(toptab));
+            for(int i=0;i<tab.topTable.size();i++){
+                byte[] s1=tab.topTable.get(i).dbname.getBytes();
+                output.write(s1);
+                byte[] i1=int2Bytes(tab.topTable.get(i).dbid,4);
+                output.write(i1);
+                byte[] i2=int2Bytes(tab.topTable.get(i).classid,4);
+                output.write(i2);
+                byte[] i3=int2Bytes(tab.topTable.get(i).tupleid,4);
+                output.write(i3);
+                byte[] i4=int2Bytes(tab.topTable.get(i).blockid,4);
+                output.write(i2);
+                byte[] i5=int2Bytes(tab.topTable.get(i).offset,4);
+                output.write(i2);
+            }
+            output.flush();
+            output.close();
+            return true;
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return false;
     }
 
     private sbufesc load(bufferTag tag){
@@ -184,6 +277,7 @@ public class MemManage {
 
         return false;
     }
+
 /*
     private void loadDeputyTable(){
         File deputytable=new File("/data/data/drz.doob/systemtable/deputytable");
