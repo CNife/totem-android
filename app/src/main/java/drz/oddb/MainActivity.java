@@ -41,7 +41,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 trans.query(editText.getText().toString());
-                startActivity(new Intent(("android.intent.action.PRINTRST")));
+               // startActivity(new Intent(("android.intent.action.PRINTRST")));
             }
         });
 
@@ -97,7 +97,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 //保存
-
+                trans.SaveAll();
                 //退出
                 android.os.Process.killProcess(android.os.Process.myPid());
 

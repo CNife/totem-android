@@ -15,7 +15,7 @@ public class TransAction {
     ClassTable classt = MemManage.loadClassTable();
     DeputyTable deputyt = MemManage.loadDeputyTable();
 
-    protected void finalize( )
+    public void SaveAll( )
     {
         MemManage.saveTopTable(topt);
         MemManage.saveClassTable(classt);
