@@ -3,13 +3,13 @@ package drz.oddb.parse;
 import java.util.*;
 public class parse implements parseConstants {
 
-  public static final int OPT_CREATE_ORIGINCLASS    = 1;
-  public static final int OPT_CREATE_SELECTDEPUTY   = 2;
-  public static final int OPT_DROP                  = 3;
-  public static final int OPT_INSERT                = 4;
-  public static final int OPT_DELETE                = 5;
-  public static final int OPT_SELECT_DERECTSELECT   = 6;
-  public static final int OPT_SELECT_INDERECTSELECT = 7;
+public static final int OPT_CREATE_ORIGINCLASS    = 1;
+public static final int OPT_CREATE_SELECTDEPUTY   = 2;
+public static final int OPT_DROP                  = 3;
+public static final int OPT_INSERT                = 4;
+public static final int OPT_DELETE                = 5;
+public static final int OPT_SELECT_DERECTSELECT   = 6;
+public static final int OPT_SELECT_INDERECTSELECT = 7;
 
         static Queue<String > st= new LinkedList<String>(); ;
   public static void main(String args[]) throws ParseException {
@@ -337,12 +337,12 @@ public class parse implements parseConstants {
         attr_s = attr();
         jj_consume_token(EQUAL);
         s = jj_consume_token(INT);
-                                         cond = attr_s+"="+s.image; {if (true) return cond;}
+                                         cond = attr_s+",=,"+s.image; {if (true) return cond;}
       } else if (jj_2_13(3)) {
         attr_s = attr();
         jj_consume_token(EQUAL);
         s = jj_consume_token(STRING);
-                                             cond = attr_s+"="+s.image; {if (true) return cond;}
+                                             cond = attr_s+",=,"+s.image; {if (true) return cond;}
       } else {
         jj_consume_token(-1);
         throw new ParseException();

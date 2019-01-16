@@ -38,7 +38,7 @@ public class MainActivity extends AppCompatActivity {
         button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                text_view.setText(trans.query(editText.getText().toString()));
+                trans.query(editText.getText().toString());
             }
         });
     }

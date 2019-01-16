@@ -10,13 +10,13 @@ package drz.oddb.parse;
 import java.util.*;
 public class parse {
   
-static final int OPT_CREATE_ORIGINCLASS    = 1;
-static final int OPT_CREATE_SELECTDEPUTY   = 2;
-static final int OPT_DROP                  = 3;
-static final int OPT_INSERT                = 4;
-static final int OPT_DELETE                = 5;
-static final int OPT_SELECT_DERECTSELECT   = 6;
-static final int OPT_SELECT_INDERECTSELECT = 7;
+public static final int OPT_CREATE_ORIGINCLASS    = 1;
+public static final int OPT_CREATE_SELECTDEPUTY   = 2;
+public static final int OPT_DROP                  = 3;
+public static final int OPT_INSERT                = 4;
+public static final int OPT_DELETE                = 5;
+public static final int OPT_SELECT_DERECTSELECT   = 6;
+public static final int OPT_SELECT_INDERECTSELECT = 7;
 
 	static Queue<String > st= new LinkedList<String>(); ;
   public static void main(String args[]) throws ParseException {
