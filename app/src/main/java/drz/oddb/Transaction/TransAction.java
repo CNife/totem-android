@@ -95,10 +95,10 @@ public class TransAction {
 
 
     }
-
+public void Print(TupleList tpl,String[] attrname,int[] attrid,String[] type){};
 
     private boolean Condition(String attrtype,Tuple tuple,int attrid,String value1){
-        value = value1.replace("\"","");
+        String value = value1.replace("\"","");
         switch (attrtype){
             case "int":
                 int value_int = Integer.parseInt(value);
@@ -153,12 +153,11 @@ public class TransAction {
                 Tuple tuple = GetTuple(item.blockid,item.offset);
                if(Condition(sattrtype,tuple,sattrid,p[attrnumber+5])){
                    tpl.addTuple(tuple);
-
                }
             }
         }
 
-
+        return tpl;
 
     }
 

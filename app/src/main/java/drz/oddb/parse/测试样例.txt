@@ -1,0 +1,20 @@
+CREATE SELECTDEPUTY aa SELECT  b1,b2,b3 FROM  bb WHERE t1="1" ;
+2,3,aa,b1,b2,b3,bb,t1,=,"1"
+
+SELECT  b1,b2,b3 FROM  bb WHERE t1="1";
+6,3,b1,b2,b3,bb,t1,=,"1"
+
+INSERT INTO aa VALUES (1,2,"3");
+4,3,1,2,"3"
+
+DELETE FROM bb WHERE t4="5SS";
+5,bb,t4,=,"5SS"
+
+CREATE CLASS dZ123 (nB1 int,nB2 char) ;
+1,2,dZ123,nB1,int,nB2,char
+
+DROP CLASS asd;
+3,asd
+
+SELECT popSinger -> singer.nation  FROM popSinger WHERE singerName = "JayZhou";
+7,2,popSinger,singer,nation,popSinger,singerName,=,"JayZhou"
