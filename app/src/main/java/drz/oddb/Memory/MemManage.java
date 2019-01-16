@@ -20,7 +20,8 @@ import drz.oddb.Transaction.SystemTable.*;
 
 public class MemManage {
     final private int attrstringlen=8; //属性最大字符串长度
-    final private int bufflength=1000;//缓冲区大小为1000*8K
+    final private int bufflength=1000;//缓冲区大小为1000个块
+    final private int blocklength=8*1024;//块大小为8KB
 
     //系统表变量
     /*private List<TopTable> topTab=new ArrayList<>();
@@ -31,7 +32,7 @@ public class MemManage {
 
     private Map<Integer,sbufesc> hashMap=new HashMap<>();//hash加速根据数据库id、表id和块号查找数据是否在缓冲区
     private List<sbufesc> FreeList = new ArrayList<>();		//构建缓冲区freeList
-    private ByteBuffer MemBuff=ByteBuffer.allocateDirect(8*1024*bufflength);//buff
+    private ByteBuffer MemBuff=ByteBuffer.allocateDirect(blocklength*bufflength);//buff
     private boolean[] buffuse=new boolean[1000];
 
     public MemManage(){
@@ -91,11 +92,11 @@ public class MemManage {
             BufferedOutputStream output=new BufferedOutputStream(new FileOutputStream(deputytab));
             for(int i=0;i<tab.deputyTable.size();i++){
                 byte[] i1=int2Bytes(tab.deputyTable.get(i).classid,4);
-                output.write(i1);
+                output.write(i1,0,i1.length);
                 byte[] i2=int2Bytes(tab.deputyTable.get(i).deputyid,4);
-                output.write(i2);
+                output.write(i2,0,i2.length);
                 byte[] s1=tab.deputyTable.get(i).deputyname.getBytes();
-                output.write(s1);
+                output.write(s1,0,s1.length);
             }
             output.flush();
             output.close();
@@ -152,17 +153,17 @@ public class MemManage {
             BufferedOutputStream output=new BufferedOutputStream(new FileOutputStream(classtab));
             for(int i=0;i<tab.classTable.size();i++){
                 byte[] s1=tab.classTable.get(i).classname.getBytes();
-                output.write(s1);
+                output.write(s1,0,s1.length);
                 byte[] i1=int2Bytes(tab.classTable.get(i).classid,4);
-                output.write(i1);
+                output.write(i1,0,i1.length);
                 byte[] i2=int2Bytes(tab.classTable.get(i).attrnum,4);
-                output.write(i2);
+                output.write(i2,0,i2.length);
                 byte[] i3=int2Bytes(tab.classTable.get(i).attrid,4);
-                output.write(i3);
+                output.write(i3,0,i3.length);
                 byte[] s2=tab.classTable.get(i).attrname.getBytes();
-                output.write(s2);
+                output.write(s2,0,s2.length);
                 byte[] s3=tab.classTable.get(i).attrtype.getBytes();
-                output.write(s3);
+                output.write(s3,0,s3.length);
             }
             output.flush();
             output.close();
@@ -219,17 +220,17 @@ public class MemManage {
             BufferedOutputStream output=new BufferedOutputStream(new FileOutputStream(toptab));
             for(int i=0;i<tab.topTable.size();i++){
                 byte[] s1=tab.topTable.get(i).dbname.getBytes();
-                output.write(s1);
+                output.write(s1,0,s1.length);
                 byte[] i1=int2Bytes(tab.topTable.get(i).dbid,4);
-                output.write(i1);
+                output.write(i1,0,i1.length);
                 byte[] i2=int2Bytes(tab.topTable.get(i).classid,4);
-                output.write(i2);
+                output.write(i2,0,i2.length);
                 byte[] i3=int2Bytes(tab.topTable.get(i).tupleid,4);
-                output.write(i3);
+                output.write(i3,0,i3.length);
                 byte[] i4=int2Bytes(tab.topTable.get(i).blockid,4);
-                output.write(i2);
+                output.write(i4,0,i2.length);
                 byte[] i5=int2Bytes(tab.topTable.get(i).offset,4);
-                output.write(i2);
+                output.write(i5,0,i5.length);
             }
             output.flush();
             output.close();
@@ -257,12 +258,12 @@ public class MemManage {
         }
         File file=new File("/data/data/drz.oddb/Memory/"+block);
         if(file.exists()){
-            int offset=Free.buf_id*8*1024;
+            int offset=Free.buf_id*blocklength;
             try {
                 FileInputStream input=new FileInputStream(file);
-                byte[] temp=new byte[8*1024];
+                byte[] temp=new byte[blocklength];
                 input.read(temp);
-                for(int i=0;i<8*1024;i++){
+                for(int i=0;i<blocklength;i++){
                     MemBuff.put(offset+i,temp[i]);
                 }
                 hashMap.put(block,Free);
@@ -293,18 +294,25 @@ public class MemManage {
         int offset;
         sbufesc s=null;
         if((s=hashMap.get(block))!=null){
-            offset=s.blockNum.intValue();
+            offset=s.buf_id;
         }else{
             return false;
         }
         try {
             BufferedOutputStream output=new BufferedOutputStream(new FileOutputStream(file));
-            byte[] buff=new byte[1024*8];
-
+            byte[] buff=new byte[blocklength];
+            for(int i=0;i<blocklength;i++){
+                buff[i]=MemBuff.get(offset*blocklength+i);
+            }
+            output.write(buff,0,blocklength);
+            output.flush();
+            output.close();
+            return true;
         } catch (FileNotFoundException e) {
             e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
         }
-
         return false;
     }
 
