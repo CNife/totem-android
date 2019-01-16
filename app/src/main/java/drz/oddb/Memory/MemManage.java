@@ -23,33 +23,22 @@ public class MemManage {
     final private int bufflength=1000;//缓冲区大小为1000个块
     final private int blocklength=8*1024;//块大小为8KB
 
-    //系统表变量
-    /*private List<TopTable> topTab=new ArrayList<>();
-    private List<ClassTable> classTab=new ArrayList<>();
-    private List<DbTable> dbTab=new ArrayList<>();
-    private List<AttrTable> attrTab=new ArrayList<>();
-    private List<DeputyTable> deputyTab=new ArrayList<>();*/
-
     private Map<Integer,sbufesc> hashMap=new HashMap<>();//hash加速根据数据库id、表id和块号查找数据是否在缓冲区
     private List<sbufesc> FreeList = new ArrayList<>();		//构建缓冲区freeList
     private ByteBuffer MemBuff=ByteBuffer.allocateDirect(blocklength*bufflength);//buff
     private boolean[] buffuse=new boolean[1000];
+    private int blockmaxnum;
 
     public MemManage(){
-        /*loadTopTable();
-        loadClassTable();
-        loadDbTable();
-        loadAttrTable();
-        loadDeputyTable();*/
-        initbuffuesd();
+        initbuffues();
+        blockmaxnum=loadBlockMaxNum();
     }
 
-    private void initbuffuesd(){
+    private void initbuffues(){
         for(int i=0;i<1000;i++){
             buffuse[i]=true;
         }
     }
-
 
     public static  DeputyTable loadDeputyTable(){
         DeputyTable ret = new DeputyTable();
@@ -79,13 +68,15 @@ public class MemManage {
 
     public static boolean saveDeputyTable(DeputyTable tab){
         File deputytab=new File("/data/data/drz.doob/transaction/deputytable");
-        File path=deputytab.getParentFile();
-        if(!path.exists()){
-            path.mkdirs();
-            try {
-                deputytab.createNewFile();
-            } catch (IOException e) {
-                e.printStackTrace();
+        if(!deputytab.exists()){
+            File path=deputytab.getParentFile();
+            if(!path.exists()){
+                path.mkdirs();
+                try {
+                    deputytab.createNewFile();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
             }
         }
         try {
@@ -140,13 +131,15 @@ public class MemManage {
 
     public static  boolean saveClassTable(ClassTable tab) {
         File classtab=new File("/data/data/drz.doob/transaction/classtable");
-        File path=classtab.getParentFile();
-        if(!path.exists()){
-            path.mkdirs();
-            try {
-                classtab.createNewFile();
-            } catch (IOException e) {
-                e.printStackTrace();
+        if(!classtab.exists()){
+            File path=classtab.getParentFile();
+            if(!path.exists()){
+                path.mkdirs();
+                try {
+                    classtab.createNewFile();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
             }
         }
         try {
@@ -207,13 +200,15 @@ public class MemManage {
 
     public static boolean saveTopTable(TopTable tab){
         File toptab=new File("/data/data/drz.doob/transaction/toptable");
-        File path=toptab.getParentFile();
-        if(!path.exists()){
-            path.mkdirs();
-            try {
-                toptab.createNewFile();
-            } catch (IOException e) {
-                e.printStackTrace();
+        if(!toptab.exists()){
+            File path=toptab.getParentFile();
+            if(!path.exists()){
+                path.mkdirs();
+                try {
+                    toptab.createNewFile();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
             }
         }
         try {
@@ -282,13 +277,15 @@ public class MemManage {
 
     private boolean save(Integer block){
         File file=new File("/data/data/drz.oddb/Memory/"+block);
-        File path=file.getParentFile();
-        if(!path.exists()){
-            path.mkdirs();
-            try {
-                file.createNewFile();
-            } catch (IOException e) {
-                e.printStackTrace();
+        if(!file.exists()){
+            File path=file.getParentFile();
+            if(!path.exists()){
+                path.mkdirs();
+                try {
+                    file.createNewFile();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
             }
         }
         int offset;
@@ -315,6 +312,59 @@ public class MemManage {
         }
         return false;
     }
+
+    private void readTuple(){
+
+    }
+
+    private int loadBlockMaxNum(){
+        int ret=0;
+        File file=new File("/data/data/drz.doob/Memory/blocknum");
+        if(file.exists()){
+            try {
+                FileInputStream input=new FileInputStream(file);
+                byte[] temp=new byte[4];
+                input.read(temp,0,4);
+                ret=bytes2Int(temp,0,4);
+                return ret;
+            } catch (FileNotFoundException e) {
+                e.printStackTrace();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            return 0;
+        }else{
+            return 0;
+        }
+    }
+
+    private boolean saveBlockMaxNum(){
+        File file=new File("/data/data/drz.doob/Memory/blocknum");
+        if(!file.exists()){
+            File path=file.getParentFile();
+            if(!path.exists()){
+                path.mkdirs();
+                try {
+                    file.createNewFile();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+        try {
+            FileOutputStream output=new FileOutputStream(file);
+            byte[] temp=int2Bytes(blockmaxnum,4);
+            output.write(temp,0,4);
+            output.close();
+            return true;
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+
 
     private static byte[] int2Bytes(int value, int len){
         byte[] b = new byte[len];
