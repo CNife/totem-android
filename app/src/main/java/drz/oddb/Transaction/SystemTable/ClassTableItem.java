@@ -16,4 +16,6 @@ public class ClassTableItem {
         this.attrtype = attrtype;
         this.attrid = attrid;
     }
+    public ClassTableItem(){}
+
 }
