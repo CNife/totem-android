@@ -8,11 +8,16 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.TextView;
+
+import drz.oddb.Transaction.TransAction;
 
 public class MainActivity extends AppCompatActivity {
 
     //查询输入框
     private EditText editText;
+    private TextView text_view;
+    TransAction trans = new TransAction();
 
     //BGM
     //private Intent intent = new Intent("com.angel.Android.MUSIC");
@@ -29,10 +34,11 @@ public class MainActivity extends AppCompatActivity {
         //查询按钮
         Button button = (Button) findViewById(R.id.button);
         editText = (EditText) findViewById(R.id.edit_text);
+        text_view = (TextView) findViewById(R.id.text_view);
         button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                //在此处添加button按钮逻辑
+                trans.query(editText.getText().toString());
             }
         });
     }
