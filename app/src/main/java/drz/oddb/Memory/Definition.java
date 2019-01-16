@@ -16,14 +16,8 @@ class header{
 }
 
 //缓冲区
-class bufferTag{
-    int dbOid;		//数据库id
-    int tableOid;		//表id
-    int blockNum;		//块号
-}
-
 class sbufesc{
-    bufferTag tag;		//包含数据库id、表id和块号
+    Integer blockNum;		//块号
     Boolean flag;		//标记改块是否为脏（true为脏）
     int buf_id;		//缓冲区索引号
 }
@@ -36,7 +30,6 @@ class HeapTupleHeader{
 }
 
 class ItemPointerData{
-    bufferTag tag;
     int offset;			//块内偏移
 }
 

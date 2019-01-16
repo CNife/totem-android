@@ -14,6 +14,8 @@ import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+
 import drz.oddb.Transaction.SystemTable.*;
 
 public class MemManage {
@@ -27,7 +29,7 @@ public class MemManage {
     private List<AttrTable> attrTab=new ArrayList<>();
     private List<DeputyTable> deputyTab=new ArrayList<>();*/
 
-    private HashMap<bufferTag,sbufesc> hashMap;//hash加速根据数据库id、表id和块号查找数据是否在缓冲区
+    private Map<Integer,sbufesc> hashMap=new HashMap<>();//hash加速根据数据库id、表id和块号查找数据是否在缓冲区
     private List<sbufesc> FreeList = new ArrayList<>();		//构建缓冲区freeList
     private ByteBuffer MemBuff=ByteBuffer.allocateDirect(8*1024*bufflength);//buff
     private boolean[] buffuse=new boolean[1000];
@@ -53,24 +55,25 @@ public class MemManage {
         DeputyTableItem temp=null;
         File deputytab=new File("/data/data/drz.doob/transaction/deputytable");
         if(!deputytab.exists()){
-            return null;
-        }
-        try {
-            FileInputStream input=new FileInputStream(deputytab);
-            byte buff[]=new byte[16];
-            while(input.read(buff,0,16)!=-1){
-                temp=new DeputyTableItem();
-                temp.classid=bytes2Int(buff,0,4);
-                temp.deputyid=bytes2Int(buff,4,4);
-                temp.deputyname=new String(buff,8,8);
-                ret.deputyTable.add(temp);
+            return ret;
+        }else {
+            try {
+                FileInputStream input = new FileInputStream(deputytab);
+                byte buff[] = new byte[16];
+                while (input.read(buff, 0, 16) != -1) {
+                    temp = new DeputyTableItem();
+                    temp.classid = bytes2Int(buff, 0, 4);
+                    temp.deputyid = bytes2Int(buff, 4, 4);
+                    temp.deputyname = new String(buff, 8, 8);
+                    ret.deputyTable.add(temp);
+                }
+            } catch (FileNotFoundException e) {
+                e.printStackTrace();
+            } catch (IOException e) {
+                e.printStackTrace();
             }
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
+            return ret;
         }
-        return ret;
     }
 
     public static boolean saveDeputyTable(DeputyTable tab){
@@ -110,27 +113,28 @@ public class MemManage {
         ClassTableItem temp=null;
         File classtab=new File("/data/data/drz.doob/transaction/classtable");
         if(!classtab.exists()){
-            return null;
-        }
-        try {
-            FileInputStream input=new FileInputStream(classtab);
-            byte buff[]=new byte[36];
-            while(input.read(buff,0,36)!=-1){
-                temp=new ClassTableItem();
-                temp.classname=new String(buff,0,8);
-                temp.classid=bytes2Int(buff,8,4);
-                temp.attrnum=bytes2Int(buff,12,4);
-                temp.attrid=bytes2Int(buff,16,4);
-                temp.attrname=new String(buff,20,8);
-                temp.attrtype=new String(buff,28,8);
-                ret.classTable.add(temp);
+            return ret;
+        }else {
+            try {
+                FileInputStream input = new FileInputStream(classtab);
+                byte buff[] = new byte[36];
+                while (input.read(buff, 0, 36) != -1) {
+                    temp = new ClassTableItem();
+                    temp.classname = new String(buff, 0, 8);
+                    temp.classid = bytes2Int(buff, 8, 4);
+                    temp.attrnum = bytes2Int(buff, 12, 4);
+                    temp.attrid = bytes2Int(buff, 16, 4);
+                    temp.attrname = new String(buff, 20, 8);
+                    temp.attrtype = new String(buff, 28, 8);
+                    ret.classTable.add(temp);
+                }
+            } catch (FileNotFoundException e) {
+                e.printStackTrace();
+            } catch (IOException e) {
+                e.printStackTrace();
             }
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
+            return ret;
         }
-        return ret;
     }
 
     public static  boolean saveClassTable(ClassTable tab) {
@@ -176,27 +180,28 @@ public class MemManage {
         TopTableItem temp=null;
         File toptab=new File("/data/data/drz.doob/transaction/toptable");
         if(!toptab.exists()){
-            return null;
-        }
-        try {
-            FileInputStream input=new FileInputStream(toptab);
-            byte buff[]=new byte[28];
-            while(input.read(buff,0,28)!=-1){
-                temp=new TopTableItem();
-                temp.dbname=new String(buff,0,8);
-                temp.dbid=bytes2Int(buff,8,4);
-                temp.classid=bytes2Int(buff,12,4);
-                temp.tupleid=bytes2Int(buff,16,4);
-                temp.blockid=bytes2Int(buff,20,4);
-                temp.offset=bytes2Int(buff,24,4);
-                ret.topTable.add(temp);
+            return ret;
+        }else{
+            try {
+                FileInputStream input=new FileInputStream(toptab);
+                byte buff[]=new byte[28];
+                while(input.read(buff,0,28)!=-1){
+                    temp=new TopTableItem();
+                    temp.dbname=new String(buff,0,8);
+                    temp.dbid=bytes2Int(buff,8,4);
+                    temp.classid=bytes2Int(buff,12,4);
+                    temp.tupleid=bytes2Int(buff,16,4);
+                    temp.blockid=bytes2Int(buff,20,4);
+                    temp.offset=bytes2Int(buff,24,4);
+                    ret.topTable.add(temp);
+                }
+            } catch (FileNotFoundException e) {
+                e.printStackTrace();
+            } catch (IOException e) {
+                e.printStackTrace();
             }
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
+            return ret;
         }
-        return ret;
     }
 
     public static boolean saveTopTable(TopTable tab){
@@ -237,12 +242,12 @@ public class MemManage {
         return false;
     }
 
-    private sbufesc load(bufferTag tag){
+    private sbufesc load(Integer block){
         sbufesc Free=new sbufesc();
         if(FreeList.size()==1000) {
 
         }
-        Free.tag=tag;
+        Free.blockNum=block;
         Free.flag=false;
         for(int i=0;i<1000;i++){
             if(buffuse[i]){
@@ -250,7 +255,7 @@ public class MemManage {
                 break;
             }
         }
-        File file=new File("/data/data/drz.oddb/Memory/"+tag.dbOid+"/"+tag.blockNum);
+        File file=new File("/data/data/drz.oddb/Memory/"+block);
         if(file.exists()){
             int offset=Free.buf_id*8*1024;
             try {
@@ -260,6 +265,7 @@ public class MemManage {
                 for(int i=0;i<8*1024;i++){
                     MemBuff.put(offset+i,temp[i]);
                 }
+                hashMap.put(block,Free);
                 return Free;
             } catch (FileNotFoundException e) {
                 e.printStackTrace();
@@ -273,7 +279,28 @@ public class MemManage {
         }
     }
 
-    private boolean save(bufferTag tag){
+    private boolean save(Integer block){
+        File file=new File("/data/data/drz.oddb/Memory/"+block);
+        File path=file.getParentFile();
+        if(!path.exists()){
+            path.mkdirs();
+            try {
+                file.createNewFile();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+        int offset;
+        if(hashMap.get(block)){
+
+        }
+        try {
+            BufferedOutputStream output=new BufferedOutputStream(new FileOutputStream(file));
+            byte[] buff=new byte[1024*8];
+
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
 
         return false;
     }
