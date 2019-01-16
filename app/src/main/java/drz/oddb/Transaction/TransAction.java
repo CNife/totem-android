@@ -11,7 +11,7 @@ import drz.oddb.parse.*;
 
 public class TransAction {
 
-    TopTable topt = new TopTable();
+    TopTable topt = MemManage.loadTopTable();
     ClassTable classt = new ClassTable();
     DeputyTable deputyt = new DeputyTable();
 

@@ -7,4 +7,5 @@ public class TupleList {
         this.tuplelist.add(tuple);
         tuplenum++;
     }
+
 }
