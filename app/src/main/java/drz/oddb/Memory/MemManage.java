@@ -4,6 +4,7 @@ import org.w3c.dom.Attr;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.lang.reflect.Array;
 import java.nio.ByteBuffer;
@@ -25,7 +26,8 @@ public class MemManage {
 
     private HashMap<bufferTag,sbufesc> hashMap;//hash加速根据数据库id、表id和块号查找数据是否在缓冲区
     private List<sbufesc> FreeList = new ArrayList<>();		//构建缓冲区freeList
-    private ByteBuffer buff=ByteBuffer.allocateDirect(8*1024*bufflength);
+    private ByteBuffer MemBuff=ByteBuffer.allocateDirect(8*1024*bufflength);//buff
+    private boolean[] buffuse=new boolean[1000];
 
     public MemManage(){
         /*loadTopTable();
@@ -33,7 +35,15 @@ public class MemManage {
         loadDbTable();
         loadAttrTable();
         loadDeputyTable();*/
+        initbuffuesd();
     }
+
+    private void initbuffuesd(){
+        for(int i=0;i<1000;i++){
+            buffuse[i]=true;
+        }
+    }
+
 
     public static  DeputyTable loadDeputyTable(){
         DeputyTable ret = new DeputyTable();
@@ -135,22 +145,39 @@ public class MemManage {
     }
 
     private sbufesc load(bufferTag tag){
-        sbufesc Free;
-        if(FreeList.size()==0) {
+        sbufesc Free=new sbufesc();
+        if(FreeList.size()==1000) {
 
         }
-        String path;
-        path=Integer.toString(Free.tag.dbOid)+"//"+Integer.toString(Free.tag.tableOid);
-        File file=new File(path);
-        if(!file.exists()){
-            try{
-                file.createNewFile();
-            }catch (Exception e){
-                e.printStackTrace();
+        Free.tag=tag;
+        Free.flag=false;
+        for(int i=0;i<1000;i++){
+            if(buffuse[i]){
+                Free.buf_id=i;
+                break;
             }
         }
-
-        return null;
+        File file=new File("/data/data/drz.oddb/Memory/"+tag.dbOid+"/"+tag.blockNum);
+        if(file.exists()){
+            int offset=Free.buf_id*8*1024;
+            try {
+                FileInputStream input=new FileInputStream(file);
+                byte[] temp=new byte[8*1024];
+                input.read(temp);
+                for(int i=0;i<8*1024;i++){
+                    MemBuff.put(offset+i,temp[i]);
+                }
+                return Free;
+            } catch (FileNotFoundException e) {
+                e.printStackTrace();
+                return null;
+            } catch (IOException e) {
+                e.printStackTrace();
+                return null;
+            }
+        }else{
+            return null;
+        }
     }
 
     private boolean save(bufferTag tag){
