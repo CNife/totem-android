@@ -5,6 +5,6 @@ import java.util.List;
 
 public class TopTable {
     public  List<TopTableItem> topTable=new ArrayList<>();
-
+    public int maxTupleId = 0;
 }
 

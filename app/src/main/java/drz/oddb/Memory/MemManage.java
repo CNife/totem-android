@@ -291,9 +291,9 @@ public class MemManage {
             }
         }
         int offset;
-        if(hashMap.get(block)){
+        //if(hashMap.get(block)){
 
-        }
+        //}
         try {
             BufferedOutputStream output=new BufferedOutputStream(new FileOutputStream(file));
             byte[] buff=new byte[1024*8];

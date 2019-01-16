@@ -12,8 +12,16 @@ import drz.oddb.parse.*;
 public class TransAction {
 
     TopTable topt = MemManage.loadTopTable();
-    ClassTable classt = new ClassTable();
-    DeputyTable deputyt = new DeputyTable();
+    ClassTable classt = MemManage.loadClassTable();
+    DeputyTable deputyt = MemManage.loadDeputyTable();
+
+    protected void finalize( )
+    {
+        MemManage.saveTopTable(topt);
+        MemManage.saveClassTable(classt);
+        MemManage.saveDeputyTable(deputyt);
+    }
+
 
     public String query(String s) {
 
@@ -56,8 +64,8 @@ public class TransAction {
 
 
     private void CreateOriginClass(String[] p) {
-        String classname = p[1];
-        int count = Integer.parseInt(p[2]);
+        String classname = p[2];
+        int count = Integer.parseInt(p[1]);
         classt.maxid++;
         int classid = classt.maxid;
         for (int i = 0; i < count; i++) {

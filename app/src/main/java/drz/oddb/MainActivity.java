@@ -34,7 +34,6 @@ public class MainActivity extends AppCompatActivity {
         //查询按钮
         Button button = (Button) findViewById(R.id.button);
         editText = (EditText) findViewById(R.id.edit_text);
-        text_view = (TextView) findViewById(R.id.text_view);
         button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
