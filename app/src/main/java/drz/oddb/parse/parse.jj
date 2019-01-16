@@ -162,7 +162,7 @@ int insert() :
 {
     <INSERT>
     <INTO>
-    cln = classname()
+    cln = classname(){st.add(cln);}
     <VALUES>
     <LEFT_BRACKET>
      vl = value() {count++;st.add(vl); }
