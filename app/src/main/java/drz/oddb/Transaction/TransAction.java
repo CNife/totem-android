@@ -33,6 +33,7 @@ public class TransAction {
                 case parse.OPT_INSERT:
                     break;
                 case parse.OPT_DELETE:
+                    Delete(aa);
                     break;
                 case parse.OPT_SELECT_DERECTSELECT:
                     break;
@@ -98,12 +99,31 @@ public class TransAction {
             if(item.classid == classid){
                 Tuple tuple = GetTuple(item.dbid,item.offset);
                 if(value.equals(tuple.tuple[attrid])){
-                    DeleteTuple(item.dbid,item.offset);
+                    DeleteTuple(item.blockid,item.offset);
                     topt.topTable.remove(item);
                 }
             }
         }
     }
+
+
+    private TupleList DirectSelect(String[] p){
+        TupleList tpl = new TupleList();
+        int tuplenumber = Integer.parseInt(p[1]);
+        String[] attrname;
+        String classname = p[2+tuplenumber];
+        for (ClassTableItem item:classt.classTable) {
+            if (item.classname == classname && item.attrname.equals(attrname)) {
+                classid = item.classid;
+                attrid = item.attrid;
+                attrtype = item.attrtype;
+                break;
+            }
+        }
+
+    }
+
+
 
     private Tuple GetTuple(int id, int offset) {
         return null;
