@@ -1,11 +1,11 @@
 package drz.oddb.Transaction;
 
-import java.io.InputStream;
 import java.io.ByteArrayInputStream;
-import java.util.*;
+
 import drz.oddb.Memory.*;
 
 
+import drz.oddb.Transaction.SystemTable.*;
 
 import drz.oddb.parse.*;
 
