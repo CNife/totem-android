@@ -11,7 +11,7 @@ import drz.oddb.parse.*;
 
 public class TransAction {
 
-    TopTable topt = new TopTable();
+    TopTable topt = MemManage.loadTopTable();
     ClassTable classt = new ClassTable();
     DeputyTable deputyt = new DeputyTable();
 
@@ -27,8 +27,10 @@ public class TransAction {
                     CreateOriginClass(aa);
                     break;
                 case parse.OPT_CREATE_SELECTDEPUTY:
+                    CreateSelectDeputy(aa);
                     break;
                 case parse.OPT_DROP:
+                    Drop(aa);
                     break;
                 case parse.OPT_INSERT:
                     break;
@@ -63,10 +65,99 @@ public class TransAction {
         }
     }
 
+    //CREATE SELECTDEPUTY aa SELECT  b1,b2,b3 FROM  bb WHERE t1="1" ;
+    //2,3,aa,b1,b2,b3,bb,t1,=,"1"
     private void CreateSelectDeputy(String[] p) {
+        int count = Integer.parseInt(p[1]);
+        String classname = p[2];//代理类的名字
+        String deputyname = p[count+3];//代理的类的名字
+        classt.maxid++;
+        int classid = classt.maxid;//代理类的id
+        int deputyid = -1;//代理的类的id
 
+        String attrname;
+        String attrtype;
+        for (int i = 1; i <= count; i++) {
+            int attrid;
+            for (ClassTableItem item:classt.classTable) {
+                attrname = item.attrname;
+                attrtype = item.attrtype;
+                if (item.classname == deputyname) {
+                    deputyid = item.classid;
+                    if(item.attrname.equals(p[i+2])){
+                        classt.classTable.add(new ClassTableItem(classname, classid, count,i,p[2+i], attrtype));
+                    }
+                    break;
+                }
+            };
+        }
+        deputyt.deputyTable.add(new DeputyTableItem(classid,deputyid,classname));
+
+        String[] select_s = new String[p.length-1];
+        select_s[0] = parse.OPT_SELECT_DERECTSELECT+"";
+        select_s[1] = p[1];
+        for(int i = 0;i < p.length-2;i++)
+        {
+            select_s[2+i] = p[i+2];
+        }
+
+        TupleList tList = DirectSelect(select_s);
+        for(int  i = 0;i < tList.tuplenum;i++)
+        {
+            int[] id = InsertTuple(tList.tuplelist.get(i));
+            topt.topTable.add(new TopTableItem("dz",1,classid,topt.maxTupleId++,id[0],id[1]));
+        }
     }
 
+
+   private void Drop(String[] p){
+        String classname = p[1];
+        int classid = -1;
+       for (ClassTableItem item:classt.classTable) {
+           if (item.classname == classname ){
+                classid = item.classid;
+                classt.classTable.remove(item);
+           }
+       }
+       for (DeputyTableItem item:deputyt.deputyTable){
+            if(item.deputyname == classname){
+                deputyt.deputyTable.remove(item);
+            }
+       }
+
+       for (TopTableItem item:topt.topTable){
+           if(item.classid == classid){
+               DeleteTuple(item.blockid,item.offset);
+               topt.topTable.remove(item);
+           }
+       }
+   }
+    //INSERT INTO aa VALUES (1,2,"3");
+    //4,3,aa,1,2,"3"
+   private void Insert(String[] p){
+        int count = Integer.parseInt(p[1]);
+        String classname = p[2];
+        Object[] attrArr = new Object[count];
+
+        int classid = -1;
+       for (ClassTableItem item:classt.classTable) {
+           if (item.classname == classname ){
+               classid = item.classid;
+               switch (item.attrtype){
+                   case "int":
+                       attrArr[item.attrid] = Integer.parseInt(p[item.attrid+3]);
+                       break;
+                   case "char":
+                       attrArr[item.attrid] = p[item.attrid+3].replace("\"","");
+                       break;
+               }
+           }
+       }
+
+       int[] id = InsertTuple(new Tuple(attrArr));
+        topt.topTable.add(new TopTableItem("dz",1,classid,topt.maxTupleId++,id[0],id[1]));
+
+   }
 
     private void Delete(String[] p) {
         String classname = p[1];

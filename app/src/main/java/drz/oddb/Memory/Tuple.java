@@ -12,4 +12,5 @@ public class Tuple {
         tuple = values.clone();
         tupleHeader = values.length;
     }
+
 }
