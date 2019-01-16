@@ -82,44 +82,83 @@ public class TransAction {
                 break;
             }
         }
-        switch (attrtype){
-            case "int":
-                int value = Integer.parseInt(p[4]);
-                DeleteE(classid,attrid,value);
-            case "char":
-                DeleteE(classid,attrid,p[4]);
 
-        }
-
-    }
-
-
-    private <E> void DeleteE(int classid,int attrid,E value){
         for (TopTableItem item:topt.topTable){
             if(item.classid == classid){
                 Tuple tuple = GetTuple(item.dbid,item.offset);
-                if(value.equals(tuple.tuple[attrid])){
+                if(Condition(attrtype,tuple,attrid,p[4])){
                     DeleteTuple(item.blockid,item.offset);
                     topt.topTable.remove(item);
                 }
             }
         }
+
+
+    }
+
+
+    private boolean Condition(String attrtype,Tuple tuple,int attrid,String value1){
+        value = value1.replace("\"","");
+        switch (attrtype){
+            case "int":
+                int value_int = Integer.parseInt(value);
+                if(tuple.tuple[attrid].equals(value_int))
+                    return true;
+                break;
+            case "char":
+                String value_string = value;
+                if(tuple.tuple[attrid].equals(value_string))
+                    return true;
+                break;
+
+        }
+        return false;
     }
 
 
     private TupleList DirectSelect(String[] p){
         TupleList tpl = new TupleList();
-        int tuplenumber = Integer.parseInt(p[1]);
-        String[] attrname;
-        String classname = p[2+tuplenumber];
+        int attrnumber = Integer.parseInt(p[1]);
+        String[] attrname = null;
+        int[] attrid = null;
+        String[] attrtype= null;
+        String classname = p[2+attrnumber];
+        int classid = 0;
+        for(int i = 0;i < attrnumber;i++){
+            for (ClassTableItem item:classt.classTable) {
+                if (item.classname == classname && item.attrname.equals(p[2+i])) {
+                    classid = item.classid;
+                    attrid[i] = item.attrid;
+                    attrtype[i] = item.attrtype;
+                    attrname[i] = item.attrname;
+                    break;
+                }
+            }
+        }
+
+
+        int sattrid = 0;
+        String sattrtype = null;
         for (ClassTableItem item:classt.classTable) {
-            if (item.classname == classname && item.attrname.equals(attrname)) {
-                classid = item.classid;
-                attrid = item.attrid;
-                attrtype = item.attrtype;
+            if (item.classid == classid && item.attrname.equals(p[attrnumber+3])) {
+                sattrid = item.attrid;
+                sattrtype = item.attrtype;
                 break;
             }
         }
+
+
+        for(TopTableItem item : topt.topTable){
+            if(item.classid == classid){
+                Tuple tuple = GetTuple(item.blockid,item.offset);
+               if(Condition(sattrtype,tuple,sattrid,p[attrnumber+5])){
+                   tpl.addTuple(tuple);
+
+               }
+            }
+        }
+
+
 
     }
 
