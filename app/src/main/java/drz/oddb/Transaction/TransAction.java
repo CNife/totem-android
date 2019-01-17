@@ -5,6 +5,7 @@ import java.io.ByteArrayInputStream;
 import drz.oddb.Memory.*;
 
 
+import drz.oddb.PrintResult;
 import drz.oddb.Transaction.SystemTable.*;
 
 import drz.oddb.parse.*;
@@ -14,7 +15,7 @@ public class TransAction {
     TopTable topt = mem.loadTopTable();
     ClassTable classt = mem.loadClassTable();
     DeputyTable deputyt = mem.loadDeputyTable();
-
+    PrintResult print_rst = new PrintResult();
     public void SaveAll( )
     {
         mem.saveTopTable(topt);
@@ -22,6 +23,29 @@ public class TransAction {
         mem.saveDeputyTable(deputyt);
     }
 
+
+    public void Test(){
+        TupleList tpl = new TupleList();
+        Tuple t1 = new Tuple();
+        t1.tupleHeader = 3;
+        t1.tuple = new Object[t1.tupleHeader];
+        t1.tuple[0] = "a";
+        t1.tuple[1] = 1;
+        t1.tuple[2] = "b";
+        Tuple t2 = new Tuple();
+        t2.tupleHeader = 3;
+        t2.tuple = new Object[t2.tupleHeader];
+        t2.tuple[0] = "d";
+        t2.tuple[1] = 2;
+        t2.tuple[2] = "e";
+        tpl.addTuple(t1);
+        tpl.addTuple(t2);
+        String[] attrname = {"attr2","attr1","attr3"};
+        int[] attrid = {1,0,2};
+        String[]attrtype = {"int","char","char"};
+        print_rst.Print(tpl,attrname,attrid,attrtype);
+
+    }
 
     public String query(String s) {
 
@@ -193,10 +217,6 @@ public class TransAction {
         }
 
 
-    }
-    public class PrintResult {
-        public void Print(TupleList tpl, String[] attrname, int[] attrid, String[] type) {
-        };
     }
     private boolean Condition(String attrtype,Tuple tuple,int attrid,String value1){
         String value = value1.replace("\"","");

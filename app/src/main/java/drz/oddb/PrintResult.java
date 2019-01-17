@@ -26,10 +26,10 @@ public class PrintResult extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.print_result);
 
-
     }
 
     public void Print(TupleList tpl,String[] attrname,int[] attrid,String[] type){
+        startActivity(new Intent(("android.intent.action.PRINTRST")));
 
         ArrayList<Object> tabCol = new ArrayList<>(attrid.length);
         ArrayList<Object> tabH = new ArrayList<>(tpl.tuplenum);
@@ -44,11 +44,11 @@ public class PrintResult extends AppCompatActivity {
             TableRow tableRow = new TableRow(this);
             for(c = 0;c < tabCol.size();c++){
                 TextView tv = new TextView(this);
-                oj = tpl.tuplelist.get(r).tuple[c];
                 if(r == 0){
                     tv.setText(attrname[c]);
                 }
                 else{
+                    oj = tpl.tuplelist.get(r-1).tuple[c];
                     switch (type[c]){
                         case "int":
                             itemp = Integer.parseInt((String)oj);
@@ -65,4 +65,5 @@ public class PrintResult extends AppCompatActivity {
         }
         rst_tab = findViewById(R.id.rst_tab);
     }
+
 }

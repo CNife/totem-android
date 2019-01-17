@@ -27,6 +27,7 @@ public class MainActivity extends AppCompatActivity {
     TransAction trans = new TransAction();
 
 
+
     //BGM
     //private Intent intent = new Intent("com.angel.Android.MUSIC");
 
@@ -45,8 +46,7 @@ public class MainActivity extends AppCompatActivity {
         button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                trans.query(editText.getText().toString());
-                //startActivity(new Intent(("android.intent.action.PRINTRST")));
+                trans.Test();
             }
         });
 
