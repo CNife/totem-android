@@ -132,8 +132,8 @@ public class MemManage {
         }
     }
 
-    public boolean saveClassTable(ClassTable tab) {
-        File classtab=new File("/data/data/drz.oddb/transction/classtable");
+    public boolean saveClassTable(ClassTable tab){
+        File classtab=new File("/data/data/drz.oddb/transaction/classtable");
         if(!classtab.exists()){
             File path=classtab.getParentFile();
             System.out.println(path.getAbsolutePath());
@@ -249,7 +249,7 @@ public class MemManage {
 
     private sbufesc load(int block){
         sbufesc Free=new sbufesc();
-        if(FreeList.size()==1000) {
+        if(FreeList.size()==bufflength) {
             int k=random.nextInt(1000);
             save(k);
             buffuse[k]=true;
@@ -361,9 +361,9 @@ public class MemManage {
         return false;
     }
 
-    private boolean creatBlock(){
-        sbufesc s=new sbufesc();
-        if(FreeList.size()==1000) {
+    private void creatBlock(){
+        sbufesc newblocksb=new sbufesc();
+        if(FreeList.size()==bufflength) {
             int k=random.nextInt(1000);
             save(k);
             buffuse[k]=true;
@@ -373,7 +373,24 @@ public class MemManage {
                 System.out.println("删除失败！");
             }
         }
-        return false;
+        for(int i=0;i<1000;i++){
+            if(buffuse[i]){
+                newblocksb.buf_id=i;
+                buffuse[i]=false;
+                break;
+            }
+        }
+        blockmaxnum++;
+        newblocksb.blockNum=blockmaxnum;
+        newblocksb.flag=true;
+        byte[] header=int2Bytes(4,4);
+        for(int i=0;i<4;i++){
+            MemBuff.put(newblocksb.buf_id*blocklength+i,header[i]);
+        }
+        byte x=(byte)32;
+        for(int i=4;i<blocklength;i++){
+            MemBuff.put(newblocksb.buf_id*blocklength+i,x);
+        }
     }
 
     private boolean delete(int x){
