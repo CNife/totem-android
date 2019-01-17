@@ -5,5 +5,9 @@ import java.util.List;
 
 public class DeputyTable {
     public List<DeputyTableItem> deputyTable=new ArrayList<>();
+
+    public void clear(){
+        deputyTable.clear();
+    }
 }
 
