@@ -32,9 +32,10 @@ public class PrintResult extends AppCompatActivity {
 
      public void Print(TupleList tpl,String[] attrname,int[] attrid,String[] type){
 
-
-        Object[] tabCol = new Object[attrid.length];
-         Object[] tabH = new Object[tpl.tuplenum];
+        int tabCol  = attrid.length;
+         int tabH = tpl.tuplenum;
+        //Object[] tabCol = new Object[attrid.length];
+         //Object[] tabH = new Object[tpl.tuplenum];
         //ArrayList<Object> tabCol = new ArrayList<Object>(attrid.length);
         //ArrayList<Object> tabH = new ArrayList<Object>(tpl.tuplenum);
 
@@ -46,16 +47,16 @@ public class PrintResult extends AppCompatActivity {
 
          rst_tab = findViewById(R.id.rst_tab);
 
-        for(r = 0;r <= tabH.length;r++){
+        for(r = 0;r <= tabH;r++){
             TableRow tableRow = new TableRow(this);
-            for(c = 0;c < tabCol.length;c++){
+            for(c = 0;c < tabCol;c++){
                 TextView tv = new TextView(this);
                 if(r == 0){
-                    tv.setText(attrname[c]);
+                    tv.setText(attrname[attrid[c]]);
                 }
                 else{
                     oj = tpl.tuplelist.get(r-1).tuple[c];
-                    switch (type[c]){
+                    switch (type[attrid[c]]){
                         case "int":
                             itemp = Integer.parseInt(oj.toString());
                             tv.setText(itemp+"");

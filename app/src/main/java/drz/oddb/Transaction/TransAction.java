@@ -57,7 +57,7 @@ public class TransAction {
         tpl.addTuple(t2);
         String[] attrname = {"attr2","attr1","attr3"};
         int[] attrid = {1,0,2};
-        String[]attrtype = {"char","int","char"};
+        String[]attrtype = {"int","char","char"};
 
         PrintSelectResult(tpl,attrname,attrid,attrtype);
 
