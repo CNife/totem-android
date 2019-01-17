@@ -357,6 +357,11 @@ public class MemManage {
     }
 
     public boolean writeTuple(Tuple t){
+        sbufesc sbu=new sbufesc();
+        if((sbu=findBlock(blockmaxnum))==null){
+            sbu=load(blockmaxnum);
+        }
+        byte[] x=new byte[4];
 
         return false;
     }
@@ -480,13 +485,15 @@ public class MemManage {
 
     private String byte2str(byte[] b,int off,int len){
         String s="";
+        int k=0;
         for(int i=off;i<off+len;i++){
             if(b[i]!=32){
-                s=s+b[i];
+                k++;
             }else{
                 break;
             }
         }
+        s=new String(b,0,k);
         return s;
     }
 
