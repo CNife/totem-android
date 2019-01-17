@@ -13,6 +13,9 @@ import android.widget.EditText;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import drz.oddb.Memory.*;
+import drz.oddb.Transaction.SystemTable.ClassTable;
+import drz.oddb.Transaction.SystemTable.ClassTableItem;
 import drz.oddb.Transaction.TransAction;
 
 public class MainActivity extends AppCompatActivity {
@@ -27,6 +30,14 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        ClassTable abc=new ClassTable();
+        ClassTableItem x=new ClassTableItem("a",1,2,3,"b","c");
+        abc.classTable.add(x);
+        if(MemManage.saveClassTable(abc)){
+            System.out.println("写入成功！");
+        }else{
+            System.out.println("写入失败！");
+        }
         Intent intent = new Intent(MainActivity.this,MusicServer.class);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);

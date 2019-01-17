@@ -54,7 +54,7 @@ public class MemManage {
                     temp = new DeputyTableItem();
                     temp.classid = bytes2Int(buff, 0, 4);
                     temp.deputyid = bytes2Int(buff, 4, 4);
-                    temp.deputyname = new String(buff, 8, 8);
+                    temp.deputyname = byte2str(buff, 8, 8);
                     ret.deputyTable.add(temp);
                 }
             } catch (FileNotFoundException e) {
@@ -92,7 +92,7 @@ public class MemManage {
                 output.write(i1,0,i1.length);
                 byte[] i2=int2Bytes(tab.deputyTable.get(i).deputyid,4);
                 output.write(i2,0,i2.length);
-                byte[] s1=tab.deputyTable.get(i).deputyname.getBytes();
+                byte[] s1=str2Bytes(tab.deputyTable.get(i).deputyname);
                 output.write(s1,0,s1.length);
             }
             output.flush();
@@ -118,12 +118,12 @@ public class MemManage {
                 byte buff[] = new byte[36];
                 while (input.read(buff, 0, 36) != -1) {
                     temp = new ClassTableItem();
-                    temp.classname = new String(buff, 0, 8);
+                    temp.classname = byte2str(buff, 0, 8);
                     temp.classid = bytes2Int(buff, 8, 4);
                     temp.attrnum = bytes2Int(buff, 12, 4);
                     temp.attrid = bytes2Int(buff, 16, 4);
-                    temp.attrname = new String(buff, 20, 8);
-                    temp.attrtype = new String(buff, 28, 8);
+                    temp.attrname = byte2str(buff, 20, 8);
+                    temp.attrtype = byte2str(buff, 28, 8);
                     ret.classTable.add(temp);
                 }
             } catch (FileNotFoundException e) {
@@ -162,8 +162,9 @@ public class MemManage {
         }
         try {
             BufferedOutputStream output=new BufferedOutputStream(new FileOutputStream(classtab));
+            System.out.println(tab.classTable.size());
             for(int i=0;i<tab.classTable.size();i++){
-                byte[] s1=tab.classTable.get(i).classname.getBytes();
+                byte[] s1=str2Bytes(tab.classTable.get(i).classname);
                 output.write(s1,0,s1.length);
                 byte[] i1=int2Bytes(tab.classTable.get(i).classid,4);
                 output.write(i1,0,i1.length);
@@ -171,9 +172,9 @@ public class MemManage {
                 output.write(i2,0,i2.length);
                 byte[] i3=int2Bytes(tab.classTable.get(i).attrid,4);
                 output.write(i3,0,i3.length);
-                byte[] s2=tab.classTable.get(i).attrname.getBytes();
+                byte[] s2=str2Bytes(tab.classTable.get(i).attrname);
                 output.write(s2,0,s2.length);
-                byte[] s3=tab.classTable.get(i).attrtype.getBytes();
+                byte[] s3=str2Bytes(tab.classTable.get(i).attrtype);
                 output.write(s3,0,s3.length);
             }
             output.flush();
@@ -201,7 +202,7 @@ public class MemManage {
                 byte buff[]=new byte[28];
                 while(input.read(buff,0,28)!=-1){
                     temp=new TopTableItem();
-                    temp.dbname=new String(buff,0,8);
+                    temp.dbname=byte2str(buff,0,8);
                     temp.dbid=bytes2Int(buff,8,4);
                     temp.classid=bytes2Int(buff,12,4);
                     temp.tupleid=bytes2Int(buff,16,4);
@@ -240,7 +241,7 @@ public class MemManage {
         try {
             BufferedOutputStream output=new BufferedOutputStream(new FileOutputStream(toptab));
             for(int i=0;i<tab.topTable.size();i++){
-                byte[] s1=tab.topTable.get(i).dbname.getBytes();
+                byte[] s1=str2Bytes(tab.topTable.get(i).dbname);
                 output.write(s1,0,s1.length);
                 byte[] i1=int2Bytes(tab.topTable.get(i).dbid,4);
                 output.write(i1,0,i1.length);
@@ -391,6 +392,33 @@ public class MemManage {
         return false;
     }
 
+    private static byte[] str2Bytes(String s){
+        byte[] ret=new byte[8];
+        byte[] temp=s.getBytes();
+        for(int i=0;i<temp.length;i++){
+            ret[i]=temp[i];
+        }
+        if(temp.length==8){
+            return ret;
+        }else{
+            for(int i=temp.length;i<8;i++){
+                ret[i]=(byte)32;
+            }
+            return ret;
+        }
+    }
+
+    private  static String byte2str(byte[] b,int off,int len){
+        String s="";
+        for(int i=off;i<off+len;i++){
+            if(b[i]!=32){
+                s=s+b[i];
+            }else{
+                break;
+            }
+        }
+        return s;
+    }
 
     private static byte[] int2Bytes(int value, int len){
         byte[] b = new byte[len];
