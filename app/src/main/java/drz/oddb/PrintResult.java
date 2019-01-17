@@ -25,14 +25,18 @@ public class PrintResult extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState){
         super.onCreate(savedInstanceState);
         setContentView(R.layout.print_result);
-
+        Intent intent = getIntent();
+        Bundle bundle = intent.getExtras();
+        Print((TupleList) bundle.getSerializable("tupleList"),bundle.getStringArray("attrname"),bundle.getIntArray("attrid"),bundle.getStringArray("type"));
     }
 
      public void Print(TupleList tpl,String[] attrname,int[] attrid,String[] type){
 
 
-        ArrayList<Object> tabCol = new ArrayList<>(attrid.length);
-        ArrayList<Object> tabH = new ArrayList<>(tpl.tuplenum);
+        Object[] tabCol = new Object[attrid.length];
+         Object[] tabH = new Object[tpl.tuplenum];
+        //ArrayList<Object> tabCol = new ArrayList<Object>(attrid.length);
+        //ArrayList<Object> tabH = new ArrayList<Object>(tpl.tuplenum);
 
         int r;
         int c;
@@ -42,9 +46,9 @@ public class PrintResult extends AppCompatActivity {
 
          rst_tab = findViewById(R.id.rst_tab);
 
-        for(r = 0;r <= tabH.size();r++){
+        for(r = 0;r <= tabH.length;r++){
             TableRow tableRow = new TableRow(this);
-            for(c = 0;c < tabCol.size();c++){
+            for(c = 0;c < tabCol.length;c++){
                 TextView tv = new TextView(this);
                 if(r == 0){
                     tv.setText(attrname[c]);
@@ -53,18 +57,20 @@ public class PrintResult extends AppCompatActivity {
                     oj = tpl.tuplelist.get(r-1).tuple[c];
                     switch (type[c]){
                         case "int":
-                            itemp = Integer.parseInt((String)oj);
-                            tv.setText(itemp);
+                            itemp = Integer.parseInt(oj.toString());
+                            tv.setText(itemp+"");
                         case "char":
-                            stemp = (String)oj;
+                            stemp = oj.toString();
                             tv.setText(stemp);
                     }
                 }
                 tv.setGravity(Gravity.CENTER);
+
                 tableRow.addView(tv);
             }
             rst_tab.addView(tableRow,new TableLayout.LayoutParams(W,M));
         }
+
     }
 
 }

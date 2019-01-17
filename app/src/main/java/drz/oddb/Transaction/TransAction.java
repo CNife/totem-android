@@ -3,6 +3,7 @@ package drz.oddb.Transaction;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.os.Bundle;
 
 import java.io.ByteArrayInputStream;
 
@@ -51,7 +52,7 @@ public class TransAction {
         tpl.addTuple(t2);
         String[] attrname = {"attr2","attr1","attr3"};
         int[] attrid = {1,0,2};
-        String[]attrtype = {"int","char","char"};
+        String[]attrtype = {"char","int","char"};
 
         PrintSelectResult(tpl,attrname,attrid,attrtype);
 
@@ -313,9 +314,16 @@ public class TransAction {
 
     private void PrintSelectResult(TupleList tpl,String[] attrname,int[] attrid,String[] type) {
         Intent intent = new Intent(context, PrintResult.class);
-        context.startActivity(intent);
+
         //todo
-        PrintResult pr = new PrintResult();
-        pr.Print(tpl, attrname, attrid, type);
+        Bundle bundle = new Bundle();
+        bundle.putSerializable("tupleList",tpl);
+        bundle.putStringArray("attrname", attrname);
+        bundle.putIntArray("attrid",attrid);
+        bundle.putStringArray("type", type);
+        intent.putExtras(bundle);
+        context.startActivity(intent);
+
+
     }
 }
