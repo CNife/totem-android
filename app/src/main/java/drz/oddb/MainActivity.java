@@ -21,16 +21,17 @@ import drz.oddb.Transaction.TransAction;
 public class MainActivity extends AppCompatActivity {
 
     //查询输入框
+
     private EditText editText;
     private TextView text_view;
     TransAction trans = new TransAction();
+
 
     //BGM
     //private Intent intent = new Intent("com.angel.Android.MUSIC");
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        MemManage mem=new MemManage();
         Intent intent = new Intent(MainActivity.this,MusicServer.class);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
@@ -44,8 +45,8 @@ public class MainActivity extends AppCompatActivity {
         button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                //trans.query(editText.getText().toString());
-                startActivity(new Intent(("android.intent.action.PRINTRST")));
+                trans.query(editText.getText().toString());
+                //startActivity(new Intent(("android.intent.action.PRINTRST")));
             }
         });
 
