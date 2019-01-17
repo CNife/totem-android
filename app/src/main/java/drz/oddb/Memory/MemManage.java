@@ -37,6 +37,7 @@ public class MemManage {
     }
 
     public void exitFlush(){
+        saveBlockMaxNum();
         sbufesc sbu=new sbufesc();
         for(int i=0;i<FreeList.size();i++){
             sbu=FreeList.get(i);
@@ -292,6 +293,7 @@ public class MemManage {
         if((blocklength-spacestart)>(4+8*t.tupleHeader)){
             ret[0]=blockmaxnum;
             ret[1]=spacestart;
+            sbu.flag=true;
             byte[] hea=int2Bytes(t.tupleHeader,4);
             for(int i=0;i<4;i++){
                 MemBuff.put(sbu.buf_id*blocklength+spacestart+i,hea[i]);
@@ -327,10 +329,13 @@ public class MemManage {
             File path=file.getParentFile();
             if(!path.exists()){
                 path.mkdirs();
+                System.out.println("创建文件夹成功！");
             }
             try {
                 file.createNewFile();
+                System.out.println("创建文件成功！");
             } catch (IOException e) {
+                System.out.println("创建文件失败！");
                 e.printStackTrace();
             }
         }
@@ -369,17 +374,17 @@ public class MemManage {
                 System.out.println("删除失败！");
             }
         }
-        Free.blockNum=block;
-        Free.flag=false;
-        for(int i=0;i<1000;i++){
-            if(buffuse[i]){
-                Free.buf_id=i;
-                buffuse[i]=false;
-                break;
-            }
-        }
         File file=new File("/data/data/drz.oddb/Memory/"+block);
         if(file.exists()){
+            Free.blockNum=block;
+            Free.flag=false;
+            for(int i=0;i<1000;i++){
+                if(buffuse[i]){
+                    Free.buf_id=i;
+                    buffuse[i]=false;
+                    break;
+                }
+            }
             int offset=Free.buf_id*blocklength;
             try {
                 FileInputStream input=new FileInputStream(file);
@@ -438,6 +443,7 @@ public class MemManage {
         for(int i=4;i<blocklength;i++){
             MemBuff.put(newblocksb.buf_id*blocklength+i,x);
         }
+        FreeList.add(newblocksb);
         return newblocksb;
     }
 
