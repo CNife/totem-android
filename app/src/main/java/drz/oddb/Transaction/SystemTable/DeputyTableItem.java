@@ -12,7 +12,7 @@ public class DeputyTableItem {
 
     public int originid = 0;            //类id
     public int deputyid = 0;           //代理类id
-    public String deputyrule = null;    //代理类名
+    public String[] deputyrule = null;    //代理guize
 
 
 }

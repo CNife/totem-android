@@ -109,7 +109,7 @@ public class TransAction {
         classt.maxid++;
         int classid = classt.maxid;
         for (int i = 0; i < count; i++) {
-            classt.classTable.add(new ClassTableItem(classname, classid, count,i,p[2 * i + 3], p[2 * i + 4]));
+            classt.classTable.add(new ClassTableItem(classname, classid, count,i,p[2 * i + 3], p[2 * i + 4],"ori"));
         }
     }
 
