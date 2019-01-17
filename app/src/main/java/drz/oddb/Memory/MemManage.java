@@ -302,7 +302,7 @@ public class MemManage {
             for(int i=0;i<t.tupleHeader;i++){
                 str=str2Bytes(t.tuple[i].toString());
                 for(int j=0;j<8;j++){
-                    MemBuff.put(sbu.buf_id*blocklength+spacestart+4+i*8,str[j]);
+                    MemBuff.put(sbu.buf_id*blocklength+spacestart+4+i*8+j,str[j]);
                 }
             }
             byte[] sp=int2Bytes(spacestart+4+t.tupleHeader*8,4);
@@ -323,7 +323,7 @@ public class MemManage {
             for(int i=0;i<t.tupleHeader;i++){
                 str=str2Bytes(t.tuple[i].toString());
                 for(int j=0;j<8;j++){
-                    MemBuff.put(sbu.buf_id*blocklength+4+4+i*8,str[j]);
+                    MemBuff.put(sbu.buf_id*blocklength+4+4+i*8+j,str[j]);
                 }
             }
             byte[] sp=int2Bytes(4+4+t.tupleHeader*8,4);
