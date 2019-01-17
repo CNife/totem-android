@@ -156,7 +156,7 @@ public class TransAction {
         for(int  i = 0;i < tList.tuplenum;i++)
         {
             int[] id = InsertTuple(tList.tuplelist.get(i));
-            topt.ObjectTable.add(new ObjectTableItem("dz",1,classid,topt.maxTupleId++,id[0],id[1]));
+            topt.objectTable.add(new ObjectTableItem("dz",1,classid,topt.maxTupleId++,id[0],id[1]));
         }
     }
 
@@ -176,10 +176,10 @@ public class TransAction {
             }
        }
 
-       for (ObjectTableItem item:topt.ObjectTable){
+       for (ObjectTableItem item:topt.objectTable){
            if(item.classid == classid){
                DeleteTuple(item.blockid,item.offset);
-               topt.ObjectTable.remove(item);
+               topt.objectTable.remove(item);
            }
        }
    }
@@ -206,7 +206,7 @@ public class TransAction {
        }
 
        int[] id = InsertTuple(new Tuple(attrArr));
-        topt.ObjectTable.add(new ObjectTableItem("dz",1,classid,topt.maxTupleId++,id[0],id[1]));
+        topt.objectTable.add(new ObjectTableItem("dz",1,classid,topt.maxTupleId++,id[0],id[1]));
 
    }
 
@@ -225,12 +225,12 @@ public class TransAction {
             }
         }
 
-        for (ObjectTableItem item:topt.ObjectTable){
+        for (ObjectTableItem item:topt.objectTable){
             if(item.classid == classid){
                 Tuple tuple = GetTuple(item.dbid,item.offset);
                 if(Condition(attrtype,tuple,attrid,p[4])){
                     DeleteTuple(item.blockid,item.offset);
-                    topt.ObjectTable.remove(item);
+                    topt.objectTable.remove(item);
                 }
             }
         }
@@ -288,7 +288,7 @@ public class TransAction {
         }
 
 
-        for(ObjectTableItem item : topt.ObjectTable){
+        for(ObjectTableItem item : topt.objectTable){
             if(item.classid == classid){
                 Tuple tuple = GetTuple(item.blockid,item.offset);
                if(Condition(sattrtype,tuple,sattrid,p[attrnumber+5])){
