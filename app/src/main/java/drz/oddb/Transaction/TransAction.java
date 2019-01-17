@@ -78,15 +78,15 @@ public class TransAction {
                     CreateOriginClass(aa);
                     break;
                 case parse.OPT_CREATE_SELECTDEPUTY:
-                    CreateSelectDeputy(aa);
+
                     break;
                 case parse.OPT_DROP:
-                    Drop(aa);
+
                     break;
                 case parse.OPT_INSERT:
                     break;
                 case parse.OPT_DELETE:
-                    Delete(aa);
+
                     break;
                 case parse.OPT_SELECT_DERECTSELECT:
                     break;
@@ -118,6 +118,8 @@ public class TransAction {
 
     //CREATE SELECTDEPUTY aa SELECT  b1,b2,b3 FROM  bb WHERE t1="1" ;
     //2,3,aa,b1,b2,b3,bb,t1,=,"1"
+
+    /*
     private void CreateSelectDeputy(String[] p) {
         int count = Integer.parseInt(p[1]);
         String classname = p[2];//代理类的名字
@@ -161,82 +163,86 @@ public class TransAction {
     }
 
 
-   private void Drop(String[] p){
-        String classname = p[1];
-        int classid = -1;
-       for (ClassTableItem item:classt.classTable) {
-           if (item.classname == classname ){
-                classid = item.classid;
-                classt.classTable.remove(item);
-           }
-       }
-       for (DeputyTableItem item:deputyt.deputyTable){
-            if(item.deputyname == classname){
-                deputyt.deputyTable.remove(item);
-            }
-       }
 
-       for (ObjectTableItem item:topt.objectTable){
-           if(item.classid == classid){
-               DeleteTuple(item.blockid,item.offset);
-               topt.objectTable.remove(item);
+       private void Drop(String[] p){
+            String classname = p[1];
+            int classid = -1;
+           for (ClassTableItem item:classt.classTable) {
+               if (item.classname == classname ){
+                    classid = item.classid;
+                    classt.classTable.remove(item);
+               }
            }
-       }
-   }
-    //INSERT INTO aa VALUES (1,2,"3");
-    //4,3,aa,1,2,"3"
-   private void Insert(String[] p){
-        int count = Integer.parseInt(p[1]);
-        String classname = p[2];
-        Object[] attrArr = new Object[count];
+           for (DeputyTableItem item:deputyt.deputyTable){
+                if(item.deputyname == classname){
+                    deputyt.deputyTable.remove(item);
+                }
+           }
 
-        int classid = -1;
-       for (ClassTableItem item:classt.classTable) {
-           if (item.classname == classname ){
-               classid = item.classid;
-               switch (item.attrtype){
-                   case "int":
-                       attrArr[item.attrid] = Integer.parseInt(p[item.attrid+3]);
-                       break;
-                   case "char":
-                       attrArr[item.attrid] = p[item.attrid+3].replace("\"","");
-                       break;
+           for (ObjectTableItem item:topt.objectTable){
+               if(item.classid == classid){
+                   DeleteTuple(item.blockid,item.offset);
+                   topt.objectTable.remove(item);
                }
            }
        }
+        //INSERT INTO aa VALUES (1,2,"3");
+        //4,3,aa,1,2,"3"
 
-       int[] id = InsertTuple(new Tuple(attrArr));
-        topt.objectTable.add(new ObjectTableItem("dz",1,classid,topt.maxTupleId++,id[0],id[1]));
 
-   }
+       private void Insert(String[] p){
+            int count = Integer.parseInt(p[1]);
+            String classname = p[2];
+            Object[] attrArr = new Object[count];
 
-    private void Delete(String[] p) {
-        String classname = p[1];
-        String attrname = p[2];
-        int classid = 0;
-        int attrid=0;
-        String attrtype=null;
-        for (ClassTableItem item:classt.classTable) {
-            if (item.classname == classname && item.attrname.equals(attrname)) {
-                classid = item.classid;
-                attrid = item.attrid;
-                attrtype = item.attrtype;
-                break;
-            }
-        }
+            int classid = -1;
+           for (ClassTableItem item:classt.classTable) {
+               if (item.classname == classname ){
+                   classid = item.classid;
+                   switch (item.attrtype){
+                       case "int":
+                           attrArr[item.attrid] = Integer.parseInt(p[item.attrid+3]);
+                           break;
+                       case "char":
+                           attrArr[item.attrid] = p[item.attrid+3].replace("\"","");
+                           break;
+                   }
+               }
+           }
 
-        for (ObjectTableItem item:topt.objectTable){
-            if(item.classid == classid){
-                Tuple tuple = GetTuple(item.dbid,item.offset);
-                if(Condition(attrtype,tuple,attrid,p[4])){
-                    DeleteTuple(item.blockid,item.offset);
-                    topt.objectTable.remove(item);
+           int[] id = InsertTuple(new Tuple(attrArr));
+            topt.objectTable.add(new ObjectTableItem("dz",1,classid,topt.maxTupleId++,id[0],id[1]));
+
+       }
+
+        private void Delete(String[] p) {
+            String classname = p[1];
+            String attrname = p[2];
+            int classid = 0;
+            int attrid=0;
+            String attrtype=null;
+            for (ClassTableItem item:classt.classTable) {
+                if (item.classname == classname && item.attrname.equals(attrname)) {
+                    classid = item.classid;
+                    attrid = item.attrid;
+                    attrtype = item.attrtype;
+                    break;
                 }
             }
+
+            for (ObjectTableItem item:topt.objectTable){
+                if(item.classid == classid){
+                    Tuple tuple = GetTuple(item.dbid,item.offset);
+                    if(Condition(attrtype,tuple,attrid,p[4])){
+                        DeleteTuple(item.blockid,item.offset);
+                        topt.objectTable.remove(item);
+                    }
+                }
+            }
+
+
         }
-
-
-    }
+        */
     private boolean Condition(String attrtype,Tuple tuple,int attrid,String value1){
         String value = value1.replace("\"","");
         switch (attrtype){
