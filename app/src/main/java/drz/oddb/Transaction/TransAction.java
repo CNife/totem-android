@@ -44,8 +44,10 @@ public class TransAction {
         String[] attrname = {"attr2","attr1","attr3"};
         int[] attrid = {1,0,2};
         String[]attrtype = {"int","char","char"};
-        print_rst.Print(tpl,attrname,attrid,attrtype);
-
+        //print_rst.Print(tpl,attrname,attrid,attrtype);
+        int[] a = InsertTuple(t1);
+        Tuple t3 = GetTuple(a[0],a[1]);
+        System.out.println(t3);
     }
 
     public String query(String s) {
