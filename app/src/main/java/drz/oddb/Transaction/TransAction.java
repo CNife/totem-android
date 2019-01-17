@@ -1,5 +1,9 @@
 package drz.oddb.Transaction;
 
+import android.app.Activity;
+import android.content.Context;
+import android.content.Intent;
+
 import java.io.ByteArrayInputStream;
 
 import drz.oddb.Memory.*;
@@ -11,11 +15,15 @@ import drz.oddb.Transaction.SystemTable.*;
 import drz.oddb.parse.*;
 
 public class TransAction {
+    public TransAction(Context context) {
+        this.context = context;
+    }
+
+    Context context;
     MemManage mem = new MemManage();
     TopTable topt = mem.loadTopTable();
     ClassTable classt = mem.loadClassTable();
     DeputyTable deputyt = mem.loadDeputyTable();
-    PrintResult print_rst = new PrintResult();
     public void SaveAll( )
     {
         mem.saveTopTable(topt);
@@ -44,10 +52,12 @@ public class TransAction {
         String[] attrname = {"attr2","attr1","attr3"};
         int[] attrid = {1,0,2};
         String[]attrtype = {"int","char","char"};
-        //print_rst.Print(tpl,attrname,attrid,attrtype);
-        int[] a = InsertTuple(t1);
-        Tuple t3 = GetTuple(a[0],a[1]);
-        System.out.println(t3);
+
+        PrintSelectResult(tpl,attrname,attrid,attrtype);
+
+        //int[] a = InsertTuple(t1);
+        //Tuple t3 = GetTuple(a[0],a[1]);
+        //System.out.println(t3);
     }
 
     public String query(String s) {
@@ -301,6 +311,10 @@ public class TransAction {
         return;
     }
 
+    private void PrintSelectResult(TupleList tpl,String[] attrname,int[] attrid,String[] type) {
+        Intent intent = new Intent(context, PrintResult.class);
+        context.startActivity(intent);
+        //todo
 
-
+    }
 }
