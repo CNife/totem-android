@@ -25,6 +25,8 @@ public class MainActivity extends AppCompatActivity {
     private TextView text_view;
     TransAction trans = new TransAction();
 
+    public PrintResult print_rst = new PrintResult();
+
     //BGM
     //private Intent intent = new Intent("com.angel.Android.MUSIC");
 
@@ -33,6 +35,8 @@ public class MainActivity extends AppCompatActivity {
         Intent intent = new Intent(MainActivity.this,MusicServer.class);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+
 
         //播放BGM
         startService(intent);
@@ -44,7 +48,8 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 //trans.query(editText.getText().toString());
-                startActivity(new Intent(("android.intent.action.PRINTRST")));
+                print_rst.Print();
+
             }
         });
 
