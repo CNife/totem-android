@@ -315,6 +315,7 @@ public class TransAction {
         Intent intent = new Intent(context, PrintResult.class);
         context.startActivity(intent);
         //todo
-
+        PrintResult pr = new PrintResult();
+        pr.Print(tpl, attrname, attrid, type);
     }
 }

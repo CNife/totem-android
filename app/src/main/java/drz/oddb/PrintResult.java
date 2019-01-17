@@ -40,6 +40,8 @@ public class PrintResult extends AppCompatActivity {
         int itemp;
         Object oj;
 
+         rst_tab = findViewById(R.id.rst_tab);
+
         for(r = 0;r <= tabH.size();r++){
             TableRow tableRow = new TableRow(this);
             for(c = 0;c < tabCol.size();c++){
@@ -63,7 +65,6 @@ public class PrintResult extends AppCompatActivity {
             }
             rst_tab.addView(tableRow,new TableLayout.LayoutParams(W,M));
         }
-        rst_tab = findViewById(R.id.rst_tab);
     }
 
 }
