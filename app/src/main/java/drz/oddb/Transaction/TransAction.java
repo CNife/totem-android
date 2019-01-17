@@ -21,6 +21,7 @@ public class TransAction {
         mem.saveTopTable(topt);
         mem.saveClassTable(classt);
         mem.saveDeputyTable(deputyt);
+        mem.exitFlush();
     }
 
 
@@ -285,15 +286,17 @@ public class TransAction {
 
 
     private Tuple GetTuple(int id, int offset) {
-        return null;
+
+        return mem.readTuple(id,offset);
     }
 
     private int[] InsertTuple(Tuple tuple){
-        return null;
+        return mem.writeTuple(tuple);
     }
 
     private void DeleteTuple(int id, int offset){
-
+        mem.deleteTuple();
+        return;
     }
 
 
