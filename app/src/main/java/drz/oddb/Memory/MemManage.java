@@ -1,23 +1,18 @@
 package drz.oddb.Memory;
 
-import org.w3c.dom.Attr;
-
 import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.OutputStream;
-import java.lang.reflect.Array;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Random;
 
 import drz.oddb.Transaction.SystemTable.*;
+import drz.oddb.Transaction.SystemTable.ObjectTable;
 
 public class MemManage {
     final private int attrstringlen=8; //属性最大字符串长度
@@ -61,7 +56,7 @@ public class MemManage {
                 byte buff[] = new byte[16];
                 while (input.read(buff, 0, 16) != -1) {
                     temp = new DeputyTableItem();
-                    temp.classid = bytes2Int(buff, 0, 4);
+                    temp.originid = bytes2Int(buff, 0, 4);
                     temp.deputyid = bytes2Int(buff, 4, 4);
                     temp.deputyname = byte2str(buff, 8, 8);
                     ret.deputyTable.add(temp);
@@ -92,7 +87,7 @@ public class MemManage {
         try {
             BufferedOutputStream output=new BufferedOutputStream(new FileOutputStream(deputytab));
             for(int i=0;i<tab.deputyTable.size();i++){
-                byte[] i1=int2Bytes(tab.deputyTable.get(i).classid,4);
+                byte[] i1=int2Bytes(tab.deputyTable.get(i).originid,4);
                 output.write(i1,0,i1.length);
                 byte[] i2=int2Bytes(tab.deputyTable.get(i).deputyid,4);
                 output.write(i2,0,i2.length);
@@ -185,9 +180,9 @@ public class MemManage {
         return false;
     }
 
-    public TopTable loadTopTable(){
-        TopTable ret = new TopTable();
-        TopTableItem temp=null;
+    public ObjectTable loadTopTable(){
+        ObjectTable ret = new ObjectTable();
+        ObjectTableItem temp=null;
         File toptab=new File("/data/data/drz.oddb/transaction/toptable");
         if(!toptab.exists()){
             return ret;
@@ -196,7 +191,7 @@ public class MemManage {
                 FileInputStream input=new FileInputStream(toptab);
                 byte buff[]=new byte[28];
                 while(input.read(buff,0,28)!=-1){
-                    temp=new TopTableItem();
+                    temp=new ObjectTableItem();
                     temp.dbname=byte2str(buff,0,8);
                     temp.dbid=bytes2Int(buff,8,4);
                     temp.classid=bytes2Int(buff,12,4);
@@ -214,7 +209,7 @@ public class MemManage {
         }
     }
 
-    public boolean saveTopTable(TopTable tab){
+    public boolean saveTopTable(ObjectTable tab){
         File toptab=new File("/data/data/drz.oddb/transaction/toptable");
         if(!toptab.exists()){
             File path=toptab.getParentFile();
@@ -265,7 +260,7 @@ public class MemManage {
             header[i]=MemBuff.get(s.buf_id*blocklength+offset+i);
         }
         ret.tupleHeader=bytes2Int(header,0,4);
-        ret.tuple=new Object[ret.tupleHeader];
+        ret.tuple=new java.lang.Object[ret.tupleHeader];
         byte[] temp=new byte[ret.tupleHeader*8];
         for(int i=0;i<ret.tupleHeader*8;i++){
             temp[i]=MemBuff.get(s.buf_id*blocklength+offset+4+i);

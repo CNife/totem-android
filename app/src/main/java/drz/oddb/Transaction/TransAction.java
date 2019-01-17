@@ -1,6 +1,5 @@
 package drz.oddb.Transaction;
 
-import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 
@@ -12,6 +11,7 @@ import drz.oddb.Memory.*;
 import drz.oddb.PrintResult;
 import drz.oddb.Transaction.SystemTable.*;
 
+import drz.oddb.Transaction.SystemTable.ObjectTable;
 import drz.oddb.parse.*;
 
 public class TransAction {
@@ -21,9 +21,12 @@ public class TransAction {
 
     Context context;
     MemManage mem = new MemManage();
-    TopTable topt = mem.loadTopTable();
+    ObjectTable topt = mem.loadTopTable();
     ClassTable classt = mem.loadClassTable();
     DeputyTable deputyt = mem.loadDeputyTable();
+    ObjectTable objectT ;
+    SwitchingTable switchingT;
+
     public void SaveAll( )
     {
         mem.saveTopTable(topt);
@@ -37,13 +40,13 @@ public class TransAction {
         TupleList tpl = new TupleList();
         Tuple t1 = new Tuple();
         t1.tupleHeader = 3;
-        t1.tuple = new Object[t1.tupleHeader];
+        t1.tuple = new java.lang.Object[t1.tupleHeader];
         t1.tuple[0] = "a";
         t1.tuple[1] = 1;
         t1.tuple[2] = "b";
         Tuple t2 = new Tuple();
         t2.tupleHeader = 3;
-        t2.tuple = new Object[t2.tupleHeader];
+        t2.tuple = new java.lang.Object[t2.tupleHeader];
         t2.tuple[0] = "d";
         t2.tuple[1] = 2;
         t2.tuple[2] = "e";
@@ -56,7 +59,7 @@ public class TransAction {
         PrintSelectResult(tpl,attrname,attrid,attrtype);
 
         //int[] a = InsertTuple(t1);
-        //Tuple t3 = GetTuple(a[0],a[1]);
+        //Tuple t3 = GetTuple(1,4);
         //System.out.println(t3);
     }
 
@@ -150,7 +153,7 @@ public class TransAction {
         for(int  i = 0;i < tList.tuplenum;i++)
         {
             int[] id = InsertTuple(tList.tuplelist.get(i));
-            topt.topTable.add(new TopTableItem("dz",1,classid,topt.maxTupleId++,id[0],id[1]));
+            topt.topTable.add(new ObjectTableItem("dz",1,classid,topt.maxTupleId++,id[0],id[1]));
         }
     }
 
@@ -170,7 +173,7 @@ public class TransAction {
             }
        }
 
-       for (TopTableItem item:topt.topTable){
+       for (ObjectTableItem item:topt.topTable){
            if(item.classid == classid){
                DeleteTuple(item.blockid,item.offset);
                topt.topTable.remove(item);
@@ -182,7 +185,7 @@ public class TransAction {
    private void Insert(String[] p){
         int count = Integer.parseInt(p[1]);
         String classname = p[2];
-        Object[] attrArr = new Object[count];
+        java.lang.Object[] attrArr = new java.lang.Object[count];
 
         int classid = -1;
        for (ClassTableItem item:classt.classTable) {
@@ -200,7 +203,7 @@ public class TransAction {
        }
 
        int[] id = InsertTuple(new Tuple(attrArr));
-        topt.topTable.add(new TopTableItem("dz",1,classid,topt.maxTupleId++,id[0],id[1]));
+        topt.topTable.add(new ObjectTableItem("dz",1,classid,topt.maxTupleId++,id[0],id[1]));
 
    }
 
@@ -219,7 +222,7 @@ public class TransAction {
             }
         }
 
-        for (TopTableItem item:topt.topTable){
+        for (ObjectTableItem item:topt.topTable){
             if(item.classid == classid){
                 Tuple tuple = GetTuple(item.dbid,item.offset);
                 if(Condition(attrtype,tuple,attrid,p[4])){
@@ -282,7 +285,7 @@ public class TransAction {
         }
 
 
-        for(TopTableItem item : topt.topTable){
+        for(ObjectTableItem item : topt.topTable){
             if(item.classid == classid){
                 Tuple tuple = GetTuple(item.blockid,item.offset);
                if(Condition(sattrtype,tuple,sattrid,p[attrnumber+5])){
