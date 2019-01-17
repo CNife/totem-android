@@ -21,6 +21,7 @@ import drz.oddb.Transaction.TransAction;
 public class MainActivity extends AppCompatActivity {
 
     //查询输入框
+
     private EditText editText;
     private TextView text_view;
     TransAction trans = new TransAction();
@@ -35,8 +36,6 @@ public class MainActivity extends AppCompatActivity {
         Intent intent = new Intent(MainActivity.this,MusicServer.class);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
-
 
         //播放BGM
         startService(intent);

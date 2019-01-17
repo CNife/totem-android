@@ -15,6 +15,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Random;
 
 import drz.oddb.Transaction.SystemTable.*;
 
@@ -23,11 +24,12 @@ public class MemManage {
     final private int bufflength=1000;//缓冲区大小为1000个块
     final private int blocklength=8*1024;//块大小为8KB
 
-    private Map<Integer,sbufesc> hashMap=new HashMap<>();//hash加速根据数据库id、表id和块号查找数据是否在缓冲区
+    //private Map<Integer,sbufesc> hashMap=new HashMap<>();//hash加速根据数据库id、表id和块号查找数据是否在缓冲区
     private List<sbufesc> FreeList = new ArrayList<>();		//构建缓冲区freeList
     private ByteBuffer MemBuff=ByteBuffer.allocateDirect(blocklength*bufflength);//buff
     private boolean[] buffuse=new boolean[1000];
     private int blockmaxnum;
+    private Random random=new Random();
 
     public MemManage(){
         initbuffues();
@@ -40,7 +42,7 @@ public class MemManage {
         }
     }
 
-    public static  DeputyTable loadDeputyTable(){
+    public DeputyTable loadDeputyTable(){
         DeputyTable ret = new DeputyTable();
         DeputyTableItem temp=null;
         File deputytab=new File("/data/data/drz.oddb/transaction/deputytable");
@@ -66,24 +68,19 @@ public class MemManage {
         }
     }
 
-    public static boolean saveDeputyTable(DeputyTable tab){
+    public boolean saveDeputyTable(DeputyTable tab){
         File deputytab=new File("/data/data/drz.oddb/transaction/deputytable");
         if(!deputytab.exists()){
             File path=deputytab.getParentFile();
             if(!path.exists()){
                 path.mkdirs();
-                try {
-                    deputytab.createNewFile();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            }else{
-                try {
-                    deputytab.createNewFile();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
             }
+            try {
+                deputytab.createNewFile();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
         }
         try {
             BufferedOutputStream output=new BufferedOutputStream(new FileOutputStream(deputytab));
@@ -106,7 +103,7 @@ public class MemManage {
         return false;
     }
 
-    public static  ClassTable loadClassTable(){
+    public ClassTable loadClassTable(){
         ClassTable ret = new ClassTable();
         ClassTableItem temp=null;
         File classtab=new File("/data/data/drz.oddb/transaction/classtable");
@@ -135,29 +132,20 @@ public class MemManage {
         }
     }
 
-    public static  boolean saveClassTable(ClassTable tab) {
-        File classtab=new File("/data/data/drz.oddb/transction/classtable");
+    public boolean saveClassTable(ClassTable tab){
+        File classtab=new File("/data/data/drz.oddb/transaction/classtable");
         if(!classtab.exists()){
             File path=classtab.getParentFile();
             System.out.println(path.getAbsolutePath());
             if(!path.exists()){
                 path.mkdirs();
-                System.out.println("创建文件夹成功！");
-                try {
-                    classtab.createNewFile();
-                    System.out.println("创建文件成功！");
-                } catch (IOException e) {
-                    System.out.println("创建文件失败！");
-                    e.printStackTrace();
-                }
-            }else{
-                try {
-                    classtab.createNewFile();
-                    System.out.println("创建文件成功！");
-                } catch (IOException e) {
-                    System.out.println("创建文件失败！");
-                    e.printStackTrace();
-                }
+            }
+            try {
+                classtab.createNewFile();
+                System.out.println("创建文件成功！");
+            } catch (IOException e) {
+                System.out.println("创建文件失败！");
+                e.printStackTrace();
             }
         }
         try {
@@ -190,7 +178,7 @@ public class MemManage {
         return false;
     }
 
-    public static  TopTable loadTopTable(){
+    public TopTable loadTopTable(){
         TopTable ret = new TopTable();
         TopTableItem temp=null;
         File toptab=new File("/data/data/drz.oddb/transaction/toptable");
@@ -219,23 +207,17 @@ public class MemManage {
         }
     }
 
-    public static boolean saveTopTable(TopTable tab){
+    public boolean saveTopTable(TopTable tab){
         File toptab=new File("/data/data/drz.oddb/transaction/toptable");
         if(!toptab.exists()){
             File path=toptab.getParentFile();
             if(!path.exists()){
                 path.mkdirs();
-                try {
-                    toptab.createNewFile();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            }else{
-                try {
-                    toptab.createNewFile();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
+            }
+            try {
+                toptab.createNewFile();
+            } catch (IOException e) {
+                e.printStackTrace();
             }
         }
         try {
@@ -265,16 +247,24 @@ public class MemManage {
         return false;
     }
 
-    private sbufesc load(Integer block){
+    private sbufesc load(int block){
         sbufesc Free=new sbufesc();
-        if(FreeList.size()==1000) {
-
+        if(FreeList.size()==bufflength) {
+            int k=random.nextInt(1000);
+            save(k);
+            buffuse[k]=true;
+            if(delete(k)){
+                System.out.println("删除成功！");
+            }else{
+                System.out.println("删除失败！");
+            }
         }
         Free.blockNum=block;
         Free.flag=false;
         for(int i=0;i<1000;i++){
             if(buffuse[i]){
                 Free.buf_id=i;
+                buffuse[i]=false;
                 break;
             }
         }
@@ -288,7 +278,7 @@ public class MemManage {
                 for(int i=0;i<blocklength;i++){
                     MemBuff.put(offset+i,temp[i]);
                 }
-                hashMap.put(block,Free);
+                //hashMap.put(block,Free);
                 return Free;
             } catch (FileNotFoundException e) {
                 e.printStackTrace();
@@ -302,26 +292,29 @@ public class MemManage {
         }
     }
 
-    private boolean save(Integer block){
+    private boolean save(int block){
         File file=new File("/data/data/drz.oddb/Memory/"+block);
         if(!file.exists()){
             File path=file.getParentFile();
             if(!path.exists()){
                 path.mkdirs();
-                try {
-                    file.createNewFile();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
+            }
+            try {
+                file.createNewFile();
+            } catch (IOException e) {
+                e.printStackTrace();
             }
         }
-        int offset;
+        int offset=-1;
         sbufesc s=null;
-        if((s=hashMap.get(block))!=null){
+        if((s=findBlock(block))==null){
+            return false;//块不在缓冲区，返回false 存入失败
+        }
+        /*if((s=hashMap.get(block))!=null){
             offset=s.buf_id;
         }else{
             return false;
-        }
+        }*/
         try {
             BufferedOutputStream output=new BufferedOutputStream(new FileOutputStream(file));
             byte[] buff=new byte[blocklength];
@@ -340,8 +333,90 @@ public class MemManage {
         return false;
     }
 
-    private void readTuple(){
+    public Tuple readTuple(int blocknum,int offset){
+        Tuple ret=new Tuple();
+        sbufesc s=null;
+        if((s=findBlock(blocknum))==null){
+            s=load(blocknum);
+        }
+        byte[] header=new byte[4];
+        for(int i=0;i<4;i++){
+            header[i]=MemBuff.get(s.buf_id*blocklength+offset+i);
+        }
+        ret.tupleHeader=bytes2Int(header,0,4);
+        ret.tuple=new Object[ret.tupleHeader];
+        byte[] temp=new byte[ret.tupleHeader*8];
+        for(int i=0;i<ret.tupleHeader*8;i++){
+            temp[i]=MemBuff.get(s.buf_id*blocklength+offset+4+i);
+        }
+        for(int i=0;i<ret.tupleHeader;i++){
+            String str=byte2str(temp,i*8,8);
+            ret.tuple[i]=str;
+        }
+        return ret;
+    }
 
+    public boolean writeTuple(Tuple t){
+        sbufesc sbu=new sbufesc();
+        if((sbu=findBlock(blockmaxnum))==null){
+            sbu=load(blockmaxnum);
+        }
+        byte[] x=new byte[4];
+
+        return false;
+    }
+
+    private void creatBlock(){
+        sbufesc newblocksb=new sbufesc();
+        if(FreeList.size()==bufflength) {
+            int k=random.nextInt(1000);
+            save(k);
+            buffuse[k]=true;
+            if(delete(k)){
+                System.out.println("删除成功！");
+            }else{
+                System.out.println("删除失败！");
+            }
+        }
+        for(int i=0;i<1000;i++){
+            if(buffuse[i]){
+                newblocksb.buf_id=i;
+                buffuse[i]=false;
+                break;
+            }
+        }
+        blockmaxnum++;
+        newblocksb.blockNum=blockmaxnum;
+        newblocksb.flag=true;
+        byte[] header=int2Bytes(4,4);
+        for(int i=0;i<4;i++){
+            MemBuff.put(newblocksb.buf_id*blocklength+i,header[i]);
+        }
+        byte x=(byte)32;
+        for(int i=4;i<blocklength;i++){
+            MemBuff.put(newblocksb.buf_id*blocklength+i,x);
+        }
+    }
+
+    private boolean delete(int x){
+        for(int i=0;i<FreeList.size();i++){
+            if(FreeList.get(i).blockNum==x){
+                FreeList.remove(x);
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private sbufesc findBlock(int x){
+        sbufesc ret=null;
+        for(int i=0;i<FreeList.size();i++) {
+            ret = FreeList.get(i);
+            if (ret.blockNum == x) {
+                return ret;
+            }
+        }
+        return null;
     }
 
     private int loadBlockMaxNum(){
@@ -392,7 +467,7 @@ public class MemManage {
         return false;
     }
 
-    private static byte[] str2Bytes(String s){
+    private byte[] str2Bytes(String s){
         byte[] ret=new byte[8];
         byte[] temp=s.getBytes();
         for(int i=0;i<temp.length;i++){
@@ -408,19 +483,21 @@ public class MemManage {
         }
     }
 
-    private  static String byte2str(byte[] b,int off,int len){
+    private String byte2str(byte[] b,int off,int len){
         String s="";
+        int k=0;
         for(int i=off;i<off+len;i++){
             if(b[i]!=32){
-                s=s+b[i];
+                k++;
             }else{
                 break;
             }
         }
+        s=new String(b,0,k);
         return s;
     }
 
-    private static byte[] int2Bytes(int value, int len){
+    private byte[] int2Bytes(int value, int len){
         byte[] b = new byte[len];
         for (int i = 0; i < len; i++) {
             b[len - i - 1] = (byte)(value >> 8 * i);
@@ -428,7 +505,7 @@ public class MemManage {
         return b;
     }
 
-    private static int bytes2Int(byte[] b, int start, int len) {
+    private int bytes2Int(byte[] b, int start, int len) {
         int sum = 0;
         int end = start + len;
         for (int i = start; i < end; i++) {

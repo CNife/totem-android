@@ -10,16 +10,16 @@ import drz.oddb.Transaction.SystemTable.*;
 import drz.oddb.parse.*;
 
 public class TransAction {
-
-    TopTable topt = MemManage.loadTopTable();
-    ClassTable classt = MemManage.loadClassTable();
-    DeputyTable deputyt = MemManage.loadDeputyTable();
+    MemManage mem = new MemManage();
+    TopTable topt = mem.loadTopTable();
+    ClassTable classt = mem.loadClassTable();
+    DeputyTable deputyt = mem.loadDeputyTable();
 
     public void SaveAll( )
     {
-        MemManage.saveTopTable(topt);
-        MemManage.saveClassTable(classt);
-        MemManage.saveDeputyTable(deputyt);
+        mem.saveTopTable(topt);
+        mem.saveClassTable(classt);
+        mem.saveDeputyTable(deputyt);
     }
 
 
