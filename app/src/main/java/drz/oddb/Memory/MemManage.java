@@ -43,7 +43,7 @@ public class MemManage {
     public static  DeputyTable loadDeputyTable(){
         DeputyTable ret = new DeputyTable();
         DeputyTableItem temp=null;
-        File deputytab=new File("/data/data/drz.doob/transaction/deputytable");
+        File deputytab=new File("/data/data/drz.oddb/transaction/deputytable");
         if(!deputytab.exists()){
             return ret;
         }else {
@@ -67,11 +67,17 @@ public class MemManage {
     }
 
     public static boolean saveDeputyTable(DeputyTable tab){
-        File deputytab=new File("/data/data/drz.doob/transaction/deputytable");
+        File deputytab=new File("/data/data/drz.oddb/transaction/deputytable");
         if(!deputytab.exists()){
             File path=deputytab.getParentFile();
             if(!path.exists()){
                 path.mkdirs();
+                try {
+                    deputytab.createNewFile();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }else{
                 try {
                     deputytab.createNewFile();
                 } catch (IOException e) {
@@ -103,7 +109,7 @@ public class MemManage {
     public static  ClassTable loadClassTable(){
         ClassTable ret = new ClassTable();
         ClassTableItem temp=null;
-        File classtab=new File("/data/data/drz.doob/transaction/classtable");
+        File classtab=new File("/data/data/drz.oddb/transaction/classtable");
         if(!classtab.exists()){
             return ret;
         }else {
@@ -130,14 +136,26 @@ public class MemManage {
     }
 
     public static  boolean saveClassTable(ClassTable tab) {
-        File classtab=new File("/data/data/drz.doob/transaction/classtable");
+        File classtab=new File("/data/data/drz.oddb/transction/classtable");
         if(!classtab.exists()){
             File path=classtab.getParentFile();
+            System.out.println(path.getAbsolutePath());
             if(!path.exists()){
                 path.mkdirs();
+                System.out.println("创建文件夹成功！");
                 try {
                     classtab.createNewFile();
+                    System.out.println("创建文件成功！");
                 } catch (IOException e) {
+                    System.out.println("创建文件失败！");
+                    e.printStackTrace();
+                }
+            }else{
+                try {
+                    classtab.createNewFile();
+                    System.out.println("创建文件成功！");
+                } catch (IOException e) {
+                    System.out.println("创建文件失败！");
                     e.printStackTrace();
                 }
             }
@@ -162,8 +180,10 @@ public class MemManage {
             output.close();
             return true;
         } catch (FileNotFoundException e) {
+            System.out.println("文件未找到！");
             e.printStackTrace();
         } catch (IOException e) {
+            System.out.println("文件未正常写入！");
             e.printStackTrace();
         }
         return false;
@@ -172,7 +192,7 @@ public class MemManage {
     public static  TopTable loadTopTable(){
         TopTable ret = new TopTable();
         TopTableItem temp=null;
-        File toptab=new File("/data/data/drz.doob/transaction/toptable");
+        File toptab=new File("/data/data/drz.oddb/transaction/toptable");
         if(!toptab.exists()){
             return ret;
         }else{
@@ -199,11 +219,17 @@ public class MemManage {
     }
 
     public static boolean saveTopTable(TopTable tab){
-        File toptab=new File("/data/data/drz.doob/transaction/toptable");
+        File toptab=new File("/data/data/drz.oddb/transaction/toptable");
         if(!toptab.exists()){
             File path=toptab.getParentFile();
             if(!path.exists()){
                 path.mkdirs();
+                try {
+                    toptab.createNewFile();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }else{
                 try {
                     toptab.createNewFile();
                 } catch (IOException e) {
