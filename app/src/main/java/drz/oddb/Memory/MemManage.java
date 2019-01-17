@@ -29,11 +29,22 @@ public class MemManage {
     private ByteBuffer MemBuff=ByteBuffer.allocateDirect(blocklength*bufflength);//buff
     private boolean[] buffuse=new boolean[1000];
     private int blockmaxnum;
-    private Random random=new Random();
+    private Random random;
 
     public MemManage(){
         initbuffues();
         blockmaxnum=loadBlockMaxNum();
+        random=new Random();
+    }
+
+    public void exitFlush(){
+        sbufesc sbu=new sbufesc();
+        for(int i=0;i<FreeList.size();i++){
+            sbu=FreeList.get(i);
+            if(sbu.flag){
+                save(sbu.blockNum);
+            }
+        }
     }
 
     private void initbuffues(){
@@ -356,17 +367,50 @@ public class MemManage {
         return ret;
     }
 
-    public boolean writeTuple(Tuple t){
+    public int[] writeTuple(Tuple t){
+        int [] ret=new int[2];
         sbufesc sbu=new sbufesc();
         if((sbu=findBlock(blockmaxnum))==null){
             sbu=load(blockmaxnum);
         }
         byte[] x=new byte[4];
-        //MemBuff
-        return false;
+        for(int i=0;i<4;i++){
+            x[i]=MemBuff.get(sbu.buf_id*blocklength+i);
+        }
+        int spacestart=bytes2Int(x,0,4);
+        if((blocklength-spacestart)>(4+8*t.tupleHeader)){
+            ret[0]=blockmaxnum;
+            ret[1]=spacestart;
+            byte[] hea=int2Bytes(t.tupleHeader,4);
+            for(int i=0;i<4;i++){
+                MemBuff.put(sbu.buf_id*blocklength+spacestart+i,hea[i]);
+            }
+            for(int i=0;i<t.tupleHeader;i++){
+                byte[] str=str2Bytes(t.tuple[i].toString());
+                for(int j=0;j<8;j++){
+                    MemBuff.put(sbu.buf_id*blocklength+spacestart+4+i*8,str[j]);
+                }
+            }
+            return ret;
+        }else{
+            sbu=creatBlock();
+            ret[0]=blockmaxnum;
+            ret[1]=4;
+            byte[] hea=int2Bytes(t.tupleHeader,4);
+            for(int i=0;i<4;i++){
+                MemBuff.put(sbu.buf_id*blocklength+4+i,hea[i]);
+            }
+            for(int i=0;i<t.tupleHeader;i++){
+                byte[] str=str2Bytes(t.tuple[i].toString());
+                for(int j=0;j<8;j++){
+                    MemBuff.put(sbu.buf_id*blocklength+4+4+i*8,str[j]);
+                }
+            }
+            return ret;
+        }
     }
 
-    private void creatBlock(){
+    private sbufesc creatBlock(){
         sbufesc newblocksb=new sbufesc();
         if(FreeList.size()==bufflength) {
             int k=random.nextInt(1000);
@@ -396,6 +440,7 @@ public class MemManage {
         for(int i=4;i<blocklength;i++){
             MemBuff.put(newblocksb.buf_id*blocklength+i,x);
         }
+        return newblocksb;
     }
 
     private boolean delete(int x){
@@ -446,11 +491,11 @@ public class MemManage {
             File path=file.getParentFile();
             if(!path.exists()){
                 path.mkdirs();
-                try {
-                    file.createNewFile();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
+            }
+            try {
+                file.createNewFile();
+            } catch (IOException e) {
+                e.printStackTrace();
             }
         }
         try {
