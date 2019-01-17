@@ -280,7 +280,9 @@ public class MemManage {
         int [] ret=new int[2];
         sbufesc sbu=new sbufesc();
         if((sbu=findBlock(blockmaxnum))==null){
-            sbu=load(blockmaxnum);
+            if((sbu=load(blockmaxnum))==null){
+                sbu=creatBlock();
+            }
         }
         byte[] x=new byte[4];
         for(int i=0;i<4;i++){
