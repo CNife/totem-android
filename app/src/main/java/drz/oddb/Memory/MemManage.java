@@ -27,7 +27,7 @@ public class MemManage {
     private List<sbufesc> FreeList = new ArrayList<>();		//构建缓冲区freeList
     private ByteBuffer MemBuff=ByteBuffer.allocateDirect(blocklength*bufflength);//buff
     private boolean[] buffuse=new boolean[1000];
-    private int blockmaxnum;
+    private int blockmaxnum=0;
     private Random random;
 
     public MemManage(){
@@ -298,26 +298,37 @@ public class MemManage {
             for(int i=0;i<4;i++){
                 MemBuff.put(sbu.buf_id*blocklength+spacestart+i,hea[i]);
             }
+            byte[] str=null;
             for(int i=0;i<t.tupleHeader;i++){
-                byte[] str=str2Bytes(t.tuple[i].toString());
+                str=str2Bytes(t.tuple[i].toString());
                 for(int j=0;j<8;j++){
                     MemBuff.put(sbu.buf_id*blocklength+spacestart+4+i*8,str[j]);
                 }
+            }
+            byte[] sp=int2Bytes(spacestart+4+t.tupleHeader*8,4);
+            for(int i=0;i<4;i++){
+                MemBuff.put(sbu.buf_id*blocklength+i,sp[i]);
             }
             return ret;
         }else{
             sbu=creatBlock();
             ret[0]=blockmaxnum;
             ret[1]=4;
+            sbu.flag=true;
             byte[] hea=int2Bytes(t.tupleHeader,4);
             for(int i=0;i<4;i++){
                 MemBuff.put(sbu.buf_id*blocklength+4+i,hea[i]);
             }
+            byte []str=null;
             for(int i=0;i<t.tupleHeader;i++){
-                byte[] str=str2Bytes(t.tuple[i].toString());
+                str=str2Bytes(t.tuple[i].toString());
                 for(int j=0;j<8;j++){
                     MemBuff.put(sbu.buf_id*blocklength+4+4+i*8,str[j]);
                 }
+            }
+            byte[] sp=int2Bytes(4+4+t.tupleHeader*8,4);
+            for(int i=0;i<4;i++){
+                MemBuff.put(sbu.buf_id*blocklength+i,sp[i]);
             }
             return ret;
         }
@@ -347,6 +358,7 @@ public class MemManage {
         try {
             BufferedOutputStream output=new BufferedOutputStream(new FileOutputStream(file));
             byte[] buff=new byte[blocklength];
+            offset=s.buf_id;
             for(int i=0;i<blocklength;i++){
                 buff[i]=MemBuff.get(offset*blocklength+i);
             }
@@ -520,12 +532,15 @@ public class MemManage {
     private byte[] str2Bytes(String s){
         byte[] ret=new byte[8];
         byte[] temp=s.getBytes();
-        for(int i=0;i<temp.length;i++){
-            ret[i]=temp[i];
-        }
-        if(temp.length==8){
+        if(temp.length>=8){
+            for(int i=0;i<8;i++){
+                ret[i]=temp[i];
+            }
             return ret;
         }else{
+            for(int i=0;i<temp.length;i++){
+                ret[i]=temp[i];
+            }
             for(int i=temp.length;i<8;i++){
                 ret[i]=(byte)32;
             }
