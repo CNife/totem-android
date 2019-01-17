@@ -30,7 +30,7 @@ public class MainActivity extends AppCompatActivity {
 
 
     //BGM
-    //private Intent intent = new Intent("com.angel.Android.MUSIC");
+    private Intent intent = new Intent("com.angel.Android.MUSIC");
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -39,7 +39,7 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         //播放BGM
-        //startService(intent);
+        startService(intent);
 
         //查询按钮
         Button button = findViewById(R.id.button);
@@ -47,9 +47,7 @@ public class MainActivity extends AppCompatActivity {
         button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
                 trans.Test();
-                //trans.query(editText.getText().toString());
             }
         });
 
