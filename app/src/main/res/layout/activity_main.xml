@@ -10,25 +10,28 @@
 
     <EditText
         android:id="@+id/edit_text"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
+        android:layout_width="368dp"
+        android:layout_height="100dp"
         android:layout_marginStart="21dp"
-        android:layout_marginTop="113dp"
+        android:layout_marginTop="170dp"
         android:layout_marginEnd="21dp"
-        android:layout_marginBottom="221dp"
-        android:hint="Plese input what you want to inquire"
-        android:maxLines="3"
-        app:layout_constraintBottom_toTopOf="@+id/exit_button"
+        android:layout_marginBottom="117dp"
+        android:background="@drawable/edit_tv"
+        android:maxLines="2"
+        app:layout_constraintBottom_toTopOf="@+id/button"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_chainStyle="spread_inside" />
 
     <Button
         android:id="@+id/button"
-        android:layout_width="164dp"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="176dp"
-        android:text="INQUIRE"
+        android:layout_width="75dp"
+        android:layout_height="75dp"
+        android:layout_marginBottom="289dp"
+        android:background="@drawable/btn_begin"
+        android:text=""
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -36,13 +39,17 @@
 
     <Button
         android:id="@+id/exit_button"
-        android:layout_width="164dp"
-        android:layout_height="wrap_content"
+        android:layout_width="80dp"
+        android:layout_height="80dp"
+        android:layout_marginTop="8dp"
         android:layout_marginBottom="83dp"
-        android:text="EXIT"
+        android:background="@drawable/btn_finish"
+        android:text=""
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.492"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/edit_text" />
+        app:layout_constraintTop_toBottomOf="@+id/button"
+        app:layout_constraintVertical_bias="0.929" />
 
 </android.support.constraint.ConstraintLayout>

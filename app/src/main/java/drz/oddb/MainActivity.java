@@ -39,7 +39,7 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         //播放BGM
-        startService(intent);
+        //startService(intent);
 
         //查询按钮
         Button button = findViewById(R.id.button);
@@ -47,6 +47,7 @@ public class MainActivity extends AppCompatActivity {
         button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                startActivity(new Intent(("android.intent.action.PRINTRST")));
                 trans.Test();
             }
         });
