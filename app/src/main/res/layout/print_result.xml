@@ -3,12 +3,13 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:background="#EFEFEF">
 
     <HorizontalScrollView
         android:id="@+id/horizontalScrollView"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
         app:layout_constraintBottom_toTopOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -18,6 +19,15 @@
             android:id="@+id/rst_tab"
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
+
+            <TableRow
+                android:background="@color/colorPrimary"
+                android:orientation="horizontal"
+                android:paddingLeft="1dip"
+                android:paddingRight="1dip"
+                android:paddingTop="1dip">
+
+            </TableRow>
 
         </TableLayout>
     </HorizontalScrollView>
