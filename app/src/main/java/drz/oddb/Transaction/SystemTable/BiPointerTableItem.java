@@ -1,7 +1,10 @@
 package drz.oddb.Transaction.SystemTable;
 
 public class BiPointerTableItem {
-    int classid = 0;
+    public int classid = 0;
+    public int objectid = 0;
+    public int deputyid = 0;
+    public int deputyobjectid = 0;
 
     public BiPointerTableItem(int classid, int objectid, int deputyid, int deputyobjectid) {
         this.classid = classid;
@@ -10,8 +13,6 @@ public class BiPointerTableItem {
         this.deputyobjectid = deputyobjectid;
     }
 
-    int objectid = 0;
-    int deputyid = 0;
-    int deputyobjectid = 0;
+    public BiPointerTableItem(){}
 
 }

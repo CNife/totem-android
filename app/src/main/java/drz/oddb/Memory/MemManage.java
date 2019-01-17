@@ -44,6 +44,129 @@ public class MemManage {
 
     public void deleteTuple(){}
 
+    public SwitchingTable loadSwitchingTable(){
+        SwitchingTable ret=new SwitchingTable();
+        SwitchingTableItem temp=null;
+        File switab=new File("/data/data/drz.oddb/transaction/switchingtable");
+        if(!switab.exists()){
+            return ret;
+        }else{
+            try {
+                FileInputStream input = new FileInputStream(switab);
+                byte buff[] = new byte[24];
+                while (input.read(buff, 0, 24) != -1) {
+                    temp = new SwitchingTableItem();
+                    temp.attr = byte2str(buff, 0, 8);
+                    temp.deputy = byte2str(buff, 8, 8);
+                    temp.rule = byte2str(buff, 16, 8);
+                    ret.switchingTable.add(temp);
+                }
+            } catch (FileNotFoundException e) {
+                e.printStackTrace();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            return ret;
+        }
+    }
+
+    public boolean saveSwitchingTable(SwitchingTable tab){
+        File switab=new File("/data/data/drz.oddb/transaction/switchingtable");
+        if(!switab.exists()){
+            File path=switab.getParentFile();
+            if(!path.exists()){
+                path.mkdirs();
+            }
+            try {
+                switab.createNewFile();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+        try {
+            BufferedOutputStream output=new BufferedOutputStream(new FileOutputStream(switab));
+            for(int i=0;i<tab.switchingTable.size();i++){
+                byte[] s1=str2Bytes(tab.switchingTable.get(i).attr);
+                output.write(s1,0,s1.length);
+                byte[] s2=str2Bytes(tab.switchingTable.get(i).deputy);
+                output.write(s2,0,s2.length);
+                byte[] s3=str2Bytes(tab.switchingTable.get(i).rule);
+                output.write(s3,0,s3.length);
+            }
+            output.flush();
+            output.close();
+            return true;
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+
+    public BiPointerTable loadBiPointerTable() {
+        BiPointerTable ret=new BiPointerTable();
+        BiPointerTableItem temp=null;
+        File bitab=new File("/data/data/drz.oddb/transaction/bipointertable");
+        if(!bitab.exists()){
+            return ret;
+        }else{
+            try {
+                FileInputStream input = new FileInputStream(bitab);
+                byte buff[] = new byte[16];
+                while (input.read(buff, 0, 16) != -1) {
+                    temp = new BiPointerTableItem();
+                    temp.classid = bytes2Int(buff, 0, 4);
+                    temp.objectid = bytes2Int(buff, 4, 4);
+                    temp.deputyid = bytes2Int(buff, 8, 4);
+                    temp.deputyobjectid = bytes2Int(buff, 12, 4);
+                    ret.biPointerTable.add(temp);
+                }
+            } catch (FileNotFoundException e) {
+                e.printStackTrace();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            return ret;
+        }
+    }
+
+    public boolean saveBiPointerTable(BiPointerTable tab){
+        File bitab=new File("/data/data/drz.oddb/transaction/bipointertable");
+        if(!bitab.exists()){
+            File path=bitab.getParentFile();
+            if(!path.exists()){
+                path.mkdirs();
+            }
+            try {
+                bitab.createNewFile();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+        try {
+            BufferedOutputStream output=new BufferedOutputStream(new FileOutputStream(bitab));
+            for(int i=0;i<tab.biPointerTable.size();i++){
+                byte[] i1=int2Bytes(tab.biPointerTable.get(i).classid,4);
+                output.write(i1,0,i1.length);
+                byte[] i2=int2Bytes(tab.biPointerTable.get(i).objectid,4);
+                output.write(i2,0,i2.length);
+                byte[] i3=int2Bytes(tab.biPointerTable.get(i).deputyid,4);
+                output.write(i3,0,i3.length);
+                byte[] i4=int2Bytes(tab.biPointerTable.get(i).deputyobjectid,4);
+                output.write(i4,0,i4.length);
+            }
+            output.flush();
+            output.close();
+            return true;
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+
     public DeputyTable loadDeputyTable(){
         DeputyTable ret = new DeputyTable();
         DeputyTableItem temp=null;
@@ -53,12 +176,14 @@ public class MemManage {
         }else {
             try {
                 FileInputStream input = new FileInputStream(deputytab);
-                byte buff[] = new byte[16];
-                while (input.read(buff, 0, 16) != -1) {
+                byte buff[] = new byte[32];
+                while (input.read(buff, 0, 32) != -1) {
                     temp = new DeputyTableItem();
                     temp.originid = bytes2Int(buff, 0, 4);
                     temp.deputyid = bytes2Int(buff, 4, 4);
-                    temp.deputyname = byte2str(buff, 8, 8);
+                    temp.deputyrule[0] = byte2str(buff, 8, 8);
+                    temp.deputyrule[1] = byte2str(buff, 16, 8);
+                    temp.deputyrule[2] = byte2str(buff, 24, 8);
                     ret.deputyTable.add(temp);
                 }
             } catch (FileNotFoundException e) {
@@ -91,8 +216,12 @@ public class MemManage {
                 output.write(i1,0,i1.length);
                 byte[] i2=int2Bytes(tab.deputyTable.get(i).deputyid,4);
                 output.write(i2,0,i2.length);
-                byte[] s1=str2Bytes(tab.deputyTable.get(i).deputyname);
+                byte[] s1=str2Bytes(tab.deputyTable.get(i).deputyrule[0]);
                 output.write(s1,0,s1.length);
+                byte[] s2=str2Bytes(tab.deputyTable.get(i).deputyrule[1]);
+                output.write(s2,0,s2.length);
+                byte[] s3=str2Bytes(tab.deputyTable.get(i).deputyrule[2]);
+                output.write(s3,0,s3.length);
             }
             output.flush();
             output.close();
@@ -189,15 +318,15 @@ public class MemManage {
         }else{
             try {
                 FileInputStream input=new FileInputStream(toptab);
-                byte buff[]=new byte[28];
-                while(input.read(buff,0,28)!=-1){
+                byte buff[]=new byte[16];
+                while(input.read(buff,0,16)!=-1){
                     temp=new ObjectTableItem();
-                    temp.dbname=byte2str(buff,0,8);
-                    temp.dbid=bytes2Int(buff,8,4);
-                    temp.classid=bytes2Int(buff,12,4);
-                    temp.tupleid=bytes2Int(buff,16,4);
-                    temp.blockid=bytes2Int(buff,20,4);
-                    temp.offset=bytes2Int(buff,24,4);
+                    /*temp.dbname=byte2str(buff,0,8);
+                    temp.dbid=bytes2Int(buff,8,4);*/
+                    temp.classid=bytes2Int(buff,0,4);
+                    temp.tupleid=bytes2Int(buff,4,4);
+                    temp.blockid=bytes2Int(buff,8,4);
+                    temp.offset=bytes2Int(buff,12,4);
                     ret.topTable.add(temp);
                 }
             } catch (FileNotFoundException e) {
@@ -225,10 +354,10 @@ public class MemManage {
         try {
             BufferedOutputStream output=new BufferedOutputStream(new FileOutputStream(toptab));
             for(int i=0;i<tab.topTable.size();i++){
-                byte[] s1=str2Bytes(tab.topTable.get(i).dbname);
+                /*byte[] s1=str2Bytes(tab.topTable.get(i).dbname);
                 output.write(s1,0,s1.length);
                 byte[] i1=int2Bytes(tab.topTable.get(i).dbid,4);
-                output.write(i1,0,i1.length);
+                output.write(i1,0,i1.length);*/
                 byte[] i2=int2Bytes(tab.topTable.get(i).classid,4);
                 output.write(i2,0,i2.length);
                 byte[] i3=int2Bytes(tab.topTable.get(i).tupleid,4);

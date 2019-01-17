@@ -10,7 +10,7 @@ public class ObjectTableItem {
 
 
 
-    public ObjectTableItem(String dbname, int dbid, int classid, int tupleid, int blockid, int offset) {
+    public ObjectTableItem( int classid, int tupleid, int blockid, int offset) {
         this.classid = classid;
         this.tupleid = tupleid;
         this.blockid = blockid;
