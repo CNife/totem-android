@@ -394,6 +394,7 @@ public class MemManage {
                     MemBuff.put(offset+i,temp[i]);
                 }
                 //hashMap.put(block,Free);
+                FreeList.add(Free);
                 return Free;
             } catch (FileNotFoundException e) {
                 e.printStackTrace();
@@ -449,8 +450,8 @@ public class MemManage {
 
     private boolean delete(int x){
         for(int i=0;i<FreeList.size();i++){
-            if(FreeList.get(i).blockNum==x){
-                FreeList.remove(x);
+            if(FreeList.get(i).buf_id==x){
+                FreeList.remove(i);
                 return true;
             }
         }
@@ -470,7 +471,7 @@ public class MemManage {
 
     private int loadBlockMaxNum(){
         int ret=0;
-        File file=new File("/data/data/drz.doob/Memory/blocknum");
+        File file=new File("/data/data/drz.oddb/Memory/blocknum");
         if(file.exists()){
             try {
                 FileInputStream input=new FileInputStream(file);
@@ -490,7 +491,7 @@ public class MemManage {
     }
 
     private boolean saveBlockMaxNum(){
-        File file=new File("/data/data/drz.doob/Memory/blocknum");
+        File file=new File("/data/data/drz.oddb/Memory/blocknum");
         if(!file.exists()){
             File path=file.getParentFile();
             if(!path.exists()){
