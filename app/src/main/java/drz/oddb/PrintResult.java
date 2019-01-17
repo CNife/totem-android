@@ -26,7 +26,6 @@ public class PrintResult extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.print_result);
 
-
     }
 
     public void Print(TupleList tpl,String[] attrname,int[] attrid,String[] type){
