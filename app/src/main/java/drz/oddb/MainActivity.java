@@ -51,8 +51,8 @@ public class MainActivity extends AppCompatActivity {
         button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                trans.query(editText.getText().toString());
-               // startActivity(new Intent(("android.intent.action.PRINTRST")));
+                //trans.query(editText.getText().toString());
+                startActivity(new Intent(("android.intent.action.PRINTRST")));
             }
         });
 
