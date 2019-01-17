@@ -1,7 +1,7 @@
-CREATE SELECTDEPUTY aa SELECT  b1,b2,b3 FROM  bb WHERE t1="1" ;
+CREATE SELECTDEPUTY aa SELECT  b1+2 AS c1,b2 AS c2,b3+1 AS c3 FROM  bb WHERE t1="1" ;
 2,3,aa,b1,b2,b3,bb,t1,=,"1"
 
-SELECT  b1,b2,b3 FROM  bb WHERE t1="1";
+SELECT  b1+2 AS c1,b2 AS c2,b3+1 AS c3 FROM  bb WHERE t1="1";
 6,3,b1,b2,b3,bb,t1,=,"1"
 
 INSERT INTO aa VALUES (1,2,"3");
@@ -17,4 +17,4 @@ DROP CLASS asd;
 3,asd
 
 SELECT popSinger -> singer.nation  FROM popSinger WHERE singerName = "JayZhou";
-7,2,popSinger,singer,nation,popSinger,singerName,=,"JayZhou"
+7,2,popSinger,singer,nation,popSinger,singerName,=,"JayZhou"3

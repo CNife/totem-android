@@ -84,6 +84,7 @@ public class TransAction {
 
                     break;
                 case parse.OPT_INSERT:
+                    Insert(aa);
                     break;
                 case parse.OPT_DELETE:
 
@@ -105,7 +106,8 @@ public class TransAction {
 
     }
 
-
+    //CREATE CLASS dZ123 (nB1 int,nB2 char) ;
+    //1,2,dZ123,nB1,int,nB2,char
     private void CreateOriginClass(String[] p) {
         String classname = p[2];
         int count = Integer.parseInt(p[1]);
@@ -115,6 +117,239 @@ public class TransAction {
             classt.classTable.add(new ClassTableItem(classname, classid, count,i,p[2 * i + 3], p[2 * i + 4],"ori"));
         }
     }
+
+    //INSERT INTO aa VALUES (1,2,"3");
+    //4,3,aa,1,2,"3"
+    //0 1 2  3 4  5
+    private int Insert(String[] p){
+        for(String str:p)
+            str.replace("\"","");
+
+        int count = Integer.parseInt(p[1]);
+        String classname = p[2];
+        Object[] tuple_ = new Object[count];
+
+        int classid = 0;
+
+        for(ClassTableItem item:classt.classTable)
+        {
+            if(item.classname.equals(classname)){
+                classid = item.classid;
+            }
+        }
+
+        for(int j = 0;j<count;j++){
+            tuple_[j] = p[j+3];
+        }
+
+        Tuple tuple = new Tuple(tuple_);
+
+        int[] a = InsertTuple(tuple);
+        topt.maxTupleId++;
+        int tupleid = topt.maxTupleId;
+        topt.objectTable.add(new ObjectTableItem(classid,tupleid,a[0],a[1]));
+
+        //向代理类加元组
+
+        for(DeputyTableItem item:deputyt.deputyTable){
+            if(classid == item.originid){
+                //判断代理规则
+
+                String attrtype=null;
+                int attrid=0;
+                for(ClassTableItem item1:classt.classTable){
+                    if(item1.classid == classid&&item1.attrname == item.deputyrule[0]) {
+                        attrtype = item1.attrtype;
+                        attrid = item1.attrid;
+                        break;
+                    }
+                }
+
+                if(Condition(attrtype,tuple,attrid,item.deputyrule[3])){
+                    String[] ss= p.clone();
+                    String s1 = null;
+
+                    for(ClassTableItem item2:classt.classTable){
+                        if(item2.classid == item.deputyid) {
+                            s1 = item2.classname;
+                            break;
+                        }
+                    }
+                    //是否要插switch的值
+                    String[] attrname1 = new String[count];
+                    int[] attrid1 = new int[count];
+                    for(ClassTableItem item3 : classt.classTable){
+                        if(item3.classid == classid){
+                            int k = 0;
+                            for(; k<count;k++){
+                                attrname1[k] = item3.attrname;
+                                attrid1[k] = item3.attrid;
+
+                            }
+                            if (k ==count-1)
+                                    break;
+                        }
+                    }
+                    for (int l = 0;l<count;l++) {
+                        for (SwitchingTableItem item4 : switchingT.switchingTable) {
+                            if (item4.attr.equals(attrname1[l])){
+                                int sw = Integer.parseInt(p[3+attrid1[l]]);
+                                ss[3+attrid1[l]] = new Integer(sw+item4.rule).toString();
+                            }
+                        }
+                    }
+
+                    ss[2] = s1;
+                    int deojid=Insert(ss);
+                    //插入Bi
+                    biPointerT.biPointerTable.add(new BiPointerTableItem(classid,tupleid,item.deputyid,deojid));
+
+
+
+                }
+            }
+        }
+        return tupleid;
+
+
+
+    }
+
+    private boolean Condition(String attrtype,Tuple tuple,int attrid,String value1){
+        String value = value1.replace("\"","");
+        switch (attrtype){
+            case "int":
+                int value_int = Integer.parseInt(value);
+                if(tuple.tuple[attrid].equals(value_int))
+                    return true;
+                break;
+            case "char":
+                String value_string = value;
+                if(tuple.tuple[attrid].equals(value_string))
+                    return true;
+                break;
+
+        }
+        return false;
+    }
+    //DELETE FROM bb WHERE t4="5SS";
+    //5,bb,t4,=,"5SS"
+    private void Delete(String[] p) {
+        String classname = p[1];
+        String attrname = p[2];
+        int classid = 0;
+        int attrid=0;
+        String attrtype=null;
+        for (ClassTableItem item:classt.classTable) {
+            if (item.classname == classname && item.attrname.equals(attrname)) {
+                classid = item.classid;
+                attrid = item.attrid;
+                attrtype = item.attrtype;
+                break;
+            }
+        }
+        //寻找需要删除的
+        for (ObjectTableItem item:topt.objectTable){
+            if(item.classid == classid){
+                Tuple tuple = GetTuple(item.blockid,item.offset);
+                if(Condition(attrtype,tuple,attrid,p[4])){
+                    //需要删除的元组
+                    DeletebyID(item.tupleid);
+                }
+            }
+        }
+
+
+    }
+
+    private void DeletebyID(int id){
+
+
+        for (ObjectTableItem item:topt.objectTable){
+            if(item.tupleid == id){
+                //需要删除的tuple
+
+
+                //删除代理类的元组
+                int deobid = 0;
+                for(BiPointerTableItem item1:biPointerT.biPointerTable){
+                    if(item.tupleid == item1.deputyid){
+                        biPointerT.biPointerTable.remove(item1);
+                    }
+                    if(item.tupleid == item1.objectid){
+                        deobid = item1.deputyobjectid;
+                        DeletebyID(deobid);
+                        biPointerT.biPointerTable.remove(item1);
+                    }
+                }
+
+                //删除自身
+                DeleteTuple(item.blockid,item.offset);
+                topt.objectTable.remove(item);
+
+
+
+
+
+                }
+            }
+    }
+
+    //DROP CLASS asd;
+    //3,asd
+    private void Drop(String[] p){
+        String classname = p[1];
+        int classid = 0;
+        //找到classid顺便 清除类表和switch表
+        for (ClassTableItem item:classt.classTable) {
+            if (item.classname == classname ){
+                classid = item.classid;
+                for(SwitchingTableItem item2:switchingT.switchingTable) {
+                    if (item2.attr.equals( item.attrname)||item2.deputy .equals( item.attrname)){
+                        switchingT.switchingTable.remove(item2);
+                    }
+                }
+                classt.classTable.remove(item);
+            }
+        }
+        //清元组表同时清了bi
+        for(ObjectTableItem item1:topt.objectTable){
+            if(item1.classid == classid){
+                DeletebyID(item1.tupleid);
+
+            }
+        }
+        //清deputy
+        for(DeputyTableItem item3:deputyt.deputyTable){
+            if(item3.deputyid == classid){
+                deputyt.deputyTable.remove(item3);
+            }
+            if(item3.originid == classid){
+                //删除代理类
+                String[]s = p.clone();
+                for(ClassTableItem item4: classt.classTable){
+                    if(item4.classid == item3.deputyid){
+                        s[1] = item4.classname;
+                        Drop(s);
+                    }
+                }
+                deputyt.deputyTable.remove(item3);
+            }
+        }
+
+    }
+
+
+
+
+
+
+
+
+
+
+
+
 
     //CREATE SELECTDEPUTY aa SELECT  b1,b2,b3 FROM  bb WHERE t1="1" ;
     //2,3,aa,b1,b2,b3,bb,t1,=,"1"
@@ -164,102 +399,15 @@ public class TransAction {
 
 
 
-       private void Drop(String[] p){
-            String classname = p[1];
-            int classid = -1;
-           for (ClassTableItem item:classt.classTable) {
-               if (item.classname == classname ){
-                    classid = item.classid;
-                    classt.classTable.remove(item);
-               }
-           }
-           for (DeputyTableItem item:deputyt.deputyTable){
-                if(item.deputyname == classname){
-                    deputyt.deputyTable.remove(item);
-                }
-           }
 
-           for (ObjectTableItem item:topt.objectTable){
-               if(item.classid == classid){
-                   DeleteTuple(item.blockid,item.offset);
-                   topt.objectTable.remove(item);
-               }
-           }
-       }
         //INSERT INTO aa VALUES (1,2,"3");
         //4,3,aa,1,2,"3"
 
 
-       private void Insert(String[] p){
-            int count = Integer.parseInt(p[1]);
-            String classname = p[2];
-            Object[] attrArr = new Object[count];
-
-            int classid = -1;
-           for (ClassTableItem item:classt.classTable) {
-               if (item.classname == classname ){
-                   classid = item.classid;
-                   switch (item.attrtype){
-                       case "int":
-                           attrArr[item.attrid] = Integer.parseInt(p[item.attrid+3]);
-                           break;
-                       case "char":
-                           attrArr[item.attrid] = p[item.attrid+3].replace("\"","");
-                           break;
-                   }
-               }
-           }
-
-           int[] id = InsertTuple(new Tuple(attrArr));
-            topt.objectTable.add(new ObjectTableItem("dz",1,classid,topt.maxTupleId++,id[0],id[1]));
-
-       }
-
-        private void Delete(String[] p) {
-            String classname = p[1];
-            String attrname = p[2];
-            int classid = 0;
-            int attrid=0;
-            String attrtype=null;
-            for (ClassTableItem item:classt.classTable) {
-                if (item.classname == classname && item.attrname.equals(attrname)) {
-                    classid = item.classid;
-                    attrid = item.attrid;
-                    attrtype = item.attrtype;
-                    break;
-                }
-            }
-
-            for (ObjectTableItem item:topt.objectTable){
-                if(item.classid == classid){
-                    Tuple tuple = GetTuple(item.dbid,item.offset);
-                    if(Condition(attrtype,tuple,attrid,p[4])){
-                        DeleteTuple(item.blockid,item.offset);
-                        topt.objectTable.remove(item);
-                    }
-                }
-            }
 
 
-        }
         */
-    private boolean Condition(String attrtype,Tuple tuple,int attrid,String value1){
-        String value = value1.replace("\"","");
-        switch (attrtype){
-            case "int":
-                int value_int = Integer.parseInt(value);
-                if(tuple.tuple[attrid].equals(value_int))
-                    return true;
-                break;
-            case "char":
-                String value_string = value;
-                if(tuple.tuple[attrid].equals(value_string))
-                    return true;
-                break;
 
-        }
-        return false;
-    }
 
 
     private TupleList DirectSelect(String[] p){
