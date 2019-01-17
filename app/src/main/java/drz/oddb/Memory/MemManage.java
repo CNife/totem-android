@@ -362,7 +362,7 @@ public class MemManage {
             sbu=load(blockmaxnum);
         }
         byte[] x=new byte[4];
-
+        //MemBuff
         return false;
     }
 
@@ -493,7 +493,7 @@ public class MemManage {
                 break;
             }
         }
-        s=new String(b,0,k);
+        s=new String(b,off,k);
         return s;
     }
 
