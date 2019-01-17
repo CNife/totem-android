@@ -22,14 +22,19 @@ public class TransAction {
 
     Context context;
     MemManage mem = new MemManage();
-    TopTable topt = mem.loadTopTable();
+    ObjectTable topt = mem.loadObjectTable();
     ClassTable classt = mem.loadClassTable();
     DeputyTable deputyt = mem.loadDeputyTable();
+    BiPointerTable biPointerT = mem.loadBiPointerTable();
+    SwitchingTable switchingT = mem.loadSwitchingTable();
     public void SaveAll( )
     {
-        mem.saveTopTable(topt);
+        mem.saveObjectTable(topt);
         mem.saveClassTable(classt);
         mem.saveDeputyTable(deputyt);
+        mem.saveBiPointerTable(biPointerT);
+        mem.saveSwitchingTable(switchingT);
+
         mem.exitFlush();
     }
 
@@ -107,7 +112,7 @@ public class TransAction {
         classt.maxid++;
         int classid = classt.maxid;
         for (int i = 0; i < count; i++) {
-            classt.classTable.add(new ClassTableItem(classname, classid, count,i,p[2 * i + 3], p[2 * i + 4]));
+            classt.classTable.add(new ClassTableItem(classname, classid, count,i,p[2 * i + 3], p[2 * i + 4],"ori"));
         }
     }
 
@@ -116,28 +121,28 @@ public class TransAction {
     private void CreateSelectDeputy(String[] p) {
         int count = Integer.parseInt(p[1]);
         String classname = p[2];//代理类的名字
-        String deputyname = p[count+3];//代理的类的名字
+        String bedeputyname = p[count+3];//代理的类的名字
         classt.maxid++;
         int classid = classt.maxid;//代理类的id
-        int deputyid = -1;//代理的类的id
+        int bedeputyid = -1;//代理的类的id
 
         String attrname;
         String attrtype;
-        for (int i = 1; i <= count; i++) {
+        for (int i = 0; i < count; i++) {
             int attrid;
             for (ClassTableItem item:classt.classTable) {
                 attrname = item.attrname;
                 attrtype = item.attrtype;
                 if (item.classname == deputyname) {
-                    deputyid = item.classid;
+                    bedeputyid = item.classid;
                     if(item.attrname.equals(p[i+2])){
-                        classt.classTable.add(new ClassTableItem(classname, classid, count,i,p[2+i], attrtype));
+                        classt.classTable.add(new ClassTableItem(classname, classid, count,i,p[2+i], attrtype,"de"));
                     }
                     break;
                 }
             };
         }
-        deputyt.deputyTable.add(new DeputyTableItem(classid,deputyid,classname));
+        deputyt.deputyTable.add(new DeputyTableItem(bedeputyid,classid,todo));
 
         String[] select_s = new String[p.length-1];
         select_s[0] = parse.OPT_SELECT_DERECTSELECT+"";
@@ -151,7 +156,7 @@ public class TransAction {
         for(int  i = 0;i < tList.tuplenum;i++)
         {
             int[] id = InsertTuple(tList.tuplelist.get(i));
-            topt.topTable.add(new TopTableItem("dz",1,classid,topt.maxTupleId++,id[0],id[1]));
+            topt.ObjectTable.add(new ObjectTableItem("dz",1,classid,topt.maxTupleId++,id[0],id[1]));
         }
     }
 
@@ -171,10 +176,10 @@ public class TransAction {
             }
        }
 
-       for (TopTableItem item:topt.topTable){
+       for (ObjectTableItem item:topt.ObjectTable){
            if(item.classid == classid){
                DeleteTuple(item.blockid,item.offset);
-               topt.topTable.remove(item);
+               topt.ObjectTable.remove(item);
            }
        }
    }
@@ -201,7 +206,7 @@ public class TransAction {
        }
 
        int[] id = InsertTuple(new Tuple(attrArr));
-        topt.topTable.add(new TopTableItem("dz",1,classid,topt.maxTupleId++,id[0],id[1]));
+        topt.ObjectTable.add(new ObjectTableItem("dz",1,classid,topt.maxTupleId++,id[0],id[1]));
 
    }
 
@@ -220,12 +225,12 @@ public class TransAction {
             }
         }
 
-        for (TopTableItem item:topt.topTable){
+        for (ObjectTableItem item:topt.ObjectTable){
             if(item.classid == classid){
                 Tuple tuple = GetTuple(item.dbid,item.offset);
                 if(Condition(attrtype,tuple,attrid,p[4])){
                     DeleteTuple(item.blockid,item.offset);
-                    topt.topTable.remove(item);
+                    topt.ObjectTable.remove(item);
                 }
             }
         }
@@ -283,7 +288,7 @@ public class TransAction {
         }
 
 
-        for(TopTableItem item : topt.topTable){
+        for(ObjectTableItem item : topt.ObjectTable){
             if(item.classid == classid){
                 Tuple tuple = GetTuple(item.blockid,item.offset);
                if(Condition(sattrtype,tuple,sattrid,p[attrnumber+5])){

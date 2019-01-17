@@ -4,10 +4,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class ObjectTable {
-    public  List<ObjectTableItem> topTable=new ArrayList<>();
+    public  List<ObjectTableItem> objectTable =new ArrayList<>();
     public int maxTupleId = 0;
     public void clear(){
-       topTable.clear();
+       objectTable.clear();
         maxTupleId = 0;
     }
 }

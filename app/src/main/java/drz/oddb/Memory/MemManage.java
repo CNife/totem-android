@@ -309,10 +309,10 @@ public class MemManage {
         return false;
     }
 
-    public ObjectTable loadTopTable(){
+    public ObjectTable loadObjectTable(){
         ObjectTable ret = new ObjectTable();
         ObjectTableItem temp=null;
-        File toptab=new File("/data/data/drz.oddb/transaction/toptable");
+        File toptab=new File("/data/data/drz.oddb/transaction/ObjectTable");
         if(!toptab.exists()){
             return ret;
         }else{
@@ -327,7 +327,7 @@ public class MemManage {
                     temp.tupleid=bytes2Int(buff,4,4);
                     temp.blockid=bytes2Int(buff,8,4);
                     temp.offset=bytes2Int(buff,12,4);
-                    ret.topTable.add(temp);
+                    ret.objectTable.add(temp);
                 }
             } catch (FileNotFoundException e) {
                 e.printStackTrace();
@@ -338,8 +338,8 @@ public class MemManage {
         }
     }
 
-    public boolean saveTopTable(ObjectTable tab){
-        File toptab=new File("/data/data/drz.oddb/transaction/toptable");
+    public boolean saveObjectTable(ObjectTable tab){
+        File toptab=new File("/data/data/drz.oddb/transaction/ObjectTable");
         if(!toptab.exists()){
             File path=toptab.getParentFile();
             if(!path.exists()){
@@ -353,18 +353,18 @@ public class MemManage {
         }
         try {
             BufferedOutputStream output=new BufferedOutputStream(new FileOutputStream(toptab));
-            for(int i=0;i<tab.topTable.size();i++){
-                /*byte[] s1=str2Bytes(tab.topTable.get(i).dbname);
+            for(int i = 0; i<tab.objectTable.size(); i++){
+                /*byte[] s1=str2Bytes(tab.ObjectTable.get(i).dbname);
                 output.write(s1,0,s1.length);
-                byte[] i1=int2Bytes(tab.topTable.get(i).dbid,4);
+                byte[] i1=int2Bytes(tab.ObjectTable.get(i).dbid,4);
                 output.write(i1,0,i1.length);*/
-                byte[] i2=int2Bytes(tab.topTable.get(i).classid,4);
+                byte[] i2=int2Bytes(tab.objectTable.get(i).classid,4);
                 output.write(i2,0,i2.length);
-                byte[] i3=int2Bytes(tab.topTable.get(i).tupleid,4);
+                byte[] i3=int2Bytes(tab.objectTable.get(i).tupleid,4);
                 output.write(i3,0,i3.length);
-                byte[] i4=int2Bytes(tab.topTable.get(i).blockid,4);
+                byte[] i4=int2Bytes(tab.objectTable.get(i).blockid,4);
                 output.write(i4,0,i2.length);
-                byte[] i5=int2Bytes(tab.topTable.get(i).offset,4);
+                byte[] i5=int2Bytes(tab.objectTable.get(i).offset,4);
                 output.write(i5,0,i5.length);
             }
             output.flush();
