@@ -28,8 +28,8 @@ public class PrintResult extends AppCompatActivity {
 
     }
 
-    public void Print(TupleList tpl,String[] attrname,int[] attrid,String[] type){
-        startActivity(new Intent(("android.intent.action.PRINTRST")));
+     public void Print(TupleList tpl,String[] attrname,int[] attrid,String[] type){
+
 
         ArrayList<Object> tabCol = new ArrayList<>(attrid.length);
         ArrayList<Object> tabH = new ArrayList<>(tpl.tuplenum);
