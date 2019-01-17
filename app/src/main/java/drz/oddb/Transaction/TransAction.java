@@ -15,7 +15,7 @@ public class TransAction {
     ClassTable classt = MemManage.loadClassTable();
     DeputyTable deputyt = MemManage.loadDeputyTable();
 
-    protected void finalize( )
+    public void SaveAll( )
     {
         MemManage.saveTopTable(topt);
         MemManage.saveClassTable(classt);
@@ -194,8 +194,10 @@ public class TransAction {
 
 
     }
-public void Print(TupleList tpl,String[] attrname,int[] attrid,String[] type){};
-
+    public class PrintResult {
+        public void Print(TupleList tpl, String[] attrname, int[] attrid, String[] type) {
+        };
+    }
     private boolean Condition(String attrtype,Tuple tuple,int attrid,String value1){
         String value = value1.replace("\"","");
         switch (attrtype){

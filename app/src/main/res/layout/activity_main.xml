@@ -2,6 +2,7 @@
 <android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:visibility="visible"
@@ -14,10 +15,10 @@
         android:layout_marginStart="21dp"
         android:layout_marginTop="113dp"
         android:layout_marginEnd="21dp"
-        android:layout_marginBottom="128dp"
+        android:layout_marginBottom="221dp"
         android:hint="Plese input what you want to inquire"
         android:maxLines="3"
-        app:layout_constraintBottom_toTopOf="@+id/button"
+        app:layout_constraintBottom_toTopOf="@+id/exit_button"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
@@ -28,6 +29,17 @@
         android:layout_height="wrap_content"
         android:layout_marginBottom="176dp"
         android:text="INQUIRE"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/edit_text" />
+
+    <Button
+        android:id="@+id/exit_button"
+        android:layout_width="164dp"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="83dp"
+        android:text="EXIT"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
