@@ -651,7 +651,7 @@ public class MemManage {
             blockspace=s;
         }else{
             blockspace=new int[1];
-            blockspace[1]=blocklength-8;
+            blockspace[0]=blocklength-8;
         }
         newblockpointer.blockNum=blockmaxnum;
         newblockpointer.flag=true;
