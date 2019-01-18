@@ -42,6 +42,18 @@ public class MemManage {
         }
     }
 
+    public void logFlush(){
+        saveBlockMaxNum();
+        sbufesc sbu=new sbufesc();
+        for(int i=0;i<FreeList.size();i++){
+            sbu=FreeList.get(i);
+            if(sbu.flag){
+                save(sbu.blockNum);
+            }
+        }
+        saveLog();
+    }
+
     public void deleteTuple(){}
 
     public SwitchingTable loadSwitchingTable(){
@@ -312,12 +324,12 @@ public class MemManage {
     public ObjectTable loadObjectTable(){
         ObjectTable ret = new ObjectTable();
         ObjectTableItem temp=null;
-        File toptab=new File("/data/data/drz.oddb/transaction/ObjectTable");
-        if(!toptab.exists()){
+        File objtab=new File("/data/data/drz.oddb/transaction/objecttable");
+        if(!objtab.exists()){
             return ret;
         }else{
             try {
-                FileInputStream input=new FileInputStream(toptab);
+                FileInputStream input=new FileInputStream(objtab);
                 byte buff[]=new byte[16];
                 while(input.read(buff,0,16)!=-1){
                     temp=new ObjectTableItem();
@@ -339,25 +351,21 @@ public class MemManage {
     }
 
     public boolean saveObjectTable(ObjectTable tab){
-        File toptab=new File("/data/data/drz.oddb/transaction/ObjectTable");
-        if(!toptab.exists()){
-            File path=toptab.getParentFile();
+        File objtab=new File("/data/data/drz.oddb/transaction/objecttable");
+        if(!objtab.exists()){
+            File path=objtab.getParentFile();
             if(!path.exists()){
                 path.mkdirs();
             }
             try {
-                toptab.createNewFile();
+                objtab.createNewFile();
             } catch (IOException e) {
                 e.printStackTrace();
             }
         }
         try {
-            BufferedOutputStream output=new BufferedOutputStream(new FileOutputStream(toptab));
+            BufferedOutputStream output=new BufferedOutputStream(new FileOutputStream(objtab));
             for(int i = 0; i<tab.objectTable.size(); i++){
-                /*byte[] s1=str2Bytes(tab.ObjectTable.get(i).dbname);
-                output.write(s1,0,s1.length);
-                byte[] i1=int2Bytes(tab.ObjectTable.get(i).dbid,4);
-                output.write(i1,0,i1.length);*/
                 byte[] i2=int2Bytes(tab.objectTable.get(i).classid,4);
                 output.write(i2,0,i2.length);
                 byte[] i3=int2Bytes(tab.objectTable.get(i).tupleid,4);
@@ -456,6 +464,15 @@ public class MemManage {
             }
             return ret;
         }
+    }
+
+    private boolean saveLog(){
+        //TODO
+        return true;
+    }
+
+    private void loadLog(){
+        //TODO
     }
 
     private boolean save(int block){
