@@ -173,6 +173,7 @@ public class MemManage {
     public DeputyTable loadDeputyTable(){
         DeputyTable ret = new DeputyTable();
         DeputyTableItem temp=null;
+        temp.deputyrule=new String[3];
         File deputytab=new File("/data/data/drz.oddb/transaction/deputytable");
         if(!deputytab.exists()){
             return ret;
