@@ -246,7 +246,10 @@ public class MemManage {
         }else {
             try {
                 FileInputStream input = new FileInputStream(classtab);
-                byte buff[] = new byte[12+attrstringlen*3];
+                byte[] x=new byte[4];
+                input.read(x,0,4);
+                ret.maxid=bytes2Int(x,0,4);
+                byte[] buff = new byte[12+attrstringlen*3];
                 while (input.read(buff, 0, 12+attrstringlen*3) != -1) {
                     temp = new ClassTableItem();
                     temp.classname = byte2str(buff, 0, attrstringlen);
@@ -284,6 +287,8 @@ public class MemManage {
         }
         try {
             BufferedOutputStream output=new BufferedOutputStream(new FileOutputStream(classtab));
+            byte[] maxi=int2Bytes(tab.maxid,4);
+            output.write(maxi,0,maxi.length);
             System.out.println(tab.classTable.size());
             for(int i=0;i<tab.classTable.size();i++){
                 byte[] s1=str2Bytes(tab.classTable.get(i).classname);
@@ -321,6 +326,9 @@ public class MemManage {
         }else{
             try {
                 FileInputStream input=new FileInputStream(objtab);
+                byte[] x=new byte[4];
+                input.read(x,0,4);
+                ret.maxTupleId=bytes2Int(x,0,4);
                 byte buff[]=new byte[16];
                 while(input.read(buff,0,16)!=-1){
                     temp=new ObjectTableItem();
@@ -354,6 +362,8 @@ public class MemManage {
         }
         try {
             BufferedOutputStream output=new BufferedOutputStream(new FileOutputStream(objtab));
+            byte[] max=int2Bytes(tab.maxTupleId,4);
+            output.write(max,0,max.length);
             for(int i = 0; i<tab.objectTable.size(); i++){
                 byte[] i2=int2Bytes(tab.objectTable.get(i).classid,4);
                 output.write(i2,0,i2.length);
