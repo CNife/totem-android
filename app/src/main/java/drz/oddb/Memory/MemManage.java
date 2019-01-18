@@ -45,6 +45,10 @@ public class MemManage {
     //删除元组
     public void deleteTuple(){}
 
+    public void deleteTuple(int block,int offset){
+
+    }
+
     public SwitchingTable loadSwitchingTable(){
         SwitchingTable ret=new SwitchingTable();
         SwitchingTableItem temp=null;
@@ -484,6 +488,7 @@ public class MemManage {
         BuffPointerList.add(0,q);
     }
 
+    //存块
     private boolean save(buffPointer blockpointer){
         File file=new File("/data/data/drz.oddb/Memory/"+blockpointer.blockNum);
         if(!file.exists()){
@@ -520,10 +525,12 @@ public class MemManage {
         return false;
     }
 
+    //加载块
     private buffPointer load(int block){
         buffPointer Free=new buffPointer();
         if(BuffPointerList.size()==bufflength) {
             if(save(BuffPointerList.get(bufflength-1))){
+                buffuse[BuffPointerList.get(bufflength-1).buf_id]=true;
                 BuffPointerList.remove(bufflength-1);
             }
         }
@@ -570,6 +577,7 @@ public class MemManage {
         buffPointer newblockpointer=new buffPointer();
         if(BuffPointerList.size()==bufflength) {
             if(save(BuffPointerList.get(bufflength-1))){
+                buffuse[BuffPointerList.get(bufflength-1).buf_id]=true;
                 BuffPointerList.remove(bufflength-1);
             }
         }
