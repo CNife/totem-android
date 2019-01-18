@@ -11,6 +11,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
+import drz.oddb.Log.LogTable;
 import drz.oddb.Transaction.SystemTable.*;
 import drz.oddb.Transaction.SystemTable.ObjectTable;
 
@@ -18,11 +19,19 @@ public class MemManage {
     final private int attrstringlen=8; //属性最大字符串长度为8Byte
     final private int bufflength=1000;//缓冲区大小为1000个块
     final private int blocklength=8*1024;//块大小为8KB
+    /*
+    final private int num_per_logbuff=20;
+    final private int maxloglength=200;
+    final private int logblocklength=num_per_logbuff*maxloglength;
+    */
 
     private List<buffPointer> BuffPointerList = new ArrayList<>();		//构建缓冲区指针表
     private ByteBuffer MemBuff=ByteBuffer.allocateDirect(blocklength*bufflength);//分配blocklength*bufflength大小的缓冲区
+    //private ByteBuffer LogBuff=ByteBuffer.allocateDirect(logblocklength);//只分配一个缓冲区
     private boolean[] buffuse=new boolean[bufflength];//缓冲区可用状态表，true为可用
     private int blockmaxnum=0;
+
+    //private int logblockmaxnum=0;
 
     public MemManage(){
         initbuffues();//初始化缓冲区状态表
@@ -387,7 +396,18 @@ public class MemManage {
         }
         return false;
     }
+    /*
+    public LogTable loadLogTable(){
+        LogTable ret=null;
+        //todo
+        return ret;
+    }
 
+    public boolean savaLogTable(LogTable tab){
+        //todo
+        return true;
+    }
+    */
     public Tuple readTuple(int blocknum,int offset){
         Tuple ret=new Tuple();
         buffPointer s=null;
@@ -672,7 +692,18 @@ public class MemManage {
         }
         return false;
     }
+    /*
+    private int loadLogBlockMaxNum(){
+        int ret = 0;
+        //todo
+        return ret;
+    }
 
+    private boolean saveLogBlockMaxNum(){
+        //todo
+        return true;
+    }
+    */
     private byte[] str2Bytes(String s){
         byte[] ret=new byte[attrstringlen];
         byte[] temp=s.getBytes();
