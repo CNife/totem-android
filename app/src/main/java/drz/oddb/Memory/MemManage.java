@@ -173,7 +173,6 @@ public class MemManage {
     public DeputyTable loadDeputyTable(){
         DeputyTable ret = new DeputyTable();
         DeputyTableItem temp=null;
-        temp.deputyrule=new String[3];
         File deputytab=new File("/data/data/drz.oddb/transaction/deputytable");
         if(!deputytab.exists()){
             return ret;
@@ -183,6 +182,7 @@ public class MemManage {
                 byte buff[] = new byte[8+3*attrstringlen];
                 while (input.read(buff, 0, 8+attrstringlen*3) != -1) {
                     temp = new DeputyTableItem();
+                    temp.deputyrule=new String[3];
                     temp.originid = bytes2Int(buff, 0, 4);
                     temp.deputyid = bytes2Int(buff, 4, 4);
                     temp.deputyrule[0] = byte2str(buff, 8, attrstringlen);
