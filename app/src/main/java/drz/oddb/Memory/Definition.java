@@ -16,8 +16,8 @@ class header{
 }
 
 //缓冲区
-class sbufesc{
-    public int blockNum;		//块号
+class buffPointer {
+    int blockNum;		//块号
     Boolean flag;		//标记改块是否为脏（true为脏）
     int buf_id;		//缓冲区索引号
 }

@@ -19,26 +19,24 @@ public class MemManage {
     final private int bufflength=1000;//缓冲区大小为1000个块
     final private int blocklength=8*1024;//块大小为8KB
 
-    private List<sbufesc> FreeList = new ArrayList<>();		//构建缓冲区指针
+    private List<buffPointer> BuffPointerList = new ArrayList<>();		//构建缓冲区指针表
     private ByteBuffer MemBuff=ByteBuffer.allocateDirect(blocklength*bufflength);//分配blocklength*bufflength大小的缓冲区
     private boolean[] buffuse=new boolean[bufflength];//缓冲区可用状态表，true为可用
     private int blockmaxnum=0;
-    private Random random;
 
     public MemManage(){
         initbuffues();//初始化缓冲区状态表
         blockmaxnum=loadBlockMaxNum();//从磁盘加载最大块号
-        random=new Random();//创建随机数生成器
     }
 
     //退出时刷新数据到磁盘
     public void flush() {
         saveBlockMaxNum();//将缓冲区最大块号存入磁盘
-        sbufesc sbu = new sbufesc();
-        for (int i = 0; i < FreeList.size(); i++) {
-            sbu = FreeList.get(i);
+        buffPointer sbu = new buffPointer();
+        for (int i = 0; i < BuffPointerList.size(); i++) {
+            sbu = BuffPointerList.get(i);
             if (sbu.flag) {
-                save(sbu.blockNum);
+                save(sbu);
             }
         }//将缓冲区存入磁盘
         saveLog();
@@ -388,7 +386,7 @@ public class MemManage {
 
     public Tuple readTuple(int blocknum,int offset){
         Tuple ret=new Tuple();
-        sbufesc s=null;
+        buffPointer s=null;
         if((s=findBlock(blocknum))==null){
             s=load(blocknum);
         }
@@ -411,57 +409,59 @@ public class MemManage {
 
     public int[] writeTuple(Tuple t){
         int [] ret=new int[2];
-        sbufesc sbu=new sbufesc();
-        if((sbu=findBlock(blockmaxnum))==null){
-            if((sbu=load(blockmaxnum))==null){
-                sbu=creatBlock();
+        buffPointer buffPointer=new buffPointer();
+        if((buffPointer=findBlock(blockmaxnum))==null){
+            if((buffPointer=load(blockmaxnum))==null){
+                buffPointer=creatBlock();
             }
         }
         byte[] x=new byte[4];
         for(int i=0;i<4;i++){
-            x[i]=MemBuff.get(sbu.buf_id*blocklength+i);
+            x[i]=MemBuff.get(buffPointer.buf_id*blocklength+i);
         }
         int spacestart=bytes2Int(x,0,4);
         if((blocklength-spacestart)>(4+attrstringlen*t.tupleHeader)){
             ret[0]=blockmaxnum;
             ret[1]=spacestart;
-            sbu.flag=true;
+            buffPointer.flag=true;
             byte[] hea=int2Bytes(t.tupleHeader,4);
             for(int i=0;i<4;i++){
-                MemBuff.put(sbu.buf_id*blocklength+spacestart+i,hea[i]);
+                MemBuff.put(buffPointer.buf_id*blocklength+spacestart+i,hea[i]);
             }
             byte[] str=null;
             for(int i=0;i<t.tupleHeader;i++){
                 str=str2Bytes(t.tuple[i].toString());
                 for(int j=0;j<attrstringlen;j++){
-                    MemBuff.put(sbu.buf_id*blocklength+spacestart+4+i*attrstringlen+j,str[j]);
+                    MemBuff.put(buffPointer.buf_id*blocklength+spacestart+4+i*attrstringlen+j,str[j]);
                 }
             }
             byte[] sp=int2Bytes(spacestart+4+t.tupleHeader*attrstringlen,4);
             for(int i=0;i<4;i++){
-                MemBuff.put(sbu.buf_id*blocklength+i,sp[i]);
+                MemBuff.put(buffPointer.buf_id*blocklength+i,sp[i]);
             }
+            updateBufferPointerSequence(buffPointer);
             return ret;
         }else{
-            sbu=creatBlock();
+            buffPointer=creatBlock();
             ret[0]=blockmaxnum;
             ret[1]=4;
-            sbu.flag=true;
+            buffPointer.flag=true;
             byte[] hea=int2Bytes(t.tupleHeader,4);
             for(int i=0;i<4;i++){
-                MemBuff.put(sbu.buf_id*blocklength+4+i,hea[i]);
+                MemBuff.put(buffPointer.buf_id*blocklength+4+i,hea[i]);
             }
             byte []str=null;
             for(int i=0;i<t.tupleHeader;i++){
                 str=str2Bytes(t.tuple[i].toString());
                 for(int j=0;j<attrstringlen;j++){
-                    MemBuff.put(sbu.buf_id*blocklength+4+4+i*attrstringlen+j,str[j]);
+                    MemBuff.put(buffPointer.buf_id*blocklength+4+4+i*attrstringlen+j,str[j]);
                 }
             }
             byte[] sp=int2Bytes(4+4+t.tupleHeader*attrstringlen,4);
             for(int i=0;i<4;i++){
-                MemBuff.put(sbu.buf_id*blocklength+i,sp[i]);
+                MemBuff.put(buffPointer.buf_id*blocklength+i,sp[i]);
             }
+            updateBufferPointerSequence(buffPointer);
             return ret;
         }
     }
@@ -475,8 +475,17 @@ public class MemManage {
         //TODO
     }
 
-    private boolean save(int block){
-        File file=new File("/data/data/drz.oddb/Memory/"+block);
+    private void updateBufferPointerSequence(buffPointer p){
+        buffPointer q=new buffPointer();
+        q.blockNum=p.blockNum;
+        q.buf_id=p.buf_id;
+        q.flag=p.flag;
+        BuffPointerList.remove(p);
+        BuffPointerList.add(0,q);
+    }
+
+    private boolean save(buffPointer blockpointer){
+        File file=new File("/data/data/drz.oddb/Memory/"+blockpointer.blockNum);
         if(!file.exists()){
             File path=file.getParentFile();
             if(!path.exists()){
@@ -492,14 +501,10 @@ public class MemManage {
             }
         }
         int offset=-1;
-        sbufesc s=null;
-        if((s=findBlock(block))==null){
-            return false;//块不在缓冲区，返回false 存入失败
-        }
         try {
             BufferedOutputStream output=new BufferedOutputStream(new FileOutputStream(file));
             byte[] buff=new byte[blocklength];
-            offset=s.buf_id;
+            offset=blockpointer.buf_id;
             for(int i=0;i<blocklength;i++){
                 buff[i]=MemBuff.get(offset*blocklength+i);
             }
@@ -515,16 +520,11 @@ public class MemManage {
         return false;
     }
 
-    private sbufesc load(int block){
-        sbufesc Free=new sbufesc();
-        if(FreeList.size()==bufflength) {
-            int k=random.nextInt(bufflength);
-            save(k);
-            buffuse[k]=true;
-            if(delete(k)){
-                System.out.println("删除成功！");
-            }else{
-                System.out.println("删除失败！");
+    private buffPointer load(int block){
+        buffPointer Free=new buffPointer();
+        if(BuffPointerList.size()==bufflength) {
+            if(save(BuffPointerList.get(bufflength-1))){
+                BuffPointerList.remove(bufflength-1);
             }
         }
         File file=new File("/data/data/drz.oddb/Memory/"+block);
@@ -546,8 +546,7 @@ public class MemManage {
                 for(int i=0;i<blocklength;i++){
                     MemBuff.put(offset+i,temp[i]);
                 }
-                //hashMap.put(block,Free);
-                FreeList.add(Free);
+                BuffPointerList.add(0,Free);
                 return Free;
             } catch (FileNotFoundException e) {
                 e.printStackTrace();
@@ -567,55 +566,50 @@ public class MemManage {
         }
     }
 
-    private sbufesc creatBlock(){
-        sbufesc newblocksb=new sbufesc();
-        if(FreeList.size()==bufflength) {
-            int k=random.nextInt(bufflength);
-            save(k);
-            buffuse[k]=true;
-            if(delete(k)){
-                System.out.println("删除成功！");
-            }else{
-                System.out.println("删除失败！");
+    private buffPointer creatBlock(){
+        buffPointer newblockpointer=new buffPointer();
+        if(BuffPointerList.size()==bufflength) {
+            if(save(BuffPointerList.get(bufflength-1))){
+                BuffPointerList.remove(bufflength-1);
             }
         }
         for(int i=0;i<bufflength;i++){
             if(buffuse[i]){
-                newblocksb.buf_id=i;
+                newblockpointer.buf_id=i;
                 buffuse[i]=false;
                 break;
             }
         }
         blockmaxnum++;
-        newblocksb.blockNum=blockmaxnum;
-        newblocksb.flag=true;
+        newblockpointer.blockNum=blockmaxnum;
+        newblockpointer.flag=true;
         byte[] header=int2Bytes(4,4);
         for(int i=0;i<4;i++){
-            MemBuff.put(newblocksb.buf_id*blocklength+i,header[i]);
+            MemBuff.put(newblockpointer.buf_id*blocklength+i,header[i]);
         }
         byte x=(byte)32;
         for(int i=4;i<blocklength;i++){
-            MemBuff.put(newblocksb.buf_id*blocklength+i,x);
+            MemBuff.put(newblockpointer.buf_id*blocklength+i,x);
         }
-        FreeList.add(newblocksb);
-        return newblocksb;
+        BuffPointerList.add(0,newblockpointer);
+        return newblockpointer;
     }
 
     //删除缓冲区块指针
     private boolean delete(int x){
-        for(int i=0;i<FreeList.size();i++){
-            if(FreeList.get(i).buf_id==x){
-                FreeList.remove(i);
+        for(int i = 0; i< BuffPointerList.size(); i++){
+            if(BuffPointerList.get(i).buf_id==x){
+                BuffPointerList.remove(i);
                 return true;
             }
         }
         return false;
     }
 
-    private sbufesc findBlock(int x){
-        sbufesc ret=null;
-        for(int i=0;i<FreeList.size();i++) {
-            ret = FreeList.get(i);
+    private buffPointer findBlock(int x){
+        buffPointer ret=null;
+        for(int i = 0; i< BuffPointerList.size(); i++) {
+            ret = BuffPointerList.get(i);
             if (ret.blockNum == x) {
                 return ret;
             }
