@@ -2,9 +2,12 @@ package drz.oddb.Transaction;
 
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.drawable.InsetDrawable;
 import android.os.Bundle;
 
 import java.io.ByteArrayInputStream;
+import java.util.ArrayList;
+import java.util.List;
 
 import drz.oddb.Memory.*;
 
@@ -77,20 +80,22 @@ public class TransAction {
                     CreateOriginClass(aa);
                     break;
                 case parse.OPT_CREATE_SELECTDEPUTY:
-
+                    CreateSelectDeputy(aa);
                     break;
                 case parse.OPT_DROP:
-
+                    Drop(aa);
                     break;
                 case parse.OPT_INSERT:
                     Insert(aa);
                     break;
                 case parse.OPT_DELETE:
-
+                    Delete(aa);
                     break;
                 case parse.OPT_SELECT_DERECTSELECT:
+                    DirectSelect(aa);
                     break;
                 case parse.OPT_SELECT_INDERECTSELECT:
+                    InDirectSelect(aa);
                     break;
                 default:
                     break;
@@ -121,10 +126,13 @@ public class TransAction {
     //4,3,aa,1,2,"3"
     //0 1 2  3 4  5
     private int Insert(String[] p){
-        for(String str:p)
-            str.replace("\"","");
+
 
         int count = Integer.parseInt(p[1]);
+        for(int o =0;o<count+3;o++){
+            p[o] = p[o].replace("\"","");
+        }
+
         String classname = p[2];
         Object[] tuple_ = new Object[count];
 
@@ -142,6 +150,7 @@ public class TransAction {
         }
 
         Tuple tuple = new Tuple(tuple_);
+        tuple.tupleHeader=count;
 
         int[] a = InsertTuple(tuple);
         topt.maxTupleId++;
@@ -219,7 +228,7 @@ public class TransAction {
         switch (attrtype){
             case "int":
                 int value_int = Integer.parseInt(value);
-                if(tuple.tuple[attrid].equals(value_int))
+                if(Integer.parseInt((String)tuple.tuple[attrid])==value_int)
                     return true;
                 break;
             case "char":
@@ -339,62 +348,238 @@ public class TransAction {
     }
 
 
+    //SELECT  b1+2 AS c1,b2 AS c2,b3 AS c3 FROM  bb WHERE t1="1";
+    //6,3,b1,1,2,c1,b2,0,0,c2,b3,0,0,c3,bb,t1,=,"1"
+    //0 1 2  3 4 5  6  7 8 9  10 111213 14 15 16 17
+    private TupleList DirectSelect(String[] p){
+        TupleList tpl = new TupleList();
+        int attrnumber = Integer.parseInt(p[1]);
+        String[] attrname = null;
+        int[] attrid = null;
+        String[] attrtype= null;
+        String classname = p[2+4*attrnumber];
+        int classid = 0;
+        for(int i = 0;i < attrnumber;i++){
+            for (ClassTableItem item:classt.classTable) {
+                if (item.classname == classname && item.attrname.equals(p[2+4*i])) {
+                    classid = item.classid;
+                    attrid[i] = item.attrid;
+                    attrtype[i] = item.attrtype;
+                    attrname[i] = p[5+4*i];
+                    //重命名
+
+                    break;
+                }
+            }
+        }
+
+
+        int sattrid = 0;
+        String sattrtype = null;
+        for (ClassTableItem item:classt.classTable) {
+            if (item.classid == classid && item.attrname.equals(p[3+4*attrnumber])) {
+                sattrid = item.attrid;
+                sattrtype = item.attrtype;
+                break;
+            }
+        }
+
+
+        for(ObjectTableItem item : topt.objectTable){
+            if(item.classid == classid){
+                Tuple tuple = GetTuple(item.blockid,item.offset);
+                if(Condition(sattrtype,tuple,sattrid,p[4*attrnumber+5])){
+                    //Switch
+
+                    for(int j = 0;j<attrnumber;j++){
+                        if(Integer.parseInt(p[3+4*j])==1){
+                            int value = Integer.parseInt(p[4+4*j]);
+                            int orivalue = Integer.parseInt((String)tuple.tuple[attrid[j]]);
+                            Object ob = value+orivalue;
+                            tuple.tuple[attrid[j]] = ob;
+                        }
+
+                    }
 
 
 
+                    tpl.addTuple(tuple);
+                }
+            }
+        }
+        PrintSelectResult(tpl,attrname,attrid,attrtype);
+        return tpl;
+
+    }
 
 
-
-
-
-
-
-
-    //CREATE SELECTDEPUTY aa SELECT  b1,b2,b3 FROM  bb WHERE t1="1" ;
-    //2,3,aa,b1,b2,b3,bb,t1,=,"1"
-
-    /*
+    //CREATE SELECTDEPUTY aa SELECT  b1+2 AS c1,b2 AS c2,b3 AS c3 FROM  bb WHERE t1="1" ;
+    //2,3,aa,b1,1,2,c1,b2,0,0,c2,b3,0,0,c3,bb,t1,=,"1"
+    //0 1 2  3  4 5 6  7  8 9 10 11 121314 15 16 17 18
     private void CreateSelectDeputy(String[] p) {
         int count = Integer.parseInt(p[1]);
         String classname = p[2];//代理类的名字
-        String bedeputyname = p[count+3];//代理的类的名字
+        String bedeputyname = p[4*count+3];//代理的类的名字
         classt.maxid++;
         int classid = classt.maxid;//代理类的id
         int bedeputyid = -1;//代理的类的id
+        String[] attrname=new String[count];
+        String[] bedeputyattrname=new String[count];
+        int[] bedeputyattrid = new int[count];
+        String[] attrtype=new String[count];
+        int[] attrid=new int[count];
+        for(int j = 0;j<count;j++){
+            attrname[j] = p[4*j+6];
+            attrid[j] = j;
+            bedeputyattrname[j] = p[4*j+3];
+        }
 
-        String attrname;
-        String attrtype;
+        String attrtype1;
         for (int i = 0; i < count; i++) {
-            int attrid;
+
             for (ClassTableItem item:classt.classTable) {
-                attrname = item.attrname;
-                attrtype = item.attrtype;
-                if (item.classname == deputyname) {
+                if (item.classname.equals(bedeputyname)&&item.attrname.equals(p[3+4*i])) {
                     bedeputyid = item.classid;
-                    if(item.attrname.equals(p[i+2])){
-                        classt.classTable.add(new ClassTableItem(classname, classid, count,i,p[2+i], attrtype,"de"));
-                    }
+                    bedeputyattrid[i] = item.attrid;
+
+                        classt.classTable.add(new ClassTableItem(classname, classid, count,attrid[i],attrname[i], item.attrtype,"de"));
+                        //swi
+                        if(Integer.parseInt(p[4+4*i]) == 1){
+                            switchingT.switchingTable.add(new SwitchingTableItem(item.attrname,attrname[i],p[5+4*i]));
+
+                        }
                     break;
                 }
             };
         }
-        deputyt.deputyTable.add(new DeputyTableItem(bedeputyid,classid,todo));
 
-        String[] select_s = new String[p.length-1];
-        select_s[0] = parse.OPT_SELECT_DERECTSELECT+"";
-        select_s[1] = p[1];
-        for(int i = 0;i < p.length-2;i++)
-        {
-            select_s[2+i] = p[i+2];
+
+
+        String[] con =new String[3];
+        con[0] = p[4+4*count];
+        con[1] = p[5+4*count];
+        con[2] = p[6+4*count];
+        deputyt.deputyTable.add(new DeputyTableItem(bedeputyid,classid,con));
+
+
+        TupleList tpl= new TupleList();
+
+        int conid = 0;
+        String contype  = null;
+        for(ClassTableItem item3:classt.classTable){
+            if(item3.attrname.equals(con[0])){
+                conid = item3.attrid;
+                contype = item3.attrtype;
+                break;
+            }
         }
+        List<ObjectTableItem> obj = new ArrayList<>();
+        for(ObjectTableItem item2:topt.objectTable){
+            if(item2.classid ==bedeputyid){
+                Tuple tuple = GetTuple(item2.blockid,item2.offset);
+                if(Condition(contype,tuple,conid,con[2])){
+                    //插入
+                    //swi
+                    Tuple ituple = new Tuple();
+                    ituple.tupleHeader = count;
+                    ituple.tuple = new Object[count];
 
-        TupleList tList = DirectSelect(select_s);
-        for(int  i = 0;i < tList.tuplenum;i++)
-        {
-            int[] id = InsertTuple(tList.tuplelist.get(i));
-            topt.objectTable.add(new ObjectTableItem("dz",1,classid,topt.maxTupleId++,id[0],id[1]));
+                    for(int o =0;o<count;o++){
+                        if(Integer.parseInt(p[4+4*o]) == 1){
+                            int value = Integer.parseInt(p[5+4*o]);
+                            int orivalue =Integer.parseInt((String)tuple.tuple[bedeputyattrid[o]]);
+                            Object ob = value+orivalue;
+                            ituple.tuple[o] = ob;
+                        }
+                        if(Integer.parseInt(p[4+4*o]) == 0){
+                            ituple.tuple[o] = tuple.tuple[bedeputyattrid[o]];
+                        }
+                    }
+
+                    topt.maxTupleId++;
+                    int tupid = topt.maxTupleId;
+
+                    int [] aa = InsertTuple(ituple);
+                    //topt.objectTable.add(new ObjectTableItem(classid,tupid,aa[0],aa[1]));
+                    obj.add(new ObjectTableItem(classid,tupid,aa[0],aa[1]));
+
+                    //bi
+                    biPointerT.biPointerTable.add(new BiPointerTableItem(bedeputyid,item2.tupleid,classid,tupid));
+
+                }
+            }
+        }
+        for(ObjectTableItem item6:obj) {
+            topt.objectTable.add(item6);
         }
     }
+
+    //SELECT popSinger -> singer.nation  FROM popSinger WHERE singerName = "JayZhou";
+    //7,2,popSinger,singer,nation,popSinger,singerName,=,"JayZhou"
+    //0 1 2         3      4      5         6          7  8
+    private TupleList InDirectSelect(String[] p){
+        TupleList tpl= new TupleList();
+        String classname = p[3];
+        String attrname = p[4];
+        String crossname = p[2];
+        String[] attrtype = new String[1];
+        String[] con =new String[3];
+        con[0] = p[6];
+        con[1] = p[7];
+        con[2] = p[8];
+
+        int classid = 0;
+        int crossid = 0;
+        String crossattrtype = null;
+        int crossattrid = 0;
+        for(ClassTableItem item : classt.classTable){
+            if(item.classname.equals(classname)){
+                classid = item.classid;
+                if(attrname.equals(item.attrname))
+                    attrtype[0]=item.attrtype;
+            }
+            if(item.classname.equals(crossname)){
+                crossid = item.classid;
+                if(item.attrname.equals(con[0])) {
+                    crossattrtype = item.attrtype;
+                    crossattrid = item.attrid;
+                }
+            }
+        }
+
+        for(ObjectTableItem item1:topt.objectTable){
+            if(item1.classid == crossid){
+                Tuple tuple = GetTuple(item1.blockid,item1.offset);
+                if(Condition(crossattrtype,tuple,crossattrid,con[2])){
+                    for(BiPointerTableItem item3: biPointerT.biPointerTable){
+                        if(item1.tupleid == item3.objectid){
+                            for(ObjectTableItem item2: topt.objectTable){
+                                if(item2.tupleid == item3.deputyobjectid){
+                                    Tuple ituple = GetTuple(item2.blockid,item2.offset);
+                                    tpl.addTuple(ituple);
+                                }
+                            }
+                        }
+                    }
+
+                }
+            }
+
+        }
+        String[] name = new String[1];
+        name[0] = attrname;
+        int[] id = new int[1];
+        id[0] = 0;
+        PrintSelectResult(tpl,name,id,attrtype);
+        return tpl;
+
+
+
+
+    }
+
+    /*
+
 
 
 
@@ -409,50 +594,7 @@ public class TransAction {
 
 
 
-    private TupleList DirectSelect(String[] p){
-        TupleList tpl = new TupleList();
-        int attrnumber = Integer.parseInt(p[1]);
-        String[] attrname = null;
-        int[] attrid = null;
-        String[] attrtype= null;
-        String classname = p[2+attrnumber];
-        int classid = 0;
-        for(int i = 0;i < attrnumber;i++){
-            for (ClassTableItem item:classt.classTable) {
-                if (item.classname == classname && item.attrname.equals(p[2+i])) {
-                    classid = item.classid;
-                    attrid[i] = item.attrid;
-                    attrtype[i] = item.attrtype;
-                    attrname[i] = item.attrname;
-                    break;
-                }
-            }
-        }
 
-
-        int sattrid = 0;
-        String sattrtype = null;
-        for (ClassTableItem item:classt.classTable) {
-            if (item.classid == classid && item.attrname.equals(p[attrnumber+3])) {
-                sattrid = item.attrid;
-                sattrtype = item.attrtype;
-                break;
-            }
-        }
-
-
-        for(ObjectTableItem item : topt.objectTable){
-            if(item.classid == classid){
-                Tuple tuple = GetTuple(item.blockid,item.offset);
-               if(Condition(sattrtype,tuple,sattrid,p[attrnumber+5])){
-                   tpl.addTuple(tuple);
-               }
-            }
-        }
-
-        return tpl;
-
-    }
 
 
 
@@ -469,11 +611,14 @@ public class TransAction {
         mem.deleteTuple();
         return;
     }
+    private void PrintClass(ObjectTable topt,SwitchingTable switchingT,DeputyTable deputyt,BiPointerTable biPointerT,ClassTable classTable){
 
+
+    }
     private void PrintSelectResult(TupleList tpl,String[] attrname,int[] attrid,String[] type) {
         Intent intent = new Intent(context, PrintResult.class);
 
-        //todo
+
         Bundle bundle = new Bundle();
         bundle.putSerializable("tupleList",tpl);
         bundle.putStringArray("attrname", attrname);
