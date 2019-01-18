@@ -21,7 +21,7 @@ public class MemManage {
 
     private List<sbufesc> FreeList = new ArrayList<>();		//构建缓冲区freeList
     private ByteBuffer MemBuff=ByteBuffer.allocateDirect(blocklength*bufflength);//buff
-    private boolean[] buffuse=new boolean[1000];
+    private boolean[] buffuse=new boolean[bufflength];
     private int blockmaxnum=0;
     private Random random;
 
@@ -65,12 +65,12 @@ public class MemManage {
         }else{
             try {
                 FileInputStream input = new FileInputStream(switab);
-                byte buff[] = new byte[24];
-                while (input.read(buff, 0, 24) != -1) {
+                byte buff[] = new byte[3*attrstringlen];
+                while (input.read(buff, 0, 3*attrstringlen) != -1) {
                     temp = new SwitchingTableItem();
-                    temp.attr = byte2str(buff, 0, 8);
-                    temp.deputy = byte2str(buff, 8, 8);
-                    temp.rule = byte2str(buff, 16, 8);
+                    temp.attr = byte2str(buff, 0, attrstringlen);
+                    temp.deputy = byte2str(buff, attrstringlen, attrstringlen);
+                    temp.rule = byte2str(buff, attrstringlen*2, attrstringlen);
                     ret.switchingTable.add(temp);
                 }
             } catch (FileNotFoundException e) {
@@ -188,14 +188,14 @@ public class MemManage {
         }else {
             try {
                 FileInputStream input = new FileInputStream(deputytab);
-                byte buff[] = new byte[32];
-                while (input.read(buff, 0, 32) != -1) {
+                byte buff[] = new byte[8+3*attrstringlen];
+                while (input.read(buff, 0, 8+attrstringlen*3) != -1) {
                     temp = new DeputyTableItem();
                     temp.originid = bytes2Int(buff, 0, 4);
                     temp.deputyid = bytes2Int(buff, 4, 4);
-                    temp.deputyrule[0] = byte2str(buff, 8, 8);
-                    temp.deputyrule[1] = byte2str(buff, 16, 8);
-                    temp.deputyrule[2] = byte2str(buff, 24, 8);
+                    temp.deputyrule[0] = byte2str(buff, 8, attrstringlen);
+                    temp.deputyrule[1] = byte2str(buff, 8+attrstringlen, attrstringlen);
+                    temp.deputyrule[2] = byte2str(buff, 8+attrstringlen*2, attrstringlen);
                     ret.deputyTable.add(temp);
                 }
             } catch (FileNotFoundException e) {
@@ -255,15 +255,15 @@ public class MemManage {
         }else {
             try {
                 FileInputStream input = new FileInputStream(classtab);
-                byte buff[] = new byte[36];
-                while (input.read(buff, 0, 36) != -1) {
+                byte buff[] = new byte[12+attrstringlen*3];
+                while (input.read(buff, 0, 12+attrstringlen*3) != -1) {
                     temp = new ClassTableItem();
-                    temp.classname = byte2str(buff, 0, 8);
-                    temp.classid = bytes2Int(buff, 8, 4);
-                    temp.attrnum = bytes2Int(buff, 12, 4);
-                    temp.attrid = bytes2Int(buff, 16, 4);
-                    temp.attrname = byte2str(buff, 20, 8);
-                    temp.attrtype = byte2str(buff, 28, 8);
+                    temp.classname = byte2str(buff, 0, attrstringlen);
+                    temp.classid = bytes2Int(buff, attrstringlen, 4);
+                    temp.attrnum = bytes2Int(buff, attrstringlen+4, 4);
+                    temp.attrid = bytes2Int(buff, attrstringlen+8, 4);
+                    temp.attrname = byte2str(buff, attrstringlen+12, attrstringlen);
+                    temp.attrtype = byte2str(buff, attrstringlen*2+12, attrstringlen);
                     ret.classTable.add(temp);
                 }
             } catch (FileNotFoundException e) {
@@ -333,8 +333,6 @@ public class MemManage {
                 byte buff[]=new byte[16];
                 while(input.read(buff,0,16)!=-1){
                     temp=new ObjectTableItem();
-                    /*temp.dbname=byte2str(buff,0,8);
-                    temp.dbid=bytes2Int(buff,8,4);*/
                     temp.classid=bytes2Int(buff,0,4);
                     temp.tupleid=bytes2Int(buff,4,4);
                     temp.blockid=bytes2Int(buff,8,4);
@@ -398,12 +396,12 @@ public class MemManage {
         }
         ret.tupleHeader=bytes2Int(header,0,4);
         ret.tuple=new java.lang.Object[ret.tupleHeader];
-        byte[] temp=new byte[ret.tupleHeader*8];
-        for(int i=0;i<ret.tupleHeader*8;i++){
+        byte[] temp=new byte[ret.tupleHeader*attrstringlen];
+        for(int i=0;i<ret.tupleHeader*attrstringlen;i++){
             temp[i]=MemBuff.get(s.buf_id*blocklength+offset+4+i);
         }
         for(int i=0;i<ret.tupleHeader;i++){
-            String str=byte2str(temp,i*8,8);
+            String str=byte2str(temp,i*attrstringlen,attrstringlen);
             ret.tuple[i]=str;
         }
         return ret;
@@ -422,7 +420,7 @@ public class MemManage {
             x[i]=MemBuff.get(sbu.buf_id*blocklength+i);
         }
         int spacestart=bytes2Int(x,0,4);
-        if((blocklength-spacestart)>(4+8*t.tupleHeader)){
+        if((blocklength-spacestart)>(4+attrstringlen*t.tupleHeader)){
             ret[0]=blockmaxnum;
             ret[1]=spacestart;
             sbu.flag=true;
@@ -433,11 +431,11 @@ public class MemManage {
             byte[] str=null;
             for(int i=0;i<t.tupleHeader;i++){
                 str=str2Bytes(t.tuple[i].toString());
-                for(int j=0;j<8;j++){
-                    MemBuff.put(sbu.buf_id*blocklength+spacestart+4+i*8+j,str[j]);
+                for(int j=0;j<attrstringlen;j++){
+                    MemBuff.put(sbu.buf_id*blocklength+spacestart+4+i*attrstringlen+j,str[j]);
                 }
             }
-            byte[] sp=int2Bytes(spacestart+4+t.tupleHeader*8,4);
+            byte[] sp=int2Bytes(spacestart+4+t.tupleHeader*attrstringlen,4);
             for(int i=0;i<4;i++){
                 MemBuff.put(sbu.buf_id*blocklength+i,sp[i]);
             }
@@ -454,11 +452,11 @@ public class MemManage {
             byte []str=null;
             for(int i=0;i<t.tupleHeader;i++){
                 str=str2Bytes(t.tuple[i].toString());
-                for(int j=0;j<8;j++){
-                    MemBuff.put(sbu.buf_id*blocklength+4+4+i*8+j,str[j]);
+                for(int j=0;j<attrstringlen;j++){
+                    MemBuff.put(sbu.buf_id*blocklength+4+4+i*attrstringlen+j,str[j]);
                 }
             }
-            byte[] sp=int2Bytes(4+4+t.tupleHeader*8,4);
+            byte[] sp=int2Bytes(4+4+t.tupleHeader*attrstringlen,4);
             for(int i=0;i<4;i++){
                 MemBuff.put(sbu.buf_id*blocklength+i,sp[i]);
             }
@@ -518,7 +516,7 @@ public class MemManage {
     private sbufesc load(int block){
         sbufesc Free=new sbufesc();
         if(FreeList.size()==bufflength) {
-            int k=random.nextInt(1000);
+            int k=random.nextInt(bufflength);
             save(k);
             buffuse[k]=true;
             if(delete(k)){
@@ -531,7 +529,7 @@ public class MemManage {
         if(file.exists()){
             Free.blockNum=block;
             Free.flag=false;
-            for(int i=0;i<1000;i++){
+            for(int i=0;i<bufflength;i++){
                 if(buffuse[i]){
                     Free.buf_id=i;
                     buffuse[i]=false;
@@ -562,7 +560,7 @@ public class MemManage {
     }
 
     private void initbuffues(){
-        for(int i=0;i<1000;i++){
+        for(int i=0;i<bufflength;i++){
             buffuse[i]=true;
         }
     }
@@ -570,7 +568,7 @@ public class MemManage {
     private sbufesc creatBlock(){
         sbufesc newblocksb=new sbufesc();
         if(FreeList.size()==bufflength) {
-            int k=random.nextInt(1000);
+            int k=random.nextInt(bufflength);
             save(k);
             buffuse[k]=true;
             if(delete(k)){
@@ -579,7 +577,7 @@ public class MemManage {
                 System.out.println("删除失败！");
             }
         }
-        for(int i=0;i<1000;i++){
+        for(int i=0;i<bufflength;i++){
             if(buffuse[i]){
                 newblocksb.buf_id=i;
                 buffuse[i]=false;
@@ -671,10 +669,10 @@ public class MemManage {
     }
 
     private byte[] str2Bytes(String s){
-        byte[] ret=new byte[8];
+        byte[] ret=new byte[attrstringlen];
         byte[] temp=s.getBytes();
-        if(temp.length>=8){
-            for(int i=0;i<8;i++){
+        if(temp.length>=attrstringlen){
+            for(int i=0;i<attrstringlen;i++){
                 ret[i]=temp[i];
             }
             return ret;
@@ -682,7 +680,7 @@ public class MemManage {
             for(int i=0;i<temp.length;i++){
                 ret[i]=temp[i];
             }
-            for(int i=temp.length;i<8;i++){
+            for(int i=temp.length;i<attrstringlen;i++){
                 ret[i]=(byte)32;
             }
             return ret;
