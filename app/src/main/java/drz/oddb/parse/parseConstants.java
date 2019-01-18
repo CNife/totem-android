@@ -52,6 +52,10 @@ public interface parseConstants {
   int CROSS = 24;
   /** RegularExpression Id. */
   int DOT = 25;
+  /** RegularExpression Id. */
+  int AS = 26;
+  /** RegularExpression Id. */
+  int PLUS = 27;
 
   /** Lexical state. */
   int DEFAULT = 0;
@@ -84,6 +88,8 @@ public interface parseConstants {
     "<STRING>",
     "\"->\"",
     "\".\"",
+    "\"AS\"",
+    "\"+\"",
   };
 
 }

@@ -59,6 +59,8 @@ TOKEN:
 |<STRING: "\""(["a"-"z","A"-"Z","1"-"9"])*"\"" >
 |<CROSS:"->">
 |<DOT:".">
+|<AS:"AS">
+|<PLUS:"+">
 }
 
 
@@ -269,6 +271,13 @@ String attr() :
    { return s.image;}
 }
 
+String dattr():
+{  Token s;}
+{
+   s=<ID>
+   { return s.image;}
+}
+
 String condition() :
 {
   	String attr_s;
@@ -293,14 +302,20 @@ String value() :
 
 int directselect() :
 {
+    String dattr_s;
 	String attr_s;
+	String value_s = "";
+	boolean plus = false;
 	String cln;
 	String cond;
 	int count = 0;
 }
 {
     attr_s = attr() {st.add(attr_s);count++;}
-    (<COMMA> attr_s = attr() {st.add(attr_s);count++; })*
+    (< PLUS >  value_s = value() {plus = true; })? {if(plus) { st.add("1"); st.add(value_s);}else {st.add("0"); st.add("0"); } plus = false; }
+    <AS>
+    dattr_s = dattr() {st.add(dattr_s);}
+    (<COMMA>  attr_s = attr() {st.add(attr_s);count++; } (< PLUS >  value_s = value() {plus = true; })?{if(plus) { st.add("1"); st.add(value_s);}else {st.add("0"); st.add("0"); } plus = false; } <AS> dattr_s = dattr(){st.add(dattr_s);})*
     <FROM>
     cln = classname() {st.add(cln); }
     <WHERE>
