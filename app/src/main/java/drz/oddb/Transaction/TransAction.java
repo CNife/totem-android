@@ -6,6 +6,7 @@ import android.graphics.drawable.InsetDrawable;
 import android.os.Bundle;
 
 import java.io.ByteArrayInputStream;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -13,6 +14,7 @@ import drz.oddb.Memory.*;
 
 
 import drz.oddb.PrintResult;
+import drz.oddb.ShowClass;
 import drz.oddb.Transaction.SystemTable.*;
 
 import drz.oddb.parse.*;
@@ -612,6 +614,17 @@ public class TransAction {
         return;
     }
     private void PrintClass(ObjectTable topt,SwitchingTable switchingT,DeputyTable deputyt,BiPointerTable biPointerT,ClassTable classTable){
+        Intent intent = new Intent(context, ShowClass.class);
+
+        Bundle bundle = new Bundle();
+        bundle.putSerializable("ObjectTable", (Serializable) topt);
+        bundle.putSerializable("SwitchingTable", (Serializable) switchingT);
+        bundle.putSerializable("eputyTable", (Serializable) deputyt);
+        bundle.putSerializable("BiPointerTable", (Serializable) biPointerT);
+        bundle.putSerializable("ClassTable", (Serializable) classTable);
+
+        intent.putExtras(bundle);
+        context.startActivity(intent);
 
 
     }
