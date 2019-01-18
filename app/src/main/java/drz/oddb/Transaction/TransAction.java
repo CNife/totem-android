@@ -1,6 +1,5 @@
 package drz.oddb.Transaction;
 
-import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
@@ -35,7 +34,7 @@ public class TransAction {
         mem.saveBiPointerTable(biPointerT);
         mem.saveSwitchingTable(switchingT);
 
-        mem.exitFlush();
+        mem.flush();
     }
 
 

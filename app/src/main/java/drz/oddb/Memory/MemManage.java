@@ -15,45 +15,36 @@ import drz.oddb.Transaction.SystemTable.*;
 import drz.oddb.Transaction.SystemTable.ObjectTable;
 
 public class MemManage {
-    final private int attrstringlen=8; //属性最大字符串长度
+    final private int attrstringlen=8; //属性最大字符串长度为8Byte
     final private int bufflength=1000;//缓冲区大小为1000个块
     final private int blocklength=8*1024;//块大小为8KB
 
-    private List<sbufesc> FreeList = new ArrayList<>();		//构建缓冲区freeList
-    private ByteBuffer MemBuff=ByteBuffer.allocateDirect(blocklength*bufflength);//buff
-    private boolean[] buffuse=new boolean[bufflength];
+    private List<sbufesc> FreeList = new ArrayList<>();		//构建缓冲区指针
+    private ByteBuffer MemBuff=ByteBuffer.allocateDirect(blocklength*bufflength);//分配blocklength*bufflength大小的缓冲区
+    private boolean[] buffuse=new boolean[bufflength];//缓冲区可用状态表，true为可用
     private int blockmaxnum=0;
     private Random random;
 
     public MemManage(){
-        initbuffues();
-        blockmaxnum=loadBlockMaxNum();
-        random=new Random();
+        initbuffues();//初始化缓冲区状态表
+        blockmaxnum=loadBlockMaxNum();//从磁盘加载最大块号
+        random=new Random();//创建随机数生成器
     }
 
-    public void exitFlush(){
-        saveBlockMaxNum();
-        sbufesc sbu=new sbufesc();
-        for(int i=0;i<FreeList.size();i++){
-            sbu=FreeList.get(i);
-            if(sbu.flag){
+    //退出时刷新数据到磁盘
+    public void flush() {
+        saveBlockMaxNum();//将缓冲区最大块号存入磁盘
+        sbufesc sbu = new sbufesc();
+        for (int i = 0; i < FreeList.size(); i++) {
+            sbu = FreeList.get(i);
+            if (sbu.flag) {
                 save(sbu.blockNum);
             }
-        }
-    }
-
-    public void logFlush(){
-        saveBlockMaxNum();
-        sbufesc sbu=new sbufesc();
-        for(int i=0;i<FreeList.size();i++){
-            sbu=FreeList.get(i);
-            if(sbu.flag){
-                save(sbu.blockNum);
-            }
-        }
+        }//将缓冲区存入磁盘
         saveLog();
     }
 
+    //删除元组
     public void deleteTuple(){}
 
     public SwitchingTable loadSwitchingTable(){
@@ -599,6 +590,7 @@ public class MemManage {
         return newblocksb;
     }
 
+    //删除缓冲区块指针
     private boolean delete(int x){
         for(int i=0;i<FreeList.size();i++){
             if(FreeList.get(i).buf_id==x){
