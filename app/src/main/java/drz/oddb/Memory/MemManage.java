@@ -36,7 +36,7 @@ public class MemManage {
     //刷新数据到磁盘
     public void flush() {
         saveBlockSpace();//将块信息存入磁盘
-        buffPointer sbu = new buffPointer();
+        buffPointer sbu;
         for (int i = 0; i < BuffPointerList.size(); i++) {
             sbu = BuffPointerList.get(i);
             if (sbu.flag) {
@@ -54,7 +54,7 @@ public class MemManage {
 
     public SwitchingTable loadSwitchingTable(){
         SwitchingTable ret=new SwitchingTable();
-        SwitchingTableItem temp=null;
+        SwitchingTableItem temp;
         File switab=new File("/data/data/drz.oddb/transaction/switchingtable");
         if(!switab.exists()){
             return ret;
@@ -69,6 +69,7 @@ public class MemManage {
                     temp.rule = byte2str(buff, attrstringlen*2, attrstringlen);
                     ret.switchingTable.add(temp);
                 }
+                input.close();
             } catch (FileNotFoundException e) {
                 e.printStackTrace();
             } catch (IOException e) {
@@ -83,10 +84,10 @@ public class MemManage {
         if(!switab.exists()){
             File path=switab.getParentFile();
             if(!path.exists()){
-                path.mkdirs();
+                if(path.mkdirs())System.out.println("创建路径/data/data/drz.oddb/transaction/成功！");
             }
             try {
-                switab.createNewFile();
+                if(switab.createNewFile())System.out.println("创建文件/data/data/drz.oddb/transaction/switchingtable成功！");
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -114,7 +115,7 @@ public class MemManage {
 
     public BiPointerTable loadBiPointerTable() {
         BiPointerTable ret=new BiPointerTable();
-        BiPointerTableItem temp=null;
+        BiPointerTableItem temp;
         File bitab=new File("/data/data/drz.oddb/transaction/bipointertable");
         if(!bitab.exists()){
             return ret;
@@ -130,6 +131,7 @@ public class MemManage {
                     temp.deputyobjectid = bytes2Int(buff, 12, 4);
                     ret.biPointerTable.add(temp);
                 }
+                input.close();
             } catch (FileNotFoundException e) {
                 e.printStackTrace();
             } catch (IOException e) {
@@ -144,10 +146,10 @@ public class MemManage {
         if(!bitab.exists()){
             File path=bitab.getParentFile();
             if(!path.exists()){
-                path.mkdirs();
+                if(path.mkdirs())System.out.println("创建路径/data/data/drz.oddb/transaction/成功！");
             }
             try {
-                bitab.createNewFile();
+                if(bitab.createNewFile())System.out.println("创建文件/data/data/drz.oddb/transaction/bipointertable成功！");
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -177,7 +179,7 @@ public class MemManage {
 
     public DeputyTable loadDeputyTable(){
         DeputyTable ret = new DeputyTable();
-        DeputyTableItem temp=null;
+        DeputyTableItem temp;
         File deputytab=new File("/data/data/drz.oddb/transaction/deputytable");
         if(!deputytab.exists()){
             return ret;
@@ -195,6 +197,7 @@ public class MemManage {
                     temp.deputyrule[2] = byte2str(buff, 8+attrstringlen*2, attrstringlen);
                     ret.deputyTable.add(temp);
                 }
+                input.close();
             } catch (FileNotFoundException e) {
                 e.printStackTrace();
             } catch (IOException e) {
@@ -209,10 +212,10 @@ public class MemManage {
         if(!deputytab.exists()){
             File path=deputytab.getParentFile();
             if(!path.exists()){
-                path.mkdirs();
+                if(path.mkdirs())System.out.println("创建路径/data/data/drz.oddb/transaction/成功！");
             }
             try {
-                deputytab.createNewFile();
+                if(deputytab.createNewFile())System.out.println("创建文件/data/data/drz.oddb/transaction/deputytable成功！");
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -245,7 +248,7 @@ public class MemManage {
 
     public ClassTable loadClassTable(){
         ClassTable ret = new ClassTable();
-        ClassTableItem temp=null;
+        ClassTableItem temp;
         File classtab=new File("/data/data/drz.oddb/transaction/classtable");
         if(!classtab.exists()){
             return ret;
@@ -253,8 +256,9 @@ public class MemManage {
             try {
                 FileInputStream input = new FileInputStream(classtab);
                 byte[] x=new byte[4];
-                input.read(x,0,4);
-                ret.maxid=bytes2Int(x,0,4);
+                if(input.read(x,0,4)!=-1){
+                    ret.maxid=bytes2Int(x,0,4);
+                }
                 byte[] buff = new byte[12+attrstringlen*3];
                 while (input.read(buff, 0, 12+attrstringlen*3) != -1) {
                     temp = new ClassTableItem();
@@ -281,10 +285,10 @@ public class MemManage {
             File path=classtab.getParentFile();
             System.out.println(path.getAbsolutePath());
             if(!path.exists()){
-                path.mkdirs();
+                if(path.mkdirs())System.out.println("创建路径/data/data/drz.oddb/transaction/成功！");
             }
             try {
-                classtab.createNewFile();
+                if(classtab.createNewFile())System.out.println("创建路径/data/data/drz.oddb/transaction/classtable成功！");
                 System.out.println("创建文件成功！");
             } catch (IOException e) {
                 System.out.println("创建文件失败！");
@@ -325,7 +329,7 @@ public class MemManage {
 
     public ObjectTable loadObjectTable(){
         ObjectTable ret = new ObjectTable();
-        ObjectTableItem temp=null;
+        ObjectTableItem temp;
         File objtab=new File("/data/data/drz.oddb/transaction/objecttable");
         if(!objtab.exists()){
             return ret;
@@ -344,6 +348,7 @@ public class MemManage {
                     temp.offset=bytes2Int(buff,12,4);
                     ret.objectTable.add(temp);
                 }
+                input.close();
             } catch (FileNotFoundException e) {
                 e.printStackTrace();
             } catch (IOException e) {
@@ -358,10 +363,10 @@ public class MemManage {
         if(!objtab.exists()){
             File path=objtab.getParentFile();
             if(!path.exists()){
-                path.mkdirs();
+                if(path.mkdirs())System.out.println("创建路径/data/data/drz.oddb/transaction/成功！");
             }
             try {
-                objtab.createNewFile();
+                if(objtab.createNewFile())System.out.println("创建路径/data/data/drz.oddb/transaction/objecttable成功！");
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -453,7 +458,7 @@ public class MemManage {
             for(int i=0;i<4;i++){
                 MemBuff.put(p.buf_id*blocklength+spaceend+i,hea[i]);
             }
-            byte[] str=null;
+            byte[] str;
             for(int i=0;i<t.tupleHeader;i++){
                 str=str2Bytes(t.tuple[i].toString());
                 for(int j=0;j<attrstringlen;j++){
@@ -483,7 +488,7 @@ public class MemManage {
             for(int i=0;i<4;i++){
                 MemBuff.put(p.buf_id*blocklength+spaceend+i,hea[i]);
             }
-            byte[] str=null;
+            byte[] str;
             for(int i=0;i<t.tupleHeader;i++){
                 str=str2Bytes(t.tuple[i].toString());
                 for(int j=0;j<attrstringlen;j++){
@@ -509,10 +514,10 @@ public class MemManage {
         if(!file.exists()){
             File path=file.getParentFile();
             if(!path.exists()){
-                path.mkdirs();
+                if(path.mkdirs())System.out.println("创建路径/data/data/drz.oddb/Log/成功！");
             }
             try {
-                file.createNewFile();
+                if(file.createNewFile())System.out.println("创建成功！");
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -540,7 +545,7 @@ public class MemManage {
 
     public  LogTable loadLog(int logid){
         LogTable log=new LogTable();
-        LogTableItem temp=null;
+        LogTableItem temp;
         File file=new File("/data/data/drz.oddb/Log/"+logid);
         if(!file.exists()){
             return null;
@@ -573,10 +578,10 @@ public class MemManage {
         if(!file.exists()){
             File path=file.getParentFile();
             if(!path.exists()){
-                path.mkdirs();
+                if(path.mkdirs())System.out.println("创建路径/data/data/drz.oddb/Log/成功！");
             }
             try {
-                file.createNewFile();
+                if(file.createNewFile())System.out.println("创建成功！");
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -630,18 +635,19 @@ public class MemManage {
         if(!file.exists()){
             File path=file.getParentFile();
             if(!path.exists()){
-                path.mkdirs();
+                if(path.mkdirs())System.out.println("创建路径/data/data/drz.oddb/Memory/成功！");
                 System.out.println("创建文件夹成功！");
             }
             try {
-                file.createNewFile();
-                System.out.println("创建文件成功！");
+                if(file.createNewFile()) {
+                    System.out.println("创建文件成功！");
+                }
             } catch (IOException e) {
                 System.out.println("创建文件失败！");
                 e.printStackTrace();
             }
         }
-        int offset=-1;
+        int offset;
         try {
             BufferedOutputStream output=new BufferedOutputStream(new FileOutputStream(file));
             byte[] buff=new byte[blocklength];
@@ -690,6 +696,7 @@ public class MemManage {
                     MemBuff.put(offset+i,temp[i]);
                 }
                 BuffPointerList.add(0,Free);
+                input.close();
                 return Free;
             } catch (FileNotFoundException e) {
                 e.printStackTrace();
@@ -763,7 +770,7 @@ public class MemManage {
 
     //寻找块
     private buffPointer findBlock(int x){
-        buffPointer ret=null;
+        buffPointer ret;
         for(int i = 0; i< BuffPointerList.size(); i++) {
             ret = BuffPointerList.get(i);
             if (ret.blockNum == x) {
@@ -805,10 +812,10 @@ public class MemManage {
         if(!file.exists()){
             File path=file.getParentFile();
             if(!path.exists()){
-                path.mkdirs();
+                if(path.mkdirs())System.out.println("创建路径/data/data/drz.oddb/Memory/成功！");
             }
             try {
-                file.createNewFile();
+                if(file.createNewFile())System.out.println("创建成功");
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -852,7 +859,7 @@ public class MemManage {
     }
 
     private String byte2str(byte[] b,int off,int len){
-        String s="";
+        String s;
         int k=0;
         for(int i=off;i<off+len;i++){
             if(b[i]!=32){
