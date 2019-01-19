@@ -1,20 +1,35 @@
-CREATE SELECTDEPUTY aa SELECT  b1+2 AS c1,b2 AS c2,b3+1 AS c3 FROM  bb WHERE t1="1" ;
-2,3,aa,b1,b2,b3,bb,t1,=,"1"
+CREATE CLASS company (name char,age int, salary int);
+INSERT INTO company VALUES ("aa",20,8000);
+INSERT INTO company VALUES ("bb",30,8000);
+INSERT INTO company VALUES ("cc",30,8000);
+INSERT INTO company VALUES ("dd",20,1000);
+INSERT INTO company VALUES ("ee",20,1000);
+INSERT INTO company VALUES ("ff",30,1000);
 
-SELECT  b1+2 AS c1,b2 AS c2,b3+1 AS c3 FROM  bb WHERE t1="1";
-6,3,b1,b2,b3,bb,t1,=,"1"
+CREATE SELECTDEPUTY nandb SELECT name AS n1,age+5 AS birth FROM company WHERE age=20;
 
-INSERT INTO aa VALUES (1,2,"3");
-4,3,1,2,"3"
+ //更新迁移
+INSERT INTO company VALUES ("gg",20,3000);
+DELETE FROM company WHERE name="aa";
 
-DELETE FROM bb WHERE t4="5SS";
-5,bb,t4,=,"5SS"
+//虚属性
+CREATE SELECTDEPUTY nands SELECT name AS n,salary+10 AS s FROM company WHERE salary=1000;
 
-CREATE CLASS dZ123 (nB1 int,nB2 char) ;
-1,2,dZ123,nB1,int,nB2,char
+SELECT n AS names,s AS salarys FROM nands WHERE n="ff";
+SELECT name AS n,age AS a,salary AS s FROM company WHERE age=20;
+SELECT name AS n,salary AS s FROM company WHERE age=20;
+//跨类查询
+SELECT company -> nandb.n1 FROM company WHERE salary=1000;
 
-DROP CLASS asd;
-3,asd
+DROP CLASS nandb;
+DROP CLASS company; //有代理类
 
-SELECT popSinger -> singer.nation  FROM popSinger WHERE singerName = "JayZhou";
-7,2,popSinger,singer,nation,popSinger,singerName,=,"JayZhou"3
+
+
+
+
+
+
+
+
+

@@ -19,28 +19,22 @@ public class MemManage {
     final private int attrstringlen=8; //属性最大字符串长度为8Byte
     final private int bufflength=1000;//缓冲区大小为1000个块
     final private int blocklength=8*1024;//块大小为8KB
-    /*
-    final private int num_per_logbuff=20;
-    final private int maxloglength=200;
-    final private int logblocklength=num_per_logbuff*maxloglength;
-    */
 
     private List<buffPointer> BuffPointerList = new ArrayList<>();		//构建缓冲区指针表
     private ByteBuffer MemBuff=ByteBuffer.allocateDirect(blocklength*bufflength);//分配blocklength*bufflength大小的缓冲区
-    //private ByteBuffer LogBuff=ByteBuffer.allocateDirect(logblocklength);//只分配一个缓冲区
     private boolean[] buffuse=new boolean[bufflength];//缓冲区可用状态表，true为可用
-    private int blockmaxnum=0;
+    private int blockmaxnum=-1;//最大的块号
+    private int[] blockspace=new int[10];//块空闲空间信息
 
-    //private int logblockmaxnum=0;
 
     public MemManage(){
         initbuffues();//初始化缓冲区状态表
-        blockmaxnum=loadBlockMaxNum();//从磁盘加载最大块号
+        loadBlockSpace();//从磁盘加载块信息
     }
 
     //退出时刷新数据到磁盘
     public void flush() {
-        saveBlockMaxNum();//将缓冲区最大块号存入磁盘
+        saveBlockSpace();//将块信息存入磁盘
         buffPointer sbu = new buffPointer();
         for (int i = 0; i < BuffPointerList.size(); i++) {
             sbu = BuffPointerList.get(i);
@@ -396,33 +390,27 @@ public class MemManage {
         }
         return false;
     }
-    /*
-    public LogTable loadLogTable(){
-        LogTable ret=null;
-        //todo
-        return ret;
-    }
 
-    public boolean savaLogTable(LogTable tab){
-        //todo
-        return true;
-    }
-    */
     public Tuple readTuple(int blocknum,int offset){
         Tuple ret=new Tuple();
         buffPointer s=null;
         if((s=findBlock(blocknum))==null){
             s=load(blocknum);
         }
+        byte[] sta=new byte[4];
+        for(int i=0;i<4;i++){
+            MemBuff.get(s.buf_id*blocklength+offset+i);
+        }
+        int start=bytes2Int(sta,0,4);
         byte[] header=new byte[4];
         for(int i=0;i<4;i++){
-            header[i]=MemBuff.get(s.buf_id*blocklength+offset+i);
+            header[i]=MemBuff.get(s.buf_id*blocklength+start+i);
         }
         ret.tupleHeader=bytes2Int(header,0,4);
         ret.tuple=new java.lang.Object[ret.tupleHeader];
         byte[] temp=new byte[ret.tupleHeader*attrstringlen];
         for(int i=0;i<ret.tupleHeader*attrstringlen;i++){
-            temp[i]=MemBuff.get(s.buf_id*blocklength+offset+4+i);
+            temp[i]=MemBuff.get(s.buf_id*blocklength+start+4+i);
         }
         for(int i=0;i<ret.tupleHeader;i++){
             String str=byte2str(temp,i*attrstringlen,attrstringlen);
@@ -433,69 +421,95 @@ public class MemManage {
 
     public int[] writeTuple(Tuple t){
         int [] ret=new int[2];
-        buffPointer buffPointer=new buffPointer();
-        if((buffPointer=findBlock(blockmaxnum))==null){
-            if((buffPointer=load(blockmaxnum))==null){
-                buffPointer=creatBlock();
+        int tuplelength=4+attrstringlen*t.tupleHeader;
+        buffPointer p=null;
+        int k=-1;
+        if(blockspace!=null){
+            for(int i=0;i<=blockmaxnum;i++){
+                if(blockspace[i]>=8+tuplelength){
+                    k=i;
+                    break;
+                }
             }
         }
-        byte[] x=new byte[4];
-        for(int i=0;i<4;i++){
-            x[i]=MemBuff.get(buffPointer.buf_id*blocklength+i);
-        }
-        int spacestart=bytes2Int(x,0,4);
-        if((blocklength-spacestart)>(4+attrstringlen*t.tupleHeader)){
-            ret[0]=blockmaxnum;
+        if(k!=-1){
+            blockspace[k]=blockspace[k]-tuplelength-4;
+            p=findBlock(k);
+            byte[] x=new byte[4];
+            for(int i=0;i<4;i++){
+                x[i]=MemBuff.get(p.buf_id*blocklength+i);
+            }
+            int spacestart=bytes2Int(x,0,4);
+            for(int i=0;i<4;i++){
+                x[i]=MemBuff.get(p.buf_id*blocklength+i);
+            }
+            int spaceend=bytes2Int(x,0,4);
+            ret[0]=k;
             ret[1]=spacestart;
-            buffPointer.flag=true;
+            spacestart=spacestart+4;
+            spaceend=spaceend-tuplelength;
+            p.flag=true;
             byte[] hea=int2Bytes(t.tupleHeader,4);
             for(int i=0;i<4;i++){
-                MemBuff.put(buffPointer.buf_id*blocklength+spacestart+i,hea[i]);
+                MemBuff.put(p.buf_id*blocklength+spaceend+i,hea[i]);
             }
             byte[] str=null;
             for(int i=0;i<t.tupleHeader;i++){
                 str=str2Bytes(t.tuple[i].toString());
                 for(int j=0;j<attrstringlen;j++){
-                    MemBuff.put(buffPointer.buf_id*blocklength+spacestart+4+i*attrstringlen+j,str[j]);
+                    MemBuff.put(p.buf_id*blocklength+spaceend+4+i*attrstringlen+j,str[j]);
                 }
             }
-            byte[] sp=int2Bytes(spacestart+4+t.tupleHeader*attrstringlen,4);
+            byte[] sp=int2Bytes(spacestart,4);
             for(int i=0;i<4;i++){
-                MemBuff.put(buffPointer.buf_id*blocklength+i,sp[i]);
+                MemBuff.put(p.buf_id*blocklength+i,sp[i]);
             }
-            updateBufferPointerSequence(buffPointer);
+            sp=int2Bytes(spaceend,4);
+            for(int i=0;i<4;i++){
+                MemBuff.put(p.buf_id*blocklength+4+i,sp[i]);
+                MemBuff.put(p.buf_id*blocklength+spacestart-4+i,sp[i]);
+            }
+            updateBufferPointerSequence(p);
             return ret;
         }else{
-            buffPointer=creatBlock();
+            p=creatBlock();
+            blockspace[blockmaxnum]=blockspace[blockmaxnum]-tuplelength-4;
             ret[0]=blockmaxnum;
-            ret[1]=4;
-            buffPointer.flag=true;
+            ret[1]=8;
+            int spacetart=12;
+            int spaceend=blocklength-tuplelength;
+            p.flag=true;
             byte[] hea=int2Bytes(t.tupleHeader,4);
             for(int i=0;i<4;i++){
-                MemBuff.put(buffPointer.buf_id*blocklength+4+i,hea[i]);
+                MemBuff.put(p.buf_id*blocklength+spaceend+i,hea[i]);
             }
-            byte []str=null;
+            byte[] str=null;
             for(int i=0;i<t.tupleHeader;i++){
                 str=str2Bytes(t.tuple[i].toString());
                 for(int j=0;j<attrstringlen;j++){
-                    MemBuff.put(buffPointer.buf_id*blocklength+4+4+i*attrstringlen+j,str[j]);
+                    MemBuff.put(p.buf_id*blocklength+spaceend+4+i*attrstringlen+j,str[j]);
                 }
             }
-            byte[] sp=int2Bytes(4+4+t.tupleHeader*attrstringlen,4);
+            byte[] sp=int2Bytes(spacetart,4);
             for(int i=0;i<4;i++){
-                MemBuff.put(buffPointer.buf_id*blocklength+i,sp[i]);
+                MemBuff.put(p.buf_id*blocklength+i,sp[i]);
             }
-            updateBufferPointerSequence(buffPointer);
+            sp=int2Bytes(spaceend,4);
+            for(int i=0;i<4;i++){
+                MemBuff.put(p.buf_id*blocklength+4+i,sp[i]);
+                MemBuff.put(p.buf_id*blocklength+spacetart-4+i,sp[i]);
+            }
+            updateBufferPointerSequence(p);
             return ret;
         }
     }
 
-    private boolean saveLog(){
+    public boolean saveLog(){
         //TODO
         return true;
     }
 
-    private void loadLog(){
+    public  void loadLog(){
         //TODO
     }
 
@@ -593,6 +607,7 @@ public class MemManage {
         }
     }
 
+    //创建块
     private buffPointer creatBlock(){
         buffPointer newblockpointer=new buffPointer();
         if(BuffPointerList.size()==bufflength) {
@@ -609,10 +624,30 @@ public class MemManage {
             }
         }
         blockmaxnum++;
+        if(blockspace!=null){
+            int[] s=new int[blockmaxnum+1];
+            for(int i=0;i<blockmaxnum;i++){
+                s[i]=blockspace[i];
+            }
+            s[blockmaxnum]=blocklength-8;
+            blockspace=s;
+        }else{
+            blockspace=new int[1];
+            blockspace[0]=blocklength-8;
+        }
         newblockpointer.blockNum=blockmaxnum;
         newblockpointer.flag=true;
-        byte[] header=int2Bytes(4,4);
-        for(int i=0;i<4;i++){
+        byte[] header=new byte[8];
+        byte[] start=int2Bytes(8,4);
+        byte[] end=int2Bytes(blocklength,4);
+        for(int i=0;i<8;i++){
+            if(i<4){
+                header[i]=start[i];
+            }else{
+                header[i]=end[i-4];
+            }
+        }
+        for(int i=0;i<8;i++){
             MemBuff.put(newblockpointer.buf_id*blocklength+i,header[i]);
         }
         byte x=(byte)32;
@@ -621,17 +656,6 @@ public class MemManage {
         }
         BuffPointerList.add(0,newblockpointer);
         return newblockpointer;
-    }
-
-    //删除缓冲区块指针
-    private boolean delete(int x){
-        for(int i = 0; i< BuffPointerList.size(); i++){
-            if(BuffPointerList.get(i).buf_id==x){
-                BuffPointerList.remove(i);
-                return true;
-            }
-        }
-        return false;
     }
 
     private buffPointer findBlock(int x){
@@ -645,29 +669,33 @@ public class MemManage {
         return null;
     }
 
-    private int loadBlockMaxNum(){
-        int ret=0;
-        File file=new File("/data/data/drz.oddb/Memory/blocknum");
+    private void loadBlockSpace(){
+        File file=new File("/data/data/drz.oddb/Memory/blockspace");
         if(file.exists()){
             try {
                 FileInputStream input=new FileInputStream(file);
                 byte[] temp=new byte[4];
                 input.read(temp,0,4);
-                ret=bytes2Int(temp,0,4);
-                return ret;
+                blockmaxnum=bytes2Int(temp,0,4);
+                blockspace=new int[blockmaxnum+1];
+                for(int i=0;i<=blockmaxnum;i++){
+                    input.read(temp,0,4);
+                    blockspace[i]=bytes2Int(temp,0,4);
+                }
+                input.close();
+
             } catch (FileNotFoundException e) {
                 e.printStackTrace();
             } catch (IOException e) {
                 e.printStackTrace();
             }
-            return 0;
         }else{
-            return 0;
+            blockspace=null;
         }
     }
 
-    private boolean saveBlockMaxNum(){
-        File file=new File("/data/data/drz.oddb/Memory/blocknum");
+    private boolean saveBlockSpace(){
+        File file=new File("/data/data/drz.oddb/Memory/blockspace");
         if(!file.exists()){
             File path=file.getParentFile();
             if(!path.exists()){
@@ -680,9 +708,14 @@ public class MemManage {
             }
         }
         try {
-            FileOutputStream output=new FileOutputStream(file);
+            BufferedOutputStream output=new BufferedOutputStream(new FileOutputStream(file));
             byte[] temp=int2Bytes(blockmaxnum,4);
             output.write(temp,0,4);
+            for(int i=0;i<=blockmaxnum;i++){
+                temp=int2Bytes(blockspace[i],4);
+                output.write(temp,0,4);
+            }
+            output.flush();
             output.close();
             return true;
         } catch (FileNotFoundException e) {
@@ -692,18 +725,7 @@ public class MemManage {
         }
         return false;
     }
-    /*
-    private int loadLogBlockMaxNum(){
-        int ret = 0;
-        //todo
-        return ret;
-    }
 
-    private boolean saveLogBlockMaxNum(){
-        //todo
-        return true;
-    }
-    */
     private byte[] str2Bytes(String s){
         byte[] ret=new byte[attrstringlen];
         byte[] temp=s.getBytes();

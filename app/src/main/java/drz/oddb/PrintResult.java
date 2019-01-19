@@ -1,7 +1,7 @@
 package drz.oddb;
 
 import android.content.Intent;
-import android.graphics.Color;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.Gravity;
@@ -10,10 +10,7 @@ import android.widget.TableLayout;
 import android.widget.TableRow;
 import android.widget.TextView;
 
-import drz.*;
 import drz.oddb.Memory.TupleList;
-
-import java.util.ArrayList;
 
 
 public class PrintResult extends AppCompatActivity {
@@ -67,10 +64,12 @@ public class PrintResult extends AppCompatActivity {
                     }
                 }
                 tv.setGravity(Gravity.CENTER);
+                tv.setBackgroundResource(R.drawable.tab_bg);
+                tv.setTextSize(25);
 
                 tableRow.addView(tv);
             }
-            rst_tab.addView(tableRow,new TableLayout.LayoutParams(W,M));
+            rst_tab.addView(tableRow,new TableLayout.LayoutParams(M,W));
         }
 
     }
