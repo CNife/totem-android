@@ -10,10 +10,13 @@ import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.Toast;
 
+import java.util.ArrayList;
+
 import drz.oddb.Transaction.SystemTable.ObjectTable;
 
 public class TableDetail extends AppCompatActivity {
-    private String[] objects = new String[20];
+    private ArrayList<String> array = new ArrayList<String> ();
+    String[] objects = array.toArray(new String[0]);
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
