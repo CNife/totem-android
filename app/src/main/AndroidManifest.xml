@@ -32,14 +32,16 @@
         </activity>
 
         <activity
-            android:name=".ShowClass"
-            android:label="ShowClass"
+            android:name=".ShowTable"
+            android:label="ShowTable"
             android:launchMode="singleTask"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
-            android:name=".ClassDetail"
+            android:name=".TableDetail"
             android:label="ClassDetail"
-            android:theme="@style/AppTheme.NoActionBar"></activity>
+            android:theme="@style/AppTheme.NoActionBar">
+
+        </activity>
     </application>
 
 

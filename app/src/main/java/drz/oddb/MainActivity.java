@@ -61,6 +61,17 @@ public class MainActivity extends AppCompatActivity {
                 stopService(music);
             }
         });
+
+        //展示按钮
+        Button show_button = findViewById(R.id.showbutton);
+        show_button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                onStop();
+                Intent intent = new Intent(MainActivity.this,ShowTable.class);
+                startActivity(intent);
+            }
+        });
     }
     protected void onStop(){
         Intent intent = new Intent(MainActivity.this,MusicServer.class);

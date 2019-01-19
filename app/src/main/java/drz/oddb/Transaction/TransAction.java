@@ -2,7 +2,6 @@ package drz.oddb.Transaction;
 
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.drawable.InsetDrawable;
 import android.os.Bundle;
 
 import java.io.ByteArrayInputStream;
@@ -16,7 +15,7 @@ import drz.oddb.Memory.*;
 
 
 import drz.oddb.PrintResult;
-import drz.oddb.ShowClass;
+import drz.oddb.ShowTable;
 import drz.oddb.Transaction.SystemTable.*;
 
 import drz.oddb.parse.*;
@@ -47,7 +46,6 @@ public class TransAction {
         mem.saveLog(log.LogT);
         mem.flush();
     }
-
 
     public void Test(){
         TupleList tpl = new TupleList();
@@ -730,16 +728,16 @@ public class TransAction {
         return;
     }
     private void PrintClass(ObjectTable topt,SwitchingTable switchingT,DeputyTable deputyt,BiPointerTable biPointerT,ClassTable classTable){
-        Intent intent = new Intent(context, ShowClass.class);
+        Intent intent = new Intent(context, ShowTable.class);
 
-        Bundle bundle = new Bundle();
-        bundle.putSerializable("ObjectTable", (Serializable) topt);
-        bundle.putSerializable("SwitchingTable", (Serializable) switchingT);
-        bundle.putSerializable("eputyTable", (Serializable) deputyt);
-        bundle.putSerializable("BiPointerTable", (Serializable) biPointerT);
-        bundle.putSerializable("ClassTable", (Serializable) classTable);
+        Bundle bundle0 = new Bundle();
+        bundle0.putSerializable("ObjectTable", (Serializable) topt);
+        bundle0.putSerializable("SwitchingTable", (Serializable) switchingT);
+        bundle0.putSerializable("eputyTable", (Serializable) deputyt);
+        bundle0.putSerializable("BiPointerTable", (Serializable) biPointerT);
+        bundle0.putSerializable("ClassTable", (Serializable) classTable);
 
-        intent.putExtras(bundle);
+        intent.putExtras(bundle0);
         context.startActivity(intent);
 
 
