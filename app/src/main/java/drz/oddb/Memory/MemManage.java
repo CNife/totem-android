@@ -601,6 +601,7 @@ public class MemManage {
         }
     }
 
+    //初始化缓冲区使用位图
     private void initbuffues(){
         for(int i=0;i<bufflength;i++){
             buffuse[i]=true;
@@ -658,6 +659,7 @@ public class MemManage {
         return newblockpointer;
     }
 
+    //寻找块
     private buffPointer findBlock(int x){
         buffPointer ret=null;
         for(int i = 0; i< BuffPointerList.size(); i++) {
@@ -669,6 +671,7 @@ public class MemManage {
         return null;
     }
 
+    //从磁盘加载块空间信息
     private void loadBlockSpace(){
         File file=new File("/data/data/drz.oddb/Memory/blockspace");
         if(file.exists()){
@@ -694,6 +697,7 @@ public class MemManage {
         }
     }
 
+    //存入块空间信息到磁盘
     private boolean saveBlockSpace(){
         File file=new File("/data/data/drz.oddb/Memory/blockspace");
         if(!file.exists()){
