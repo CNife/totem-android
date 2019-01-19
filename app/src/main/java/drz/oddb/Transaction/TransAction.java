@@ -6,13 +6,16 @@ import android.graphics.drawable.InsetDrawable;
 import android.os.Bundle;
 
 import java.io.ByteArrayInputStream;
+import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 import drz.oddb.Memory.*;
 
 
 import drz.oddb.PrintResult;
+import drz.oddb.ShowClass;
 import drz.oddb.Transaction.SystemTable.*;
 
 import drz.oddb.parse.*;
@@ -166,14 +169,14 @@ public class TransAction {
                 String attrtype=null;
                 int attrid=0;
                 for(ClassTableItem item1:classt.classTable){
-                    if(item1.classid == classid&&item1.attrname == item.deputyrule[0]) {
+                    if(item1.classid == classid&&item1.attrname.equals(item.deputyrule[0])) {
                         attrtype = item1.attrtype;
                         attrid = item1.attrid;
                         break;
                     }
                 }
 
-                if(Condition(attrtype,tuple,attrid,item.deputyrule[3])){
+                if(Condition(attrtype,tuple,attrid,item.deputyrule[2])){
                     String[] ss= p.clone();
                     String s1 = null;
 
@@ -184,25 +187,36 @@ public class TransAction {
                         }
                     }
                     //是否要插switch的值
+                    //收集源类属性名
                     String[] attrname1 = new String[count];
                     int[] attrid1 = new int[count];
+                    int k=0;
                     for(ClassTableItem item3 : classt.classTable){
                         if(item3.classid == classid){
-                            int k = 0;
-                            for(; k<count;k++){
-                                attrname1[k] = item3.attrname;
-                                attrid1[k] = item3.attrid;
+                            attrname1[k] = item3.attrname;
+                            attrid1[k] = item3.attrid;
+                            k++;
 
-                            }
-                            if (k ==count-1)
+                            if (k ==count)
                                     break;
                         }
                     }
                     for (int l = 0;l<count;l++) {
                         for (SwitchingTableItem item4 : switchingT.switchingTable) {
                             if (item4.attr.equals(attrname1[l])){
-                                int sw = Integer.parseInt(p[3+attrid1[l]]);
-                                ss[3+attrid1[l]] = new Integer(sw+item4.rule).toString();
+                                //判断被置换的属性是否是代理类的
+
+                                for(ClassTableItem item8: classt.classTable){
+                                    if(item8.attrname.equals(item4.deputy)){
+                                        if(item8.classid==item.deputyid){
+                                            int sw = Integer.parseInt(p[3+attrid1[l]]);
+                                            ss[3+attrid1[l]] = new Integer(sw+Integer.parseInt(item4.rule)).toString();
+                                            break;
+                                        }
+                                    }
+                                }
+
+
                             }
                         }
                     }
@@ -249,7 +263,7 @@ public class TransAction {
         int attrid=0;
         String attrtype=null;
         for (ClassTableItem item:classt.classTable) {
-            if (item.classname == classname && item.attrname.equals(attrname)) {
+            if (item.classname.equals(classname) && item.attrname.equals(attrname)) {
                 classid = item.classid;
                 attrid = item.attrid;
                 attrtype = item.attrtype;
@@ -257,43 +271,77 @@ public class TransAction {
             }
         }
         //寻找需要删除的
-        for (ObjectTableItem item:topt.objectTable){
+        OandB ob2 = new OandB();
+        for (Iterator it1 = topt.objectTable.iterator(); it1.hasNext();){
+            ObjectTableItem item = (ObjectTableItem)it1.next();
             if(item.classid == classid){
                 Tuple tuple = GetTuple(item.blockid,item.offset);
                 if(Condition(attrtype,tuple,attrid,p[4])){
                     //需要删除的元组
-                    DeletebyID(item.tupleid);
+                     OandB ob =new OandB(DeletebyID(item.tupleid));
+                    for(ObjectTableItem obj:ob.o){
+                        ob2.o.add(obj);
+                    }
+                    for(BiPointerTableItem bip:ob.b){
+                        ob2.b.add(bip);
+                    }
+
                 }
             }
         }
-
+        for(ObjectTableItem obj:ob2.o){
+            topt.objectTable.remove(obj);
+        }
+        for(BiPointerTableItem bip:ob2.b) {
+            topt.objectTable.remove(bip);
+        }
 
     }
 
-    private void DeletebyID(int id){
+    private OandB DeletebyID(int id){
 
-
-        for (ObjectTableItem item:topt.objectTable){
+        List<ObjectTableItem> todelete1 = new ArrayList<>();
+        List<BiPointerTableItem>todelete2 = new ArrayList<>();
+        OandB ob = new OandB(todelete1,todelete2);
+        for (Iterator it1 = topt.objectTable.iterator(); it1.hasNext();){
+            ObjectTableItem item  = (ObjectTableItem)it1.next();
             if(item.tupleid == id){
                 //需要删除的tuple
 
 
                 //删除代理类的元组
                 int deobid = 0;
-                for(BiPointerTableItem item1:biPointerT.biPointerTable){
-                    if(item.tupleid == item1.deputyid){
-                        biPointerT.biPointerTable.remove(item1);
+
+                for(Iterator it = biPointerT.biPointerTable.iterator(); it.hasNext();){
+                    BiPointerTableItem item1 =(BiPointerTableItem) it.next();
+                    if(item.tupleid == item1.deputyobjectid){
+                        //it.remove();
+                      if(!todelete2.contains(item1))
+                            todelete2.add(item1);
                     }
                     if(item.tupleid == item1.objectid){
                         deobid = item1.deputyobjectid;
-                        DeletebyID(deobid);
-                        biPointerT.biPointerTable.remove(item1);
+                        OandB ob2=new OandB(DeletebyID(deobid));
+
+                        for(ObjectTableItem obj:ob2.o){
+                            if(!todelete1.contains(obj))
+                                todelete1.add(obj);
+                        }
+                        for(BiPointerTableItem bip:ob2.b){
+                            if(!todelete2.contains(bip))
+                                todelete2.add(bip);
+                        }
+
+                        //biPointerT.biPointerTable.remove(item1);
+
                     }
                 }
 
+
                 //删除自身
                 DeleteTuple(item.blockid,item.offset);
-                topt.objectTable.remove(item);
+                if(!todelete2.contains(item));
+                    todelete1.add(item);
 
 
 
@@ -301,49 +349,89 @@ public class TransAction {
 
                 }
             }
+
+            return ob;
     }
 
     //DROP CLASS asd;
     //3,asd
-    private void Drop(String[] p){
+
+    private void Drop(String[]p){
+        List<DeputyTableItem> dti;
+        dti = Drop1(p);
+        for(DeputyTableItem item:dti){
+            deputyt.deputyTable.remove(item);
+        }
+    }
+
+    private List<DeputyTableItem> Drop1(String[] p){
         String classname = p[1];
         int classid = 0;
         //找到classid顺便 清除类表和switch表
-        for (ClassTableItem item:classt.classTable) {
-            if (item.classname == classname ){
+        for (Iterator it1 = classt.classTable.iterator(); it1.hasNext();) {
+            ClassTableItem item =(ClassTableItem) it1.next();
+            if (item.classname.equals(classname) ){
                 classid = item.classid;
-                for(SwitchingTableItem item2:switchingT.switchingTable) {
+                for(Iterator it = switchingT.switchingTable.iterator(); it.hasNext();) {
+                    SwitchingTableItem item2 =(SwitchingTableItem) it.next();
                     if (item2.attr.equals( item.attrname)||item2.deputy .equals( item.attrname)){
-                        switchingT.switchingTable.remove(item2);
+                       it.remove();
                     }
                 }
-                classt.classTable.remove(item);
+                it1.remove();
             }
         }
         //清元组表同时清了bi
+        OandB ob2 = new OandB();
         for(ObjectTableItem item1:topt.objectTable){
             if(item1.classid == classid){
-                DeletebyID(item1.tupleid);
-
+                OandB ob = DeletebyID(item1.tupleid);
+                for(ObjectTableItem obj:ob.o){
+                    ob2.o.add(obj);
+                }
+                for(BiPointerTableItem bip:ob.b){
+                    ob2.b.add(bip);
+                }
             }
         }
+        for(ObjectTableItem obj:ob2.o){
+            topt.objectTable.remove(obj);
+        }
+        for(BiPointerTableItem bip:ob2.b) {
+            biPointerT.biPointerTable.remove(bip);
+        }
+
         //清deputy
+        List<DeputyTableItem> dti = new ArrayList<>();
         for(DeputyTableItem item3:deputyt.deputyTable){
             if(item3.deputyid == classid){
-                deputyt.deputyTable.remove(item3);
+                if(!dti.contains(item3))
+                    dti.add(item3);
             }
             if(item3.originid == classid){
                 //删除代理类
                 String[]s = p.clone();
-                for(ClassTableItem item4: classt.classTable){
-                    if(item4.classid == item3.deputyid){
-                        s[1] = item4.classname;
-                        Drop(s);
+                List<String> sname = new ArrayList<>();
+                for(ClassTableItem item5: classt.classTable) {
+                    if (item5.classid == item3.deputyid) {
+                        sname.add(item5.classname);
                     }
                 }
-                deputyt.deputyTable.remove(item3);
+                for(String item4: sname){
+
+                        s[1] = item4;
+                        List<DeputyTableItem> dti2 = Drop1(s);
+                        for(DeputyTableItem item8:dti2){
+                            if(!dti.contains(item8))
+                                dti.add(item8);
+                        }
+
+                }
+                if(!dti.contains(item3))
+                    dti.add(item3);
             }
         }
+        return dti;
 
     }
 
@@ -354,14 +442,14 @@ public class TransAction {
     private TupleList DirectSelect(String[] p){
         TupleList tpl = new TupleList();
         int attrnumber = Integer.parseInt(p[1]);
-        String[] attrname = null;
-        int[] attrid = null;
-        String[] attrtype= null;
+        String[] attrname = new String[attrnumber];
+        int[] attrid = new int[attrnumber];
+        String[] attrtype= new String[attrnumber];
         String classname = p[2+4*attrnumber];
         int classid = 0;
         for(int i = 0;i < attrnumber;i++){
             for (ClassTableItem item:classt.classTable) {
-                if (item.classname == classname && item.attrname.equals(p[2+4*i])) {
+                if (item.classname.equals(classname) && item.attrname.equals(p[2+4*i])) {
                     classid = item.classid;
                     attrid[i] = item.attrid;
                     attrtype[i] = item.attrtype;
@@ -406,6 +494,9 @@ public class TransAction {
                     tpl.addTuple(tuple);
                 }
             }
+        }
+        for(int i =0;i<attrnumber;i++){
+            attrid[i]=i;
         }
         PrintSelectResult(tpl,attrname,attrid,attrtype);
         return tpl;
@@ -552,7 +643,7 @@ public class TransAction {
                 Tuple tuple = GetTuple(item1.blockid,item1.offset);
                 if(Condition(crossattrtype,tuple,crossattrid,con[2])){
                     for(BiPointerTableItem item3: biPointerT.biPointerTable){
-                        if(item1.tupleid == item3.objectid){
+                        if(item1.tupleid == item3.objectid&&item3.deputyid == classid){
                             for(ObjectTableItem item2: topt.objectTable){
                                 if(item2.tupleid == item3.deputyobjectid){
                                     Tuple ituple = GetTuple(item2.blockid,item2.offset);
@@ -593,7 +684,20 @@ public class TransAction {
         */
 
 
+    private class OandB{
+        public List<ObjectTableItem> o= new ArrayList<>();
+        public List<BiPointerTableItem> b= new ArrayList<>();
+        public OandB(){}
+        public OandB(OandB oandB){
+            this.o = oandB.o;
+            this.b = oandB.b;
+        }
 
+        public OandB(List<ObjectTableItem> o, List<BiPointerTableItem> b) {
+            this.o = o;
+            this.b = b;
+        }
+    }
 
 
 
@@ -612,6 +716,17 @@ public class TransAction {
         return;
     }
     private void PrintClass(ObjectTable topt,SwitchingTable switchingT,DeputyTable deputyt,BiPointerTable biPointerT,ClassTable classTable){
+        Intent intent = new Intent(context, ShowClass.class);
+
+        Bundle bundle = new Bundle();
+        bundle.putSerializable("ObjectTable", (Serializable) topt);
+        bundle.putSerializable("SwitchingTable", (Serializable) switchingT);
+        bundle.putSerializable("eputyTable", (Serializable) deputyt);
+        bundle.putSerializable("BiPointerTable", (Serializable) biPointerT);
+        bundle.putSerializable("ClassTable", (Serializable) classTable);
+
+        intent.putExtras(bundle);
+        context.startActivity(intent);
 
 
     }

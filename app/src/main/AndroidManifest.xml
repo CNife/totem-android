@@ -30,6 +30,17 @@
                 <category android:name="android.intent.category.DEFAULT"/>
             </intent-filter>
         </activity>
+
+        <activity
+            android:name=".ShowClass"
+            android:label="ShowClass"
+            android:launchMode="singleTask"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".ClassDetail"
+            android:label="ClassDetail"
+            android:theme="@style/AppTheme.NoActionBar"></activity>
     </application>
+
 
 </manifest>

@@ -29,8 +29,6 @@ public class MainActivity extends AppCompatActivity {
 
 
 
-    //BGM
-    private Intent intent = new Intent("com.angel.Android.MUSIC");
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -47,9 +45,9 @@ public class MainActivity extends AppCompatActivity {
         button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
-                //trans.Test();
-                trans.query(editText.getText().toString());
+                onStop();
+                trans.Test();
+                //trans.query(editText.getText().toString());
             }
         });
 
@@ -89,7 +87,7 @@ public class MainActivity extends AppCompatActivity {
                 public void onClick(DialogInterface dialog, int which) {
                 }
             });
-            dialog.show();
+            dialog.show_pressed();
         }
     }
     */
