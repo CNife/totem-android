@@ -37,13 +37,18 @@ public class MemManage {
     public boolean flush() {
         saveBlockSpace();//将块信息存入磁盘
         buffPointer sbu;
-        for (int i = 0; i < BuffPointerList.size(); i++) {
+        int i=0;
+        for (i=0; i < BuffPointerList.size(); i++) {
             sbu = BuffPointerList.get(i);
             if (sbu.flag) {
-                save(sbu);
+                if(!save(sbu))break;
             }
         }//将缓冲区存入磁盘
-        return true;
+        if(i==BuffPointerList.size()){
+            return true;
+        }else{
+            return false;
+        }
     }
 
     //删除元组
