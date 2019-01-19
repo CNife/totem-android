@@ -75,7 +75,7 @@ public class TransAction {
     }
 
     public String query(String s) {
-        if(redo==null) {
+        if(redo!=null) {
             int redonum = redo.logTable.size();   //先把redo指令加前面
             for (int i = 0; i < redonum; i++) {
                 s = redo.logTable.get(i) + s;
@@ -88,7 +88,7 @@ public class TransAction {
 
             switch (Integer.parseInt(aa[0])) {
                 case parse.OPT_CREATE_ORIGINCLASS:
-                    log.WriteLog(s);
+                    //log.WriteLog(s);
                     CreateOriginClass(aa);
                     break;
                 case parse.OPT_CREATE_SELECTDEPUTY:
