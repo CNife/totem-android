@@ -34,7 +34,7 @@ public class MemManage {
     }
 
     //刷新数据到磁盘
-    public void flush() {
+    public boolean flush() {
         saveBlockSpace();//将块信息存入磁盘
         buffPointer sbu;
         for (int i = 0; i < BuffPointerList.size(); i++) {
@@ -43,6 +43,7 @@ public class MemManage {
                 save(sbu);
             }
         }//将缓冲区存入磁盘
+        return true;
     }
 
     //删除元组
