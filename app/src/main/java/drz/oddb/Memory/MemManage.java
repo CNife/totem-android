@@ -12,6 +12,7 @@ import java.util.List;
 import java.util.Random;
 
 import drz.oddb.Log.LogTable;
+import drz.oddb.Log.LogTableItem;
 import drz.oddb.Transaction.SystemTable.*;
 import drz.oddb.Transaction.SystemTable.ObjectTable;
 
@@ -504,23 +505,114 @@ public class MemManage {
     }
 
     public boolean saveLog(LogTable log){
-        //TODO
-        return true;
+        File file=new File("/data/data/drz.oddb/Log/"+log.logID);
+        if(!file.exists()){
+            File path=file.getParentFile();
+            if(!path.exists()){
+                path.mkdirs();
+            }
+            try {
+                file.createNewFile();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+        try {
+            BufferedOutputStream output=new BufferedOutputStream(new FileOutputStream(file));
+            byte[] header=int2Bytes(log.check,4);
+            output.write(header,0,4);
+            for(int i=0;i<log.logTable.size();i++){
+                byte[] in1=int2Bytes(log.logTable.get(i).length,4);
+                output.write(in1,0,4);
+                byte[] logstr=log.logTable.get(i).str.getBytes();
+                output.write(logstr,0,log.logTable.get(i).str.length());
+            }
+            output.flush();
+            output.close();
+            return true;
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return false;
     }
 
-    public  LogTable loadLog(){
+    public  LogTable loadLog(int logid){
         LogTable log=new LogTable();
-        //TODO
-        return log;
+        LogTableItem temp=null;
+        File file=new File("/data/data/drz.oddb/Log/"+logid);
+        if(!file.exists()){
+            return null;
+        }else{
+            try {
+                FileInputStream input=new FileInputStream(file);
+                byte[] x=new byte[4];
+                input.read(x,0,4);
+                log.check=bytes2Int(x,0,4);
+                while((input.read(x,0,4)!=-1)){
+                    temp=new LogTableItem();
+                    temp.length=bytes2Int(x,0,4);
+                    byte[] y=new byte[temp.length];
+                    input.read(y,0,temp.length);
+                    temp.str=new String(y,0,temp.length);
+                    log.logTable.add(temp);
+                }
+                input.close();
+            } catch (FileNotFoundException e) {
+                e.printStackTrace();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            return log;
+        }
     }
 
-    public void check(int lognum){
-
+    public boolean check(int lognum){
+        File file=new File("/data/data/drz.oddb/Log/checklogid");
+        if(!file.exists()){
+            File path=file.getParentFile();
+            if(!path.exists()){
+                path.mkdirs();
+            }
+            try {
+                file.createNewFile();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+        try {
+            FileOutputStream output=new FileOutputStream(file);
+            byte[] check=int2Bytes(lognum,4);
+            output.write(check,0,4);
+            output.close();
+            return true;
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return  false;
     }
 
     public int loadCheck(){
         int ret=0;
-        return ret;
+        File file=new File("/data/data/drz.oddb/Log/checklogid");
+        if(!file.exists()){
+            return ret;
+        }else{
+            try {
+                FileInputStream input=new FileInputStream(file);
+                byte[] x=new byte[4];
+                input.read(x,0,4);
+                ret=bytes2Int(x,0,4);
+            } catch (FileNotFoundException e) {
+                e.printStackTrace();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            return ret;
+        }
     }
 
     private void updateBufferPointerSequence(buffPointer p){
