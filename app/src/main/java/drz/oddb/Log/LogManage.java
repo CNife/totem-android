@@ -6,8 +6,8 @@ public class LogManage {
 
     final private int MAXSIZE=20;
     private int checkpoint=0;
-    MemManage mem = null;
-    LogTable LogT = null;   //存放执行层创建LogManage时写入的日志(20个一组)
+    private MemManage mem = null;
+    public LogTable LogT = null;   //存放执行层创建LogManage时写入的日志(20个一组)
 
     //构造方法
     public LogManage(MemManage mem){
@@ -21,7 +21,7 @@ public class LogManage {
     }
 
     //分配事务ID,空方法
-    private void AllocateTID(){
+    public void AllocateTID(){
             //TODO
         }
 
@@ -32,7 +32,7 @@ public class LogManage {
     }
 
     //load日志块，找出需要redo的命令
-    public LogTable ReDo(){
+    public LogTable GetReDo(){
             LogTable ret = null;
             checkpoint = GetCheck();    //得到检查点id
             ret = mem.loadLog(checkpoint+1);   //加载可能redo的日志
@@ -69,7 +69,7 @@ public class LogManage {
         }
 
     //删除日志文件
-    public void clearLog(int lognum){
+    public void DeleteLog(int lognum){
         //todo
     }
 
