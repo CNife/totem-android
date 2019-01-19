@@ -32,7 +32,7 @@ public class MemManage {
         loadBlockSpace();//从磁盘加载块信息
     }
 
-    //退出时刷新数据到磁盘
+    //刷新数据到磁盘
     public void flush() {
         saveBlockSpace();//将块信息存入磁盘
         buffPointer sbu = new buffPointer();
@@ -42,7 +42,6 @@ public class MemManage {
                 save(sbu);
             }
         }//将缓冲区存入磁盘
-        saveLog();
     }
 
     //删除元组
@@ -504,13 +503,24 @@ public class MemManage {
         }
     }
 
-    public boolean saveLog(){
+    public boolean saveLog(LogTable log){
         //TODO
         return true;
     }
 
-    public  void loadLog(){
+    public  LogTable loadLog(){
+        LogTable log=new LogTable();
         //TODO
+        return log;
+    }
+
+    public void check(int lognum){
+
+    }
+
+    public int loadCheck(){
+        int ret=0;
+        return ret;
     }
 
     private void updateBufferPointerSequence(buffPointer p){
