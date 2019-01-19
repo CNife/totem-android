@@ -572,12 +572,13 @@ public class MemManage {
                     log.logTable.add(temp);
                 }
                 input.close();
+                return log;
             } catch (FileNotFoundException e) {
                 e.printStackTrace();
             } catch (IOException e) {
                 e.printStackTrace();
             }
-            return log;
+            return null;
         }
     }
 
