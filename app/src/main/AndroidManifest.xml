@@ -37,8 +37,32 @@
             android:launchMode="singleTask"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
-            android:name=".TableDetail"
-            android:label="ClassDetail"
+            android:name=".ShowObj"
+            android:label="ShowObj"
+            android:theme="@style/AppTheme.NoActionBar">
+
+        </activity>
+        <activity
+            android:name=".ShowSwi"
+            android:label="ShowSwi"
+            android:theme="@style/AppTheme.NoActionBar">
+
+        </activity>
+        <activity
+            android:name=".ShowDep"
+            android:label="ShowDep"
+            android:theme="@style/AppTheme.NoActionBar">
+
+        </activity>
+        <activity
+            android:name=".ShowBi"
+            android:label="ShowBi"
+            android:theme="@style/AppTheme.NoActionBar">
+
+        </activity>
+        <activity
+            android:name=".ShowCla"
+            android:label="ShowCla"
             android:theme="@style/AppTheme.NoActionBar">
 
         </activity>

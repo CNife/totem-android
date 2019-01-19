@@ -1,6 +1,8 @@
 package drz.oddb.Transaction.SystemTable;
 
-public class SwitchingTableItem {
+import java.io.Serializable;
+
+public class SwitchingTableItem implements Serializable {
     public String attr = null;
     public String deputy = null;
     public String rule = null;

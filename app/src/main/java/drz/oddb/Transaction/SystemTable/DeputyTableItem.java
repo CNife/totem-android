@@ -1,6 +1,8 @@
 package drz.oddb.Transaction.SystemTable;
 
-public class DeputyTableItem {
+import java.io.Serializable;
+
+public class DeputyTableItem implements Serializable {
     public DeputyTableItem(int originid, int deputyid, String[] deputyrule) {
         this.originid = originid;
         this.deputyid = deputyid;

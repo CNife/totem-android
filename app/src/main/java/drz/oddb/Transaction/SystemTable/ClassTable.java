@@ -1,9 +1,10 @@
 package drz.oddb.Transaction.SystemTable;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ClassTable {
+public class ClassTable implements Serializable {
     public List<ClassTableItem> classTable=new ArrayList<>();
     public int maxid=0;
 

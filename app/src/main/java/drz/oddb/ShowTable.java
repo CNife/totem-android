@@ -8,8 +8,11 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
+import drz.oddb.Transaction.TransAction;
+
 public class ShowTable extends AppCompatActivity {
     private String[] tables = new String[5];
+    TransAction trans = new TransAction(this);
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -22,9 +25,16 @@ public class ShowTable extends AppCompatActivity {
         tableList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-                String curClass = tables[i];
-                Intent intent = new Intent(ShowTable.this,TableDetail.class);
-                startActivity(intent);
+                //String curClass = tables[i];
+                //Intent intent = new Intent(ShowTable.this,ShowObj.class);
+                //startActivity(intent);
+                switch (i){
+                    case 0:trans.testObj();break;
+                    case 1:trans.testSwi();break;
+                    case 2:trans.testDep();break;
+                    case 3:trans.testBi();break;
+                    case 4:trans.testcla();break;
+                }
             }
         });
 
