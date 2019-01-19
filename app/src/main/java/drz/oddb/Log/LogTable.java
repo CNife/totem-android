@@ -4,12 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class LogTable {
+    public int check=0;
+    public int logNo=0;
     public List<LogTableItem> logTable=new ArrayList<>();
-    public int maxLogBlockNum;
-
-    public void clear(){
-        logTable.clear();
-        maxLogBlockNum = 0;
-    }
-
 }

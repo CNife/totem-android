@@ -8,17 +8,13 @@ import drz.oddb.Memory.MemManage;
 /********************/
 public class LogManage {
     final private int MAXSIZE=20;
-    private String[] LogStr = new String[MAXSIZE];
-    private int LogStrNum=0;
-    MemManage mem = new MemManage();
+    private int LogmaxNo=0;
 
         //构造方法
-        public LogManage(){
+        /*public LogManage(){
             InitLogStr();
             mem.loadLog();
         }
-
-        //创建LogArray和Log的对象
 
         //初始化LogStr
         private boolean InitLogStr(){
@@ -94,5 +90,5 @@ public class LogManage {
         public void clearLog(){
             mem.clearLogBlock();
         }
-
+*/
 }

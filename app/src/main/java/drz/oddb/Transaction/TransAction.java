@@ -66,9 +66,9 @@ public class TransAction {
 
         PrintSelectResult(tpl,attrname,attrid,attrtype);
 
-        //int[] a = InsertTuple(t1);
-        //Tuple t3 = GetTuple(a[0],a[1]);
-        //System.out.println(t3);
+        int[] a = InsertTuple(t1);
+        Tuple t3 = GetTuple(a[0],a[1]);
+        System.out.println(t3);
     }
 
     public String query(String s) {
