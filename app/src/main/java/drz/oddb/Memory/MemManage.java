@@ -37,7 +37,7 @@ public class MemManage {
     public boolean flush() {
         saveBlockSpace();//将块信息存入磁盘
         buffPointer sbu;
-        int i=0;
+        int i;
         for (i=0; i < BuffPointerList.size(); i++) {
             sbu = BuffPointerList.get(i);
             if (sbu.flag) {
@@ -581,8 +581,9 @@ public class MemManage {
         }
     }
 
-    public boolean check(int lognum){
+    public boolean check(int logid){
         File file=new File("/data/data/drz.oddb/Log/checklogid");
+        File file2=new File("/data/data/drz.oddb/Log/"+logid);
         if(!file.exists()){
             File path=file.getParentFile();
             if(!path.exists()){
@@ -596,9 +597,13 @@ public class MemManage {
         }
         try {
             FileOutputStream output=new FileOutputStream(file);
-            byte[] check=int2Bytes(lognum,4);
+            byte[] check=int2Bytes(logid,4);
             output.write(check,0,4);
             output.close();
+            FileOutputStream output2=new FileOutputStream(file2);
+            check =int2Bytes(1,4);
+            output2.write(check,0,4);
+            output2.close();
             return true;
         } catch (FileNotFoundException e) {
             e.printStackTrace();
