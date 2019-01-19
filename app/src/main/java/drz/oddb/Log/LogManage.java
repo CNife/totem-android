@@ -6,12 +6,14 @@ public class LogManage {
 
     final private int MAXSIZE=20;
     private int checkpoint=0;
+    //private int logid=0;    //LogTable块id
     private MemManage mem = null;
-    public LogTable LogT = new LogTable();   //存放执行层创建LogManage时写入的日志(20个一组)
+    public LogTable LogT = new LogTable();   //存放执行层创建LogManage时写入的日志
 
     //构造方法
     public LogManage(MemManage mem){
         this.mem = mem;
+        LogT.logID=GetCheck();  //被初始化为最大已确认logID
     }
 
     //若存够了20，需要调用该方法，初始化LogT为空
@@ -43,7 +45,6 @@ public class LogManage {
                     LogTableItem temp = ret.logTable.get(i);   //得到每一条语句
                     ret.logTable.add(temp);
                 }
-                ret.check=0;
                 ret.logID=checkpoint+1;
                 return ret;
             }
@@ -56,14 +57,17 @@ public class LogManage {
             int lognum = LogT.logTable.size();  //获得当前对象的logtable中有几条语句
             LogTableItem LogItem = new LogTableItem(s);     //把语句传入logItem
 
-            if(lognum<20){  //List写得下
+            if(lognum<MAXSIZE){  //List写得下
                 LogT.logTable.add(LogItem);
             }else{
+
                 mem.saveLog(LogT);  //把当前的存入
-                init();
+                while(!mem.flush());
+                mem.savecheck(LogT.logID);
+
+                init(); //新建一个日志块
                 LogT.logTable.add(LogItem);
-                LogT.logID++;
-                LogT.check=0;
+                LogT.logID=GetCheck()+1;
             }
             return true;
         }
