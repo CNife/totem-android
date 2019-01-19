@@ -1,6 +1,6 @@
 options{
 LOOKAHEAD = 3;
-STATIC = true ; 
+STATIC = false ;
 DEBUG_PARSER = true;
 
  }

@@ -17,7 +17,7 @@ public static final int OPT_SELECT_INDERECTSELECT = 7;
     parser.Run();
      }
 
-  static final public String[] Run() throws ParseException {
+  final public String[] Run() throws ParseException {
     trace_call("Run");
     try {
         String[] s;
@@ -30,7 +30,7 @@ public static final int OPT_SELECT_INDERECTSELECT = 7;
     }
   }
 
-  static final public String[] sql() throws ParseException {
+  final public String[] sql() throws ParseException {
     trace_call("sql");
     try {
         String sql_s;
@@ -64,7 +64,7 @@ public static final int OPT_SELECT_INDERECTSELECT = 7;
     }
   }
 
-  static final public String create() throws ParseException {
+  final public String create() throws ParseException {
     trace_call("create");
     try {
         String create_s;
@@ -105,7 +105,7 @@ public static final int OPT_SELECT_INDERECTSELECT = 7;
     }
   }
 
-  static final public String drop() throws ParseException {
+  final public String drop() throws ParseException {
     trace_call("drop");
     try {
         String cln;
@@ -121,7 +121,7 @@ public static final int OPT_SELECT_INDERECTSELECT = 7;
     }
   }
 
-  static final public String insert2() throws ParseException {
+  final public String insert2() throws ParseException {
     trace_call("insert2");
     try {
     String insert_s;
@@ -142,7 +142,7 @@ public static final int OPT_SELECT_INDERECTSELECT = 7;
     }
   }
 
-  static final public int insert() throws ParseException {
+  final public int insert() throws ParseException {
     trace_call("insert");
     try {
         String cln;
@@ -176,7 +176,7 @@ public static final int OPT_SELECT_INDERECTSELECT = 7;
     }
   }
 
-  static final public String delete() throws ParseException {
+  final public String delete() throws ParseException {
     trace_call("delete");
     try {
     String cln;
@@ -198,7 +198,7 @@ public static final int OPT_SELECT_INDERECTSELECT = 7;
     }
   }
 
-  static final public String select() throws ParseException {
+  final public String select() throws ParseException {
     trace_call("select");
     try {
     String select_s;
@@ -239,7 +239,7 @@ public static final int OPT_SELECT_INDERECTSELECT = 7;
     }
   }
 
-  static final public int originclass() throws ParseException {
+  final public int originclass() throws ParseException {
     trace_call("originclass");
     try {
         String cln;
@@ -275,7 +275,7 @@ public static final int OPT_SELECT_INDERECTSELECT = 7;
     }
   }
 
-  static final public int selectdeputy() throws ParseException {
+  final public int selectdeputy() throws ParseException {
     trace_call("selectdeputy");
     try {
         String cln;
@@ -292,7 +292,7 @@ public static final int OPT_SELECT_INDERECTSELECT = 7;
     }
   }
 
-  static final public String classname() throws ParseException {
+  final public String classname() throws ParseException {
     trace_call("classname");
     try {
    Token s;
@@ -304,7 +304,7 @@ public static final int OPT_SELECT_INDERECTSELECT = 7;
     }
   }
 
-  static final public String attrtype() throws ParseException {
+  final public String attrtype() throws ParseException {
     trace_call("attrtype");
     try {
    Token s;
@@ -316,7 +316,7 @@ public static final int OPT_SELECT_INDERECTSELECT = 7;
     }
   }
 
-  static final public String attr() throws ParseException {
+  final public String attr() throws ParseException {
     trace_call("attr");
     try {
    Token s;
@@ -328,7 +328,7 @@ public static final int OPT_SELECT_INDERECTSELECT = 7;
     }
   }
 
-  static final public String dattr() throws ParseException {
+  final public String dattr() throws ParseException {
     trace_call("dattr");
     try {
    Token s;
@@ -340,7 +340,7 @@ public static final int OPT_SELECT_INDERECTSELECT = 7;
     }
   }
 
-  static final public String condition() throws ParseException {
+  final public String condition() throws ParseException {
     trace_call("condition");
     try {
         String attr_s;
@@ -366,7 +366,7 @@ public static final int OPT_SELECT_INDERECTSELECT = 7;
     }
   }
 
-  static final public String value() throws ParseException {
+  final public String value() throws ParseException {
     trace_call("value");
     try {
         Token s;
@@ -386,7 +386,7 @@ public static final int OPT_SELECT_INDERECTSELECT = 7;
     }
   }
 
-  static final public int directselect() throws ParseException {
+  final public int directselect() throws ParseException {
     trace_call("directselect");
     try {
     String dattr_s;
@@ -443,7 +443,7 @@ public static final int OPT_SELECT_INDERECTSELECT = 7;
     }
   }
 
-  static final public int indirectselect() throws ParseException {
+  final public int indirectselect() throws ParseException {
     trace_call("indirectselect");
     try {
     String cln;
@@ -478,145 +478,145 @@ public static final int OPT_SELECT_INDERECTSELECT = 7;
     }
   }
 
-  static private boolean jj_2_1(int xla) {
+  private boolean jj_2_1(int xla) {
     jj_la = xla; jj_lastpos = jj_scanpos = token;
     try { return !jj_3_1(); }
     catch(LookaheadSuccess ls) { return true; }
     finally { jj_save(0, xla); }
   }
 
-  static private boolean jj_2_2(int xla) {
+  private boolean jj_2_2(int xla) {
     jj_la = xla; jj_lastpos = jj_scanpos = token;
     try { return !jj_3_2(); }
     catch(LookaheadSuccess ls) { return true; }
     finally { jj_save(1, xla); }
   }
 
-  static private boolean jj_2_3(int xla) {
+  private boolean jj_2_3(int xla) {
     jj_la = xla; jj_lastpos = jj_scanpos = token;
     try { return !jj_3_3(); }
     catch(LookaheadSuccess ls) { return true; }
     finally { jj_save(2, xla); }
   }
 
-  static private boolean jj_2_4(int xla) {
+  private boolean jj_2_4(int xla) {
     jj_la = xla; jj_lastpos = jj_scanpos = token;
     try { return !jj_3_4(); }
     catch(LookaheadSuccess ls) { return true; }
     finally { jj_save(3, xla); }
   }
 
-  static private boolean jj_2_5(int xla) {
+  private boolean jj_2_5(int xla) {
     jj_la = xla; jj_lastpos = jj_scanpos = token;
     try { return !jj_3_5(); }
     catch(LookaheadSuccess ls) { return true; }
     finally { jj_save(4, xla); }
   }
 
-  static private boolean jj_2_6(int xla) {
+  private boolean jj_2_6(int xla) {
     jj_la = xla; jj_lastpos = jj_scanpos = token;
     try { return !jj_3_6(); }
     catch(LookaheadSuccess ls) { return true; }
     finally { jj_save(5, xla); }
   }
 
-  static private boolean jj_2_7(int xla) {
+  private boolean jj_2_7(int xla) {
     jj_la = xla; jj_lastpos = jj_scanpos = token;
     try { return !jj_3_7(); }
     catch(LookaheadSuccess ls) { return true; }
     finally { jj_save(6, xla); }
   }
 
-  static private boolean jj_2_8(int xla) {
+  private boolean jj_2_8(int xla) {
     jj_la = xla; jj_lastpos = jj_scanpos = token;
     try { return !jj_3_8(); }
     catch(LookaheadSuccess ls) { return true; }
     finally { jj_save(7, xla); }
   }
 
-  static private boolean jj_2_9(int xla) {
+  private boolean jj_2_9(int xla) {
     jj_la = xla; jj_lastpos = jj_scanpos = token;
     try { return !jj_3_9(); }
     catch(LookaheadSuccess ls) { return true; }
     finally { jj_save(8, xla); }
   }
 
-  static private boolean jj_2_10(int xla) {
+  private boolean jj_2_10(int xla) {
     jj_la = xla; jj_lastpos = jj_scanpos = token;
     try { return !jj_3_10(); }
     catch(LookaheadSuccess ls) { return true; }
     finally { jj_save(9, xla); }
   }
 
-  static private boolean jj_2_11(int xla) {
+  private boolean jj_2_11(int xla) {
     jj_la = xla; jj_lastpos = jj_scanpos = token;
     try { return !jj_3_11(); }
     catch(LookaheadSuccess ls) { return true; }
     finally { jj_save(10, xla); }
   }
 
-  static private boolean jj_2_12(int xla) {
+  private boolean jj_2_12(int xla) {
     jj_la = xla; jj_lastpos = jj_scanpos = token;
     try { return !jj_3_12(); }
     catch(LookaheadSuccess ls) { return true; }
     finally { jj_save(11, xla); }
   }
 
-  static private boolean jj_2_13(int xla) {
+  private boolean jj_2_13(int xla) {
     jj_la = xla; jj_lastpos = jj_scanpos = token;
     try { return !jj_3_13(); }
     catch(LookaheadSuccess ls) { return true; }
     finally { jj_save(12, xla); }
   }
 
-  static private boolean jj_2_14(int xla) {
+  private boolean jj_2_14(int xla) {
     jj_la = xla; jj_lastpos = jj_scanpos = token;
     try { return !jj_3_14(); }
     catch(LookaheadSuccess ls) { return true; }
     finally { jj_save(13, xla); }
   }
 
-  static private boolean jj_2_15(int xla) {
+  private boolean jj_2_15(int xla) {
     jj_la = xla; jj_lastpos = jj_scanpos = token;
     try { return !jj_3_15(); }
     catch(LookaheadSuccess ls) { return true; }
     finally { jj_save(14, xla); }
   }
 
-  static private boolean jj_2_16(int xla) {
+  private boolean jj_2_16(int xla) {
     jj_la = xla; jj_lastpos = jj_scanpos = token;
     try { return !jj_3_16(); }
     catch(LookaheadSuccess ls) { return true; }
     finally { jj_save(15, xla); }
   }
 
-  static private boolean jj_2_17(int xla) {
+  private boolean jj_2_17(int xla) {
     jj_la = xla; jj_lastpos = jj_scanpos = token;
     try { return !jj_3_17(); }
     catch(LookaheadSuccess ls) { return true; }
     finally { jj_save(16, xla); }
   }
 
-  static private boolean jj_2_18(int xla) {
+  private boolean jj_2_18(int xla) {
     jj_la = xla; jj_lastpos = jj_scanpos = token;
     try { return !jj_3_18(); }
     catch(LookaheadSuccess ls) { return true; }
     finally { jj_save(17, xla); }
   }
 
-  static private boolean jj_2_19(int xla) {
+  private boolean jj_2_19(int xla) {
     jj_la = xla; jj_lastpos = jj_scanpos = token;
     try { return !jj_3_19(); }
     catch(LookaheadSuccess ls) { return true; }
     finally { jj_save(18, xla); }
   }
 
-  static private boolean jj_3_1() {
+  private boolean jj_3_1() {
     if (jj_3R_5()) return true;
     return false;
   }
 
-  static private boolean jj_3_17() {
+  private boolean jj_3_17() {
     if (jj_scan_token(COMMA)) return true;
     if (jj_3R_15()) return true;
     Token xsp;
@@ -626,18 +626,18 @@ public static final int OPT_SELECT_INDERECTSELECT = 7;
     return false;
   }
 
-  static private boolean jj_3R_15() {
+  private boolean jj_3R_15() {
     if (jj_scan_token(ID)) return true;
     return false;
   }
 
-  static private boolean jj_3_16() {
+  private boolean jj_3_16() {
     if (jj_scan_token(PLUS)) return true;
     if (jj_3R_12()) return true;
     return false;
   }
 
-  static private boolean jj_3R_13() {
+  private boolean jj_3R_13() {
     if (jj_3R_15()) return true;
     Token xsp;
     xsp = jj_scanpos;
@@ -646,47 +646,47 @@ public static final int OPT_SELECT_INDERECTSELECT = 7;
     return false;
   }
 
-  static private boolean jj_3_8() {
+  private boolean jj_3_8() {
     if (jj_scan_token(COMMA)) return true;
     if (jj_3R_12()) return true;
     return false;
   }
 
-  static private boolean jj_3R_16() {
+  private boolean jj_3R_16() {
     if (jj_scan_token(ID)) return true;
     return false;
   }
 
-  static private boolean jj_3R_18() {
+  private boolean jj_3R_18() {
     if (jj_scan_token(INSERT)) return true;
     if (jj_scan_token(INTO)) return true;
     if (jj_3R_17()) return true;
     return false;
   }
 
-  static private boolean jj_3_10() {
+  private boolean jj_3_10() {
     if (jj_scan_token(SELECT)) return true;
     if (jj_3R_14()) return true;
     return false;
   }
 
-  static private boolean jj_3_7() {
+  private boolean jj_3_7() {
     if (jj_scan_token(CREATE)) return true;
     if (jj_3R_11()) return true;
     return false;
   }
 
-  static private boolean jj_3R_17() {
+  private boolean jj_3R_17() {
     if (jj_scan_token(ID)) return true;
     return false;
   }
 
-  static private boolean jj_3_15() {
+  private boolean jj_3_15() {
     if (jj_scan_token(STRING)) return true;
     return false;
   }
 
-  static private boolean jj_3R_12() {
+  private boolean jj_3R_12() {
     Token xsp;
     xsp = jj_scanpos;
     if (jj_3_14()) {
@@ -696,18 +696,18 @@ public static final int OPT_SELECT_INDERECTSELECT = 7;
     return false;
   }
 
-  static private boolean jj_3_14() {
+  private boolean jj_3_14() {
     if (jj_scan_token(INT)) return true;
     return false;
   }
 
-  static private boolean jj_3R_11() {
+  private boolean jj_3R_11() {
     if (jj_scan_token(SELECTDEPUTY)) return true;
     if (jj_3R_17()) return true;
     return false;
   }
 
-  static private boolean jj_3R_7() {
+  private boolean jj_3R_7() {
     Token xsp;
     xsp = jj_scanpos;
     if (jj_3_9()) {
@@ -717,13 +717,13 @@ public static final int OPT_SELECT_INDERECTSELECT = 7;
     return false;
   }
 
-  static private boolean jj_3_9() {
+  private boolean jj_3_9() {
     if (jj_scan_token(SELECT)) return true;
     if (jj_3R_13()) return true;
     return false;
   }
 
-  static private boolean jj_3R_5() {
+  private boolean jj_3R_5() {
     Token xsp;
     xsp = jj_scanpos;
     if (jj_3_6()) {
@@ -733,38 +733,38 @@ public static final int OPT_SELECT_INDERECTSELECT = 7;
     return false;
   }
 
-  static private boolean jj_3_6() {
+  private boolean jj_3_6() {
     if (jj_scan_token(CREATE)) return true;
     if (jj_3R_10()) return true;
     return false;
   }
 
-  static private boolean jj_3_13() {
+  private boolean jj_3_13() {
     if (jj_3R_15()) return true;
     if (jj_scan_token(EQUAL)) return true;
     if (jj_scan_token(STRING)) return true;
     return false;
   }
 
-  static private boolean jj_3R_8() {
+  private boolean jj_3R_8() {
     if (jj_3R_18()) return true;
     return false;
   }
 
-  static private boolean jj_3_19() {
+  private boolean jj_3_19() {
     if (jj_scan_token(CROSS)) return true;
     if (jj_3R_17()) return true;
     return false;
   }
 
-  static private boolean jj_3_12() {
+  private boolean jj_3_12() {
     if (jj_3R_15()) return true;
     if (jj_scan_token(EQUAL)) return true;
     if (jj_scan_token(INT)) return true;
     return false;
   }
 
-  static private boolean jj_3R_14() {
+  private boolean jj_3R_14() {
     if (jj_3R_17()) return true;
     Token xsp;
     while (true) {
@@ -775,72 +775,71 @@ public static final int OPT_SELECT_INDERECTSELECT = 7;
     return false;
   }
 
-  static private boolean jj_3_11() {
+  private boolean jj_3_11() {
     if (jj_scan_token(COMMA)) return true;
     if (jj_3R_15()) return true;
     if (jj_3R_16()) return true;
     return false;
   }
 
-  static private boolean jj_3_5() {
+  private boolean jj_3_5() {
     if (jj_3R_9()) return true;
     return false;
   }
 
-  static private boolean jj_3R_10() {
+  private boolean jj_3R_10() {
     if (jj_scan_token(CLASS)) return true;
     if (jj_3R_17()) return true;
     return false;
   }
 
-  static private boolean jj_3_4() {
+  private boolean jj_3_4() {
     if (jj_3R_8()) return true;
     return false;
   }
 
-  static private boolean jj_3_3() {
+  private boolean jj_3_3() {
     if (jj_3R_7()) return true;
     return false;
   }
 
-  static private boolean jj_3_18() {
+  private boolean jj_3_18() {
     if (jj_scan_token(PLUS)) return true;
     if (jj_3R_12()) return true;
     return false;
   }
 
-  static private boolean jj_3_2() {
+  private boolean jj_3_2() {
     if (jj_3R_6()) return true;
     return false;
   }
 
-  static private boolean jj_3R_9() {
+  private boolean jj_3R_9() {
     if (jj_scan_token(DELETE)) return true;
     if (jj_scan_token(FROM)) return true;
     if (jj_3R_17()) return true;
     return false;
   }
 
-  static private boolean jj_3R_6() {
+  private boolean jj_3R_6() {
     if (jj_scan_token(DROP)) return true;
     if (jj_scan_token(CLASS)) return true;
     if (jj_3R_17()) return true;
     return false;
   }
 
-  static private boolean jj_initialized_once = false;
   /** Generated Token Manager. */
-  static public parseTokenManager token_source;
-  static SimpleCharStream jj_input_stream;
+  public parseTokenManager token_source;
+  SimpleCharStream jj_input_stream;
   /** Current token. */
-  static public Token token;
+  public Token token;
   /** Next token. */
-  static public Token jj_nt;
-  static private int jj_ntk;
-  static private Token jj_scanpos, jj_lastpos;
-  static private int jj_la;
-  static private int jj_gen;
-  static final private int[] jj_la1 = new int[0];
+  public Token jj_nt;
+  private int jj_ntk;
+  private Token jj_scanpos, jj_lastpos;
+  private int jj_la;
+  private int jj_gen;
+  final private int[] jj_la1 = new int[0];
   static private int[] jj_la1_0;
   static {
       jj_la1_init_0();
@@ -848,9 +847,9 @@ public static final int OPT_SELECT_INDERECTSELECT = 7;
    private static void jj_la1_init_0() {
       jj_la1_0 = new int[] {};
    }
-  static final private JJCalls[] jj_2_rtns = new JJCalls[19];
-  static private boolean jj_rescan = false;
-  static private int jj_gc = 0;
+  final private JJCalls[] jj_2_rtns = new JJCalls[19];
+  private boolean jj_rescan = false;
+  private int jj_gc = 0;
 
   /** Constructor with InputStream. */
   public parse(java.io.InputStream stream) {
@@ -858,13 +857,6 @@ public static final int OPT_SELECT_INDERECTSELECT = 7;
   }
   /** Constructor with InputStream and supplied encoding */
   public parse(java.io.InputStream stream, String encoding) {
-    if (jj_initialized_once) {
-      System.out.println("ERROR: Second call to constructor of static parser.  ");
-      System.out.println("       You must either use ReInit() or set the JavaCC option STATIC to false");
-      System.out.println("       during parser generation.");
-      throw new Error();
-    }
-    jj_initialized_once = true;
     try { jj_input_stream = new SimpleCharStream(stream, encoding, 1, 1); } catch(java.io.UnsupportedEncodingException e) { throw new RuntimeException(e); }
     token_source = new parseTokenManager(jj_input_stream);
     token = new Token();
@@ -875,11 +867,11 @@ public static final int OPT_SELECT_INDERECTSELECT = 7;
   }
 
   /** Reinitialise. */
-  static public void ReInit(java.io.InputStream stream) {
+  public void ReInit(java.io.InputStream stream) {
      ReInit(stream, null);
   }
   /** Reinitialise. */
-  static public void ReInit(java.io.InputStream stream, String encoding) {
+  public void ReInit(java.io.InputStream stream, String encoding) {
     try { jj_input_stream.ReInit(stream, encoding, 1, 1); } catch(java.io.UnsupportedEncodingException e) { throw new RuntimeException(e); }
     token_source.ReInit(jj_input_stream);
     token = new Token();
@@ -891,13 +883,6 @@ public static final int OPT_SELECT_INDERECTSELECT = 7;
 
   /** Constructor. */
   public parse(java.io.Reader stream) {
-    if (jj_initialized_once) {
-      System.out.println("ERROR: Second call to constructor of static parser. ");
-      System.out.println("       You must either use ReInit() or set the JavaCC option STATIC to false");
-      System.out.println("       during parser generation.");
-      throw new Error();
-    }
-    jj_initialized_once = true;
     jj_input_stream = new SimpleCharStream(stream, 1, 1);
     token_source = new parseTokenManager(jj_input_stream);
     token = new Token();
@@ -908,7 +893,7 @@ public static final int OPT_SELECT_INDERECTSELECT = 7;
   }
 
   /** Reinitialise. */
-  static public void ReInit(java.io.Reader stream) {
+  public void ReInit(java.io.Reader stream) {
     jj_input_stream.ReInit(stream, 1, 1);
     token_source.ReInit(jj_input_stream);
     token = new Token();
@@ -920,13 +905,6 @@ public static final int OPT_SELECT_INDERECTSELECT = 7;
 
   /** Constructor with generated Token Manager. */
   public parse(parseTokenManager tm) {
-    if (jj_initialized_once) {
-      System.out.println("ERROR: Second call to constructor of static parser. ");
-      System.out.println("       You must either use ReInit() or set the JavaCC option STATIC to false");
-      System.out.println("       during parser generation.");
-      throw new Error();
-    }
-    jj_initialized_once = true;
     token_source = tm;
     token = new Token();
     jj_ntk = -1;
@@ -945,7 +923,7 @@ public static final int OPT_SELECT_INDERECTSELECT = 7;
     for (int i = 0; i < jj_2_rtns.length; i++) jj_2_rtns[i] = new JJCalls();
   }
 
-  static private Token jj_consume_token(int kind) throws ParseException {
+  private Token jj_consume_token(int kind) throws ParseException {
     Token oldToken;
     if ((oldToken = token).next != null) token = token.next;
     else token = token.next = token_source.getNextToken();
@@ -971,8 +949,8 @@ public static final int OPT_SELECT_INDERECTSELECT = 7;
   }
 
   static private final class LookaheadSuccess extends java.lang.Error { }
-  static final private LookaheadSuccess jj_ls = new LookaheadSuccess();
-  static private boolean jj_scan_token(int kind) {
+  final private LookaheadSuccess jj_ls = new LookaheadSuccess();
+  private boolean jj_scan_token(int kind) {
     if (jj_scanpos == jj_lastpos) {
       jj_la--;
       if (jj_scanpos.next == null) {
@@ -995,7 +973,7 @@ public static final int OPT_SELECT_INDERECTSELECT = 7;
 
 
 /** Get the next Token. */
-  static final public Token getNextToken() {
+  final public Token getNextToken() {
     if (token.next != null) token = token.next;
     else token = token.next = token_source.getNextToken();
     jj_ntk = -1;
@@ -1005,7 +983,7 @@ public static final int OPT_SELECT_INDERECTSELECT = 7;
   }
 
 /** Get the specific Token. */
-  static final public Token getToken(int index) {
+  final public Token getToken(int index) {
     Token t = token;
     for (int i = 0; i < index; i++) {
       if (t.next != null) t = t.next;
@@ -1014,20 +992,20 @@ public static final int OPT_SELECT_INDERECTSELECT = 7;
     return t;
   }
 
-  static private int jj_ntk() {
+  private int jj_ntk() {
     if ((jj_nt=token.next) == null)
       return (jj_ntk = (token.next=token_source.getNextToken()).kind);
     else
       return (jj_ntk = jj_nt.kind);
   }
 
-  static private java.util.List<int[]> jj_expentries = new java.util.ArrayList<int[]>();
-  static private int[] jj_expentry;
-  static private int jj_kind = -1;
-  static private int[] jj_lasttokens = new int[100];
-  static private int jj_endpos;
+  private java.util.List<int[]> jj_expentries = new java.util.ArrayList<int[]>();
+  private int[] jj_expentry;
+  private int jj_kind = -1;
+  private int[] jj_lasttokens = new int[100];
+  private int jj_endpos;
 
-  static private void jj_add_error_token(int kind, int pos) {
+  private void jj_add_error_token(int kind, int pos) {
     if (pos >= 100) return;
     if (pos == jj_endpos + 1) {
       jj_lasttokens[jj_endpos++] = kind;
@@ -1053,7 +1031,7 @@ public static final int OPT_SELECT_INDERECTSELECT = 7;
   }
 
   /** Generate ParseException. */
-  static public ParseException generateParseException() {
+  public ParseException generateParseException() {
     jj_expentries.clear();
     boolean[] la1tokens = new boolean[28];
     if (jj_kind >= 0) {
@@ -1086,20 +1064,20 @@ public static final int OPT_SELECT_INDERECTSELECT = 7;
     return new ParseException(token, exptokseq, tokenImage);
   }
 
-  static private int trace_indent = 0;
-  static private boolean trace_enabled = true;
+  private int trace_indent = 0;
+  private boolean trace_enabled = true;
 
 /** Enable tracing. */
-  static final public void enable_tracing() {
+  final public void enable_tracing() {
     trace_enabled = true;
   }
 
 /** Disable tracing. */
-  static final public void disable_tracing() {
+  final public void disable_tracing() {
     trace_enabled = false;
   }
 
-  static private void trace_call(String s) {
+  private void trace_call(String s) {
     if (trace_enabled) {
       for (int i = 0; i < trace_indent; i++) { System.out.print(" "); }
       System.out.println("Call:   " + s);
@@ -1107,7 +1085,7 @@ public static final int OPT_SELECT_INDERECTSELECT = 7;
     trace_indent = trace_indent + 2;
   }
 
-  static private void trace_return(String s) {
+  private void trace_return(String s) {
     trace_indent = trace_indent - 2;
     if (trace_enabled) {
       for (int i = 0; i < trace_indent; i++) { System.out.print(" "); }
@@ -1115,7 +1093,7 @@ public static final int OPT_SELECT_INDERECTSELECT = 7;
     }
   }
 
-  static private void trace_token(Token t, String where) {
+  private void trace_token(Token t, String where) {
     if (trace_enabled) {
       for (int i = 0; i < trace_indent; i++) { System.out.print(" "); }
       System.out.print("Consumed token: <" + tokenImage[t.kind]);
@@ -1126,7 +1104,7 @@ public static final int OPT_SELECT_INDERECTSELECT = 7;
     }
   }
 
-  static private void trace_scan(Token t1, int t2) {
+  private void trace_scan(Token t1, int t2) {
     if (trace_enabled) {
       for (int i = 0; i < trace_indent; i++) { System.out.print(" "); }
       System.out.print("Visited token: <" + tokenImage[t1.kind]);
@@ -1137,7 +1115,7 @@ public static final int OPT_SELECT_INDERECTSELECT = 7;
     }
   }
 
-  static private void jj_rescan_token() {
+  private void jj_rescan_token() {
     jj_rescan = true;
     for (int i = 0; i < 19; i++) {
     try {
@@ -1174,7 +1152,7 @@ public static final int OPT_SELECT_INDERECTSELECT = 7;
     jj_rescan = false;
   }
 
-  static private void jj_save(int index, int xla) {
+  private void jj_save(int index, int xla) {
     JJCalls p = jj_2_rtns[index];
     while (p.gen > jj_gen) {
       if (p.next == null) { p = p.next = new JJCalls(); break; }

@@ -81,7 +81,7 @@ public class TransAction {
             int redonum = redo.logTable.size();   //先把redo指令加前面
             for (int i = 0; i < redonum; i++) {
                 s = redo.logTable.get(i) + s;
-            }
+           }
         }
         ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream(s.getBytes());
         parse p = new parse(byteArrayInputStream);
