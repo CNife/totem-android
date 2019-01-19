@@ -404,7 +404,7 @@ public class MemManage {
         }
         byte[] sta=new byte[4];
         for(int i=0;i<4;i++){
-            MemBuff.get(s.buf_id*blocklength+offset+i);
+            sta[i]=MemBuff.get(s.buf_id*blocklength+offset+i);
         }
         int start=bytes2Int(sta,0,4);
         byte[] header=new byte[4];
@@ -439,14 +439,16 @@ public class MemManage {
         }
         if(k!=-1){
             blockspace[k]=blockspace[k]-tuplelength-4;
-            p=findBlock(k);
+            if((p=findBlock(k))==null){
+                p=load(k);
+            };
             byte[] x=new byte[4];
             for(int i=0;i<4;i++){
                 x[i]=MemBuff.get(p.buf_id*blocklength+i);
             }
             int spacestart=bytes2Int(x,0,4);
             for(int i=0;i<4;i++){
-                x[i]=MemBuff.get(p.buf_id*blocklength+i);
+                x[i]=MemBuff.get(p.buf_id*blocklength+4+i);
             }
             int spaceend=bytes2Int(x,0,4);
             ret[0]=k;

@@ -6,6 +6,7 @@ import android.support.constraint.ConstraintLayout;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.widget.Button;
@@ -26,18 +27,18 @@ public class MainActivity extends AppCompatActivity {
 
     private TextView text_view;
     TransAction trans = new TransAction(this);
-
+    Intent music = null;
 
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        Intent intent = new Intent(MainActivity.this,MusicServer.class);
+        music = new Intent(MainActivity.this,MusicServer.class);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
         //播放BGM
-        startService(intent);
+        startService(music);
 
         //查询按钮
         Button button = findViewById(R.id.button);
@@ -45,9 +46,9 @@ public class MainActivity extends AppCompatActivity {
         button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                onStop();
-                trans.Test();
-                //trans.query(editText.getText().toString());
+                //onStop();
+                //trans.Test();
+                trans.query(editText.getText().toString());
             }
         });
 
@@ -57,6 +58,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 showexitdialog(v);
+                stopService(music);
             }
         });
     }
@@ -64,6 +66,13 @@ public class MainActivity extends AppCompatActivity {
         Intent intent = new Intent(MainActivity.this,MusicServer.class);
         stopService(intent);
         super.onStop();
+        Log.e("main", "...onstop");
+    }
+
+    protected void onStart(){
+        super.onStart();
+        startService(this.music);
+        Log.e("main","...onstart");
     }
 
     //对输入框输入的内容进行检测，若格式不正确，则弹出对话框提示
