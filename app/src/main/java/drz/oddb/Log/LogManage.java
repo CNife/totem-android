@@ -18,6 +18,8 @@ public class LogManage {
             mem.loadLog();
         }
 
+        //创建LogArray和Log的对象
+
         //初始化LogStr
         private boolean InitLogStr(){
             for(int i=0;i<MAXSIZE;i++){
