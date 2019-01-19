@@ -7,7 +7,7 @@ public class LogManage {
     final private int MAXSIZE=20;
     private int checkpoint=0;
     private MemManage mem = null;
-    public LogTable LogT = null;   //存放执行层创建LogManage时写入的日志(20个一组)
+    public LogTable LogT = new LogTable();   //存放执行层创建LogManage时写入的日志(20个一组)
 
     //构造方法
     public LogManage(MemManage mem){
@@ -16,7 +16,7 @@ public class LogManage {
 
     //若存够了20，需要调用该方法，初始化LogT为空
     private boolean init(){
-        LogT = null;
+        LogT = new LogTable();
         return true;
     }
 
