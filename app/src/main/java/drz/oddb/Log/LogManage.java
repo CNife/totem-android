@@ -63,7 +63,7 @@ public class LogManage {
 
                 mem.saveLog(LogT);  //把当前的存入
                 while(!mem.flush());
-                mem.savecheck(LogT.logID);
+                mem.check(LogT.logID);
 
                 init(); //新建一个日志块
                 LogT.logTable.add(LogItem);

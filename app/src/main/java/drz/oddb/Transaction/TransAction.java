@@ -305,7 +305,7 @@ public class TransAction {
             topt.objectTable.remove(obj);
         }
         for(BiPointerTableItem bip:ob2.b) {
-            topt.objectTable.remove(bip);
+            biPointerT.biPointerTable.remove(bip);
         }
 
     }
