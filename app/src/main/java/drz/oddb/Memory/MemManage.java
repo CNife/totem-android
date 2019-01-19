@@ -504,12 +504,12 @@ public class MemManage {
         }
     }
 
-    private boolean saveLog(){
+    public boolean saveLog(){
         //TODO
         return true;
     }
 
-    private void loadLog(){
+    public  void loadLog(){
         //TODO
     }
 

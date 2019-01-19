@@ -5,11 +5,11 @@ import java.util.List;
 
 public class LogTable {
     public List<LogTableItem> logTable=new ArrayList<>();
-    public int maxLogNum;
+    public int maxLogBlockNum;
 
     public void clear(){
         logTable.clear();
-        maxLogNum = 0;
+        maxLogBlockNum = 0;
     }
 
 }
