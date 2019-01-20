@@ -58,6 +58,7 @@ public class MemManage {
 
     }
 
+    //加载Switching表
     public SwitchingTable loadSwitchingTable(){
         SwitchingTable ret=new SwitchingTable();
         SwitchingTableItem temp;
@@ -85,6 +86,7 @@ public class MemManage {
         }
     }
 
+    //存Switching表
     public boolean saveSwitchingTable(SwitchingTable tab){
         File switab=new File("/data/data/drz.oddb/transaction/switchingtable");
         if(!switab.exists()){
@@ -119,6 +121,7 @@ public class MemManage {
         return false;
     }
 
+    //加载BiPointer表
     public BiPointerTable loadBiPointerTable() {
         BiPointerTable ret=new BiPointerTable();
         BiPointerTableItem temp;
@@ -147,6 +150,7 @@ public class MemManage {
         }
     }
 
+    //存BiPointer表
     public boolean saveBiPointerTable(BiPointerTable tab){
         File bitab=new File("/data/data/drz.oddb/transaction/bipointertable");
         if(!bitab.exists()){
@@ -183,6 +187,7 @@ public class MemManage {
         return false;
     }
 
+    //加载Detupy表
     public DeputyTable loadDeputyTable(){
         DeputyTable ret = new DeputyTable();
         DeputyTableItem temp;
@@ -213,6 +218,7 @@ public class MemManage {
         }
     }
 
+    //存Deputy表
     public boolean saveDeputyTable(DeputyTable tab){
         File deputytab=new File("/data/data/drz.oddb/transaction/deputytable");
         if(!deputytab.exists()){
@@ -252,6 +258,7 @@ public class MemManage {
         return false;
     }
 
+    //加载Class表
     public ClassTable loadClassTable(){
         ClassTable ret = new ClassTable();
         ClassTableItem temp;
@@ -286,6 +293,7 @@ public class MemManage {
         }
     }
 
+    //存Class表
     public boolean saveClassTable(ClassTable tab){
         File classtab=new File("/data/data/drz.oddb/transaction/classtable");
         if(!classtab.exists()){
@@ -336,6 +344,7 @@ public class MemManage {
         return false;
     }
 
+    //加载Object表
     public ObjectTable loadObjectTable(){
         ObjectTable ret = new ObjectTable();
         ObjectTableItem temp;
@@ -367,6 +376,7 @@ public class MemManage {
         }
     }
 
+    //存Object表
     public boolean saveObjectTable(ObjectTable tab){
         File objtab=new File("/data/data/drz.oddb/transaction/objecttable");
         if(!objtab.exists()){
@@ -405,17 +415,21 @@ public class MemManage {
         return false;
     }
 
+    //读元组
     public Tuple readTuple(int blocknum,int offset){
         Tuple ret=new Tuple();
         buffPointer s=null;
         if((s=findBlock(blocknum))==null){
+            //当块不在缓冲区中时，从磁盘加载块到缓冲区
             s=load(blocknum);
         }
+        //根据偏移获取元组在块内的指针link
         byte[] sta=new byte[4];
         for(int i=0;i<4;i++){
             sta[i]=MemBuff.get(s.buf_id*blocklength+offset+i);
         }
         int start=bytes2Int(sta,0,4);
+        //开始读元组，先读头文件即元组属性个数
         byte[] header=new byte[4];
         for(int i=0;i<4;i++){
             header[i]=MemBuff.get(s.buf_id*blocklength+start+i);
@@ -433,13 +447,16 @@ public class MemManage {
         return ret;
     }
 
+    //写元组
     public int[] writeTuple(Tuple t){
         int [] ret=new int[2];
         int tuplelength=4+attrstringlen*t.tupleHeader;
         buffPointer p=null;
         int k=-1;
         if(blockspace!=null){
+            //如果块空间表不为空，表示已经有块被创建，否则没有块被创建，需要新建第一块
             for(int i=0;i<=blockmaxnum;i++){
+                //寻找块空闲空间大小足够存入的块
                 if(blockspace[i]>=8+tuplelength){
                     k=i;
                     break;
@@ -449,6 +466,7 @@ public class MemManage {
         if(k!=-1){
             blockspace[k]=blockspace[k]-tuplelength-4;
             if((p=findBlock(k))==null){
+                //块不在缓冲区，从磁盘加载块
                 p=load(k);
             };
             byte[] x=new byte[4];
@@ -520,6 +538,7 @@ public class MemManage {
         }
     }
 
+    //更新元组
     public void UpateTuple(Tuple tuple,int blockid,int offset){
         buffPointer p=null;
         if((p=findBlock(blockid))==null){
@@ -544,6 +563,7 @@ public class MemManage {
         updateBufferPointerSequence(p);
     }
 
+    //存日志块
     public boolean saveLog(LogTable log){
         File file=new File("/data/data/drz.oddb/Log/"+log.logID);
         if(!file.exists()){
@@ -578,6 +598,7 @@ public class MemManage {
         return false;
     }
 
+    //加载日志块
     public  LogTable loadLog(int logid){
         LogTable log=new LogTable();
         LogTableItem temp;
@@ -610,6 +631,7 @@ public class MemManage {
         }
     }
 
+    //设置日志块检查点为1
     public boolean setLogCheck(int logid){
         LogTable l;
         if((l=this.loadLog(logid))!=null){
@@ -621,6 +643,7 @@ public class MemManage {
         }
     }
 
+    //设置检查点号
     public boolean setCheckPoint(int logid){
         File file=new File("/data/data/drz.oddb/Log/checklogid");
         if(!file.exists()){
@@ -648,6 +671,7 @@ public class MemManage {
         return  false;
     }
 
+    //加载日志检查检查点
     public int loadCheck(){
         int ret=0;
         File file=new File("/data/data/drz.oddb/Log/checklogid");
@@ -668,6 +692,7 @@ public class MemManage {
         }
     }
 
+    //更新缓冲区指针序列：将p置为缓冲区列表首位
     private void updateBufferPointerSequence(buffPointer p){
         buffPointer q=new buffPointer();
         q.blockNum=p.blockNum;
