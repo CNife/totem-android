@@ -265,8 +265,8 @@ public class MemManage {
                 if(input.read(x,0,4)!=-1){
                     ret.maxid=bytes2Int(x,0,4);
                 }
-                byte[] buff = new byte[12+attrstringlen*3];
-                while (input.read(buff, 0, 12+attrstringlen*3) != -1) {
+                byte[] buff = new byte[12+attrstringlen*4];
+                while (input.read(buff, 0, 12+attrstringlen*4) != -1) {
                     temp = new ClassTableItem();
                     temp.classname = byte2str(buff, 0, attrstringlen);
                     temp.classid = bytes2Int(buff, attrstringlen, 4);
@@ -274,6 +274,7 @@ public class MemManage {
                     temp.attrid = bytes2Int(buff, attrstringlen+8, 4);
                     temp.attrname = byte2str(buff, attrstringlen+12, attrstringlen);
                     temp.attrtype = byte2str(buff, attrstringlen*2+12, attrstringlen);
+                    temp.classtype=byte2str(buff,attrstringlen*3+12,attrstringlen);
                     ret.classTable.add(temp);
                 }
             } catch (FileNotFoundException e) {
@@ -319,6 +320,8 @@ public class MemManage {
                 output.write(s2,0,s2.length);
                 byte[] s3=str2Bytes(tab.classTable.get(i).attrtype);
                 output.write(s3,0,s3.length);
+                byte[] s4=str2Bytes(tab.classTable.get(i).classtype);
+                output.write(s4,0,s4.length);
             }
             output.flush();
             output.close();
