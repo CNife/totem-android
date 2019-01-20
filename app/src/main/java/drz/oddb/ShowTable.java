@@ -41,7 +41,7 @@ public class ShowTable extends AppCompatActivity {
     }
     private void showTable(){
         tables[0]="ObjectTable";
-        tables[1]="switchingTable";
+        tables[1]="SwitchingTable";
         tables[2]="DeputyTable";
         tables[3]="BiPointerTable";
         tables[4]="ClassTable";
