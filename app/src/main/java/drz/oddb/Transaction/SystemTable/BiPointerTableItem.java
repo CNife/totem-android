@@ -1,6 +1,8 @@
 package drz.oddb.Transaction.SystemTable;
 
-public class BiPointerTableItem {
+import java.io.Serializable;
+
+public class BiPointerTableItem implements Serializable {
     public int classid = 0;
     public int objectid = 0;
     public int deputyid = 0;

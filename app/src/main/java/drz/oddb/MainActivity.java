@@ -48,7 +48,7 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View v) {
                 //onStop();
                 //trans.Test();
-                trans.query(editText.getText().toString());
+               trans.query(editText.getText().toString());
             }
         });
 

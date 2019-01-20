@@ -1,6 +1,8 @@
 package drz.oddb.Transaction.SystemTable;
 
-public class ObjectTableItem {
+import java.io.Serializable;
+
+public class ObjectTableItem implements Serializable {
 
 
     public int classid = 0;    //类id

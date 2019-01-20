@@ -15,7 +15,11 @@ import drz.oddb.Memory.*;
 
 
 import drz.oddb.PrintResult;
-import drz.oddb.ShowTable;
+import drz.oddb.ShowBi;
+import drz.oddb.ShowCla;
+import drz.oddb.ShowDep;
+import drz.oddb.ShowObj;
+import drz.oddb.ShowSwi;
 import drz.oddb.Transaction.SystemTable.*;
 
 import drz.oddb.parse.*;
@@ -739,14 +743,54 @@ public class TransAction {
         mem.deleteTuple();
         return;
     }
-    private void PrintClass(ObjectTable topt,SwitchingTable switchingT,DeputyTable deputyt,BiPointerTable biPointerT,ClassTable classTable){
-        Intent intent = new Intent(context, ShowTable.class);
+    private void PrintObj(ObjectTable topt){
+        Intent intent = new Intent(context, ShowObj.class);
 
         Bundle bundle0 = new Bundle();
         bundle0.putSerializable("ObjectTable", (Serializable) topt);
+        intent.putExtras(bundle0);
+        context.startActivity(intent);
+
+
+    }
+    private void PrintSwi(SwitchingTable switchingT){
+        Intent intent = new Intent(context, ShowSwi.class);
+
+        Bundle bundle0 = new Bundle();
         bundle0.putSerializable("SwitchingTable", (Serializable) switchingT);
+
+        intent.putExtras(bundle0);
+        context.startActivity(intent);
+
+
+    }
+    private void PrintDep(DeputyTable deputyt){
+        Intent intent = new Intent(context, ShowDep.class);
+
+        Bundle bundle0 = new Bundle();
         bundle0.putSerializable("eputyTable", (Serializable) deputyt);
+
+        intent.putExtras(bundle0);
+        context.startActivity(intent);
+
+
+    }
+    private void PrintBi(BiPointerTable biPointerT){
+        Intent intent = new Intent(context, ShowBi.class);
+
+        Bundle bundle0 = new Bundle();
+
         bundle0.putSerializable("BiPointerTable", (Serializable) biPointerT);
+
+        intent.putExtras(bundle0);
+        context.startActivity(intent);
+
+
+    }
+    private void PrintCla(ClassTable classTable){
+        Intent intent = new Intent(context, ShowCla.class);
+
+        Bundle bundle0 = new Bundle();
         bundle0.putSerializable("ClassTable", (Serializable) classTable);
 
         intent.putExtras(bundle0);
@@ -766,6 +810,27 @@ public class TransAction {
         intent.putExtras(bundle);
         context.startActivity(intent);
 
+
+    }
+
+    public void testObj(){
+        PrintObj(topt);
+
+    }
+    public void testDep(){
+        PrintDep(deputyt);
+
+    }
+    public void testBi(){
+        PrintBi(biPointerT);
+
+    }
+    public void testcla(){
+        PrintCla(classt);
+
+    }
+    public void testSwi(){
+        PrintSwi(switchingT);
 
     }
 }
