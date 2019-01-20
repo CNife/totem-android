@@ -582,9 +582,19 @@ public class MemManage {
         }
     }
 
-    public boolean check(int logid){
+    public boolean setLogCheck(int logid){
+        LogTable l;
+        if((l=this.loadLog(logid))!=null){
+            l.check=1;
+            this.saveLog(l);
+            return true;
+        }else{
+            return false;
+        }
+    }
+
+    public boolean setCheckPoint(int logid){
         File file=new File("/data/data/drz.oddb/Log/checklogid");
-        File file2=new File("/data/data/drz.oddb/Log/"+logid);
         if(!file.exists()){
             File path=file.getParentFile();
             if(!path.exists()){
@@ -601,10 +611,6 @@ public class MemManage {
             byte[] check=int2Bytes(logid,4);
             output.write(check,0,4);
             output.close();
-            FileOutputStream output2=new FileOutputStream(file2);
-            check =int2Bytes(1,4);
-            output2.write(check,0,4);
-            output2.close();
             return true;
         } catch (FileNotFoundException e) {
             e.printStackTrace();
@@ -618,7 +624,7 @@ public class MemManage {
         int ret=0;
         File file=new File("/data/data/drz.oddb/Log/checklogid");
         if(!file.exists()){
-            return ret;
+            return -1;
         }else{
             try {
                 FileInputStream input=new FileInputStream(file);
