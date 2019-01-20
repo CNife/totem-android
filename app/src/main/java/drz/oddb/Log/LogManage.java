@@ -5,15 +5,16 @@ import drz.oddb.Memory.MemManage;
 public class LogManage {
 
     final private int MAXSIZE=20;
-    private int checkpoint=0;
-    //private int logid=0;    //LogTable块id
+    private int checkpoint=-1;
+    private int logid=0;    //LogTable块id
     private MemManage mem = null;
     public LogTable LogT = new LogTable();   //存放执行层创建LogManage时写入的日志
 
     //构造方法
     public LogManage(MemManage mem){
         this.mem = mem;
-        LogT.logID=GetCheck();  //被初始化为最大已确认logID
+            LogT.logID = GetCheck() + 1;       //为新块分配id->检查点+1
+            logid = LogT.logID;
     }
 
     //若存够了20，需要调用该方法，初始化LogT为空
@@ -45,7 +46,7 @@ public class LogManage {
                     LogTableItem temp = ret.logTable.get(i);   //得到每一条语句
                     ret.logTable.add(temp);
                 }
-                ret.logID=checkpoint+1;
+                ret.logID=checkpoint+1; //执行层写也可以，不可以写两次
                 return ret;
             }
             return ret;
@@ -67,7 +68,7 @@ public class LogManage {
 
                 init(); //新建一个日志块
                 LogT.logTable.add(LogItem);
-                LogT.logID=GetCheck()+1;
+                LogT.logID=logid+1;
             }
             return true;
         }

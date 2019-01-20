@@ -23,6 +23,7 @@ import drz.oddb.parse.*;
 public class TransAction {
     public TransAction(Context context) {
         this.context = context;
+        RedoRest();
     }
 
     Context context;
@@ -30,7 +31,6 @@ public class TransAction {
     LogManage log = new LogManage(mem);
 
 
-    LogTable redo = log.GetReDo();
     ObjectTable topt = mem.loadObjectTable();
     ClassTable classt = mem.loadClassTable();
     DeputyTable deputyt = mem.loadDeputyTable();
@@ -44,7 +44,8 @@ public class TransAction {
         mem.saveBiPointerTable(biPointerT);
         mem.saveSwitchingTable(switchingT);
         mem.saveLog(log.LogT);
-        mem.flush();
+        while(!mem.flush());
+        mem.check(log.LogT.logID); //成功退出,所以新的事务块一定全部执行
     }
 
     public void Test(){
@@ -74,13 +75,24 @@ public class TransAction {
         System.out.println(t3);
     }
 
-    public String query(String s) {
-        if(redo!=null) {
+    private boolean RedoRest(){//redo
+        LogTable redo;
+        if((redo=log.GetReDo())!=null) {
             int redonum = redo.logTable.size();   //先把redo指令加前面
             for (int i = 0; i < redonum; i++) {
-                s = redo.logTable.get(i) + s;
-           }
+                String s = redo.logTable.get(i).str;
+
+                log.WriteLog(s);
+                query(s);
+            }
+        }else{
+
         }
+        return true;
+    }
+
+    public String query(String s) {
+
         ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream(s.getBytes());
         parse p = new parse(byteArrayInputStream);
         try {
@@ -88,7 +100,7 @@ public class TransAction {
 
             switch (Integer.parseInt(aa[0])) {
                 case parse.OPT_CREATE_ORIGINCLASS:
-                    //log.WriteLog(s);
+                    log.WriteLog(s);
                     CreateOriginClass(aa);
                     break;
                 case parse.OPT_CREATE_SELECTDEPUTY:
