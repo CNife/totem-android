@@ -11,9 +11,11 @@ import android.widget.TableRow;
 import android.widget.TextView;
 
 
+import java.io.Serializable;
+
 import drz.oddb.Transaction.SystemTable.ObjectTable;
 
-public class ShowObj extends AppCompatActivity {
+public class ShowObj extends AppCompatActivity implements Serializable {
     private final int W = ViewGroup.LayoutParams.WRAP_CONTENT;
     private final int M = ViewGroup.LayoutParams.MATCH_PARENT;
     private TableLayout show_tab;
@@ -42,7 +44,7 @@ public class ShowObj extends AppCompatActivity {
 
         show_tab = findViewById(R.id.rst_tab);
 
-        for(int i = 0; i <= topt.objectTable.size(); i++){
+        for(int i = 0; i <= tabH; i++){
             TableRow tableRow = new TableRow(this);
             if(i == 0){
                 stemp1 = "classid";

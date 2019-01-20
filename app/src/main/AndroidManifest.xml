@@ -34,8 +34,8 @@
         <activity
             android:name=".ShowTable"
             android:label="ShowTable"
-            android:launchMode="singleTask"
-            android:theme="@style/AppTheme.NoActionBar" />
+            android:theme="@style/AppTheme.NoActionBar" >
+        </activity>
         <activity
             android:name=".ShowObj"
             android:label="ShowObj"

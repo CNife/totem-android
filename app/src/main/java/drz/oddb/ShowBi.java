@@ -11,9 +11,11 @@ import android.widget.TableRow;
 import android.widget.TextView;
 
 
+import java.io.Serializable;
+
 import drz.oddb.Transaction.SystemTable.BiPointerTable;
 
-public class ShowBi extends AppCompatActivity {
+public class ShowBi extends AppCompatActivity implements Serializable {
     private final int W = ViewGroup.LayoutParams.WRAP_CONTENT;
     private final int M = ViewGroup.LayoutParams.MATCH_PARENT;
     private TableLayout show_tab;

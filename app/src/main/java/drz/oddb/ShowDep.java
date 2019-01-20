@@ -11,10 +11,11 @@ import android.widget.TableRow;
 import android.widget.TextView;
 
 
+import java.io.Serializable;
 
 import drz.oddb.Transaction.SystemTable.DeputyTable;
 
-public class ShowDep extends AppCompatActivity {
+public class ShowDep extends AppCompatActivity implements Serializable {
     private final int W = ViewGroup.LayoutParams.WRAP_CONTENT;
     private final int M = ViewGroup.LayoutParams.MATCH_PARENT;
     private TableLayout show_tab;

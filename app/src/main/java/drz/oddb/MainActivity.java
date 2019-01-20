@@ -14,9 +14,15 @@ import android.widget.EditText;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import java.io.Serializable;
+
 import drz.oddb.Memory.*;
+import drz.oddb.Transaction.SystemTable.BiPointerTable;
 import drz.oddb.Transaction.SystemTable.ClassTable;
 import drz.oddb.Transaction.SystemTable.ClassTableItem;
+import drz.oddb.Transaction.SystemTable.DeputyTable;
+import drz.oddb.Transaction.SystemTable.ObjectTable;
+import drz.oddb.Transaction.SystemTable.SwitchingTable;
 import drz.oddb.Transaction.TransAction;
 
 public class MainActivity extends AppCompatActivity {
@@ -67,9 +73,8 @@ public class MainActivity extends AppCompatActivity {
         show_button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                onStop();
-                Intent intent = new Intent(MainActivity.this,ShowTable.class);
-                startActivity(intent);
+                //onStop();
+                trans.test();
             }
         });
     }

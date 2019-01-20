@@ -20,6 +20,7 @@ import drz.oddb.ShowCla;
 import drz.oddb.ShowDep;
 import drz.oddb.ShowObj;
 import drz.oddb.ShowSwi;
+import drz.oddb.ShowTable;
 import drz.oddb.Transaction.SystemTable.*;
 
 import drz.oddb.parse.*;
@@ -27,7 +28,6 @@ import drz.oddb.parse.*;
 public class TransAction {
     public TransAction(Context context) {
         this.context = context;
-        RedoRest();
     }
 
     Context context;
@@ -35,13 +35,14 @@ public class TransAction {
     LogManage log = new LogManage(mem);
 
 
+    LogTable redo = log.GetReDo();
     ObjectTable topt = mem.loadObjectTable();
     ClassTable classt = mem.loadClassTable();
     DeputyTable deputyt = mem.loadDeputyTable();
     BiPointerTable biPointerT = mem.loadBiPointerTable();
     SwitchingTable switchingT = mem.loadSwitchingTable();
-    public void SaveAll( )
-    {
+
+    public void SaveAll() {
         mem.saveObjectTable(topt);
         mem.saveClassTable(classt);
         mem.saveDeputyTable(deputyt);
@@ -107,7 +108,7 @@ public class TransAction {
 
             switch (Integer.parseInt(aa[0])) {
                 case parse.OPT_CREATE_ORIGINCLASS:
-                    log.WriteLog(s);
+                    //log.WriteLog(s);
                     CreateOriginClass(aa);
                     break;
                 case parse.OPT_CREATE_SELECTDEPUTY:
@@ -746,94 +747,36 @@ public class TransAction {
         mem.deleteTuple();
         return;
     }
-    private void PrintObj(ObjectTable topt){
-        Intent intent = new Intent(context, ShowObj.class);
+    private void PrintTab(ObjectTable topt,SwitchingTable switchingT,DeputyTable deputyt,BiPointerTable biPointerT,ClassTable classTable) {
+        Intent intent = new Intent(context, ShowTable.class);
 
         Bundle bundle0 = new Bundle();
-        bundle0.putSerializable("ObjectTable", (Serializable) topt);
+        bundle0.putSerializable("ObjectTable",topt);
+        bundle0.putSerializable("SwitchingTable",switchingT);
+        bundle0.putSerializable("DeputyTable",deputyt);
+        bundle0.putSerializable("BiPointerTable",biPointerT);
+        bundle0.putSerializable("ClassTable",classTable);
         intent.putExtras(bundle0);
         context.startActivity(intent);
 
 
     }
-    private void PrintSwi(SwitchingTable switchingT){
-        Intent intent = new Intent(context, ShowSwi.class);
 
-        Bundle bundle0 = new Bundle();
-        bundle0.putSerializable("SwitchingTable", (Serializable) switchingT);
-
-        intent.putExtras(bundle0);
-        context.startActivity(intent);
-
-
-    }
-    private void PrintDep(DeputyTable deputyt){
-        Intent intent = new Intent(context, ShowDep.class);
-
-        Bundle bundle0 = new Bundle();
-        bundle0.putSerializable("eputyTable", (Serializable) deputyt);
-
-        intent.putExtras(bundle0);
-        context.startActivity(intent);
-
-
-    }
-    private void PrintBi(BiPointerTable biPointerT){
-        Intent intent = new Intent(context, ShowBi.class);
-
-        Bundle bundle0 = new Bundle();
-
-        bundle0.putSerializable("BiPointerTable", (Serializable) biPointerT);
-
-        intent.putExtras(bundle0);
-        context.startActivity(intent);
-
-
-    }
-    private void PrintCla(ClassTable classTable){
-        Intent intent = new Intent(context, ShowCla.class);
-
-        Bundle bundle0 = new Bundle();
-        bundle0.putSerializable("ClassTable", (Serializable) classTable);
-
-        intent.putExtras(bundle0);
-        context.startActivity(intent);
-
-
-    }
-    private void PrintSelectResult(TupleList tpl,String[] attrname,int[] attrid,String[] type) {
+    private void PrintSelectResult(TupleList tpl, String[] attrname, int[] attrid, String[] type) {
         Intent intent = new Intent(context, PrintResult.class);
 
 
         Bundle bundle = new Bundle();
-        bundle.putSerializable("tupleList",tpl);
+        bundle.putSerializable("tupleList", tpl);
         bundle.putStringArray("attrname", attrname);
-        bundle.putIntArray("attrid",attrid);
+        bundle.putIntArray("attrid", attrid);
         bundle.putStringArray("type", type);
         intent.putExtras(bundle);
         context.startActivity(intent);
 
 
     }
-
-    public void testObj(){
-        PrintObj(topt);
-
-    }
-    public void testDep(){
-        PrintDep(deputyt);
-
-    }
-    public void testBi(){
-        PrintBi(biPointerT);
-
-    }
-    public void testcla(){
-        PrintCla(classt);
-
-    }
-    public void testSwi(){
-        PrintSwi(switchingT);
-
+    public void test(){
+        PrintTab(topt,switchingT,deputyt,biPointerT,classt);
     }
 }

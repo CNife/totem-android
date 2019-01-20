@@ -10,10 +10,11 @@ import android.widget.TableRow;
 import android.widget.TextView;
 
 
+import java.io.Serializable;
 
 import drz.oddb.Transaction.SystemTable.SwitchingTable;
 
-public class ShowSwi extends AppCompatActivity {
+public class ShowSwi extends AppCompatActivity implements Serializable {
     private final int W = ViewGroup.LayoutParams.WRAP_CONTENT;
     private final int M = ViewGroup.LayoutParams.MATCH_PARENT;
     private TableLayout show_tab;
@@ -28,7 +29,7 @@ public class ShowSwi extends AppCompatActivity {
 
         Intent intent = getIntent();
         Bundle bundle0 = intent.getExtras();
-        showSwiTab((SwitchingTable) bundle0.getSerializable("SwitchTable"));
+        showSwiTab((SwitchingTable) bundle0.getSerializable("SwitchingTable"));
 
     }
 
