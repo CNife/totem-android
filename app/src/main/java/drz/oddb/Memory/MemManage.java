@@ -6,6 +6,7 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.nio.Buffer;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.List;
@@ -518,6 +519,30 @@ public class MemManage {
             updateBufferPointerSequence(p);
             return ret;
         }
+    }
+
+    public void UpateTuple(Tuple tuple,int blockid,int offset){
+        buffPointer p=null;
+        if((p=findBlock(blockid))==null){
+            p=load(blockid);
+        }
+        byte[] link=new byte[4];
+        for(int i=0;i<4;i++){
+            link[i]=MemBuff.get(p.buf_id*blocklength+offset+i);
+        }
+        int sta=bytes2Int(link,0,4);
+        byte[] header=int2Bytes(tuple.tupleHeader,4);
+        for(int i=0;i<4;i++){
+            MemBuff.put(p.buf_id*blocklength+sta+i,header[i]);
+        }
+        byte[] temp;
+        for(int i=0;i<tuple.tupleHeader;i++){
+            temp=str2Bytes(tuple.tuple[i].toString());
+            for(int j=0;j<attrstringlen;j++){
+                MemBuff.put(p.buf_id*blocklength+sta+4+i*attrstringlen+j,temp[j]);
+            }
+        }
+        updateBufferPointerSequence(p);
     }
 
     public boolean saveLog(LogTable log){
