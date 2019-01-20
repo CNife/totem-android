@@ -49,7 +49,8 @@ public class TransAction {
         mem.saveSwitchingTable(switchingT);
         mem.saveLog(log.LogT);
         while(!mem.flush());
-        mem.check(log.LogT.logID); //成功退出,所以新的事务块一定全部执行
+        while(!mem.setLogCheck(log.LogT.logID));
+        mem.setCheckPoint(log.LogT.logID);//成功退出,所以新的事务块一定全部执行
     }
 
     public void Test(){
@@ -76,6 +77,8 @@ public class TransAction {
 
         int[] a = InsertTuple(t1);
         Tuple t3 = GetTuple(a[0],a[1]);
+        int[] b = InsertTuple(t2);
+        Tuple t4 = GetTuple(b[0],b[1]);
         System.out.println(t3);
     }
 
