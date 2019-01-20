@@ -572,6 +572,7 @@ public class MemManage {
                     log.logTable.add(temp);
                 }
                 input.close();
+                log.logID=logid;
                 return log;
             } catch (FileNotFoundException e) {
                 e.printStackTrace();
