@@ -23,7 +23,7 @@ public class ShowCla extends AppCompatActivity implements Serializable {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        Log.d("ShowObj", "oncreate");
+        Log.d("ShowCla", "oncreate");
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.print_result);

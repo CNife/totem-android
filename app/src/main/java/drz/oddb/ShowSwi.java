@@ -22,7 +22,7 @@ public class ShowSwi extends AppCompatActivity implements Serializable {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        Log.d("ShowObj", "oncreate");
+        Log.d("ShowSwi", "oncreate");
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.print_result);
@@ -68,7 +68,7 @@ public class ShowSwi extends AppCompatActivity implements Serializable {
                 }
                 tv.setGravity(Gravity.CENTER);
                 tv.setBackgroundResource(R.drawable.tab_bg);
-                tv.setTextSize(37);
+                tv.setTextSize(50);
                 tableRow.addView(tv);
             }
             show_tab.addView(tableRow, new TableLayout.LayoutParams(M, W));

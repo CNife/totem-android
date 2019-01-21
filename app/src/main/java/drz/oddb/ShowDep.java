@@ -73,7 +73,7 @@ public class ShowDep extends AppCompatActivity implements Serializable {
                 }
                 tv.setGravity(Gravity.CENTER);
                 tv.setBackgroundResource(R.drawable.tab_bg);
-                tv.setTextSize(37);
+                tv.setTextSize(28);
                 tableRow.addView(tv);
             }
             show_tab.addView(tableRow, new TableLayout.LayoutParams(M, W));

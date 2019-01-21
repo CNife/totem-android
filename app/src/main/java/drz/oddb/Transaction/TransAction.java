@@ -57,22 +57,27 @@ public class TransAction {
     public void Test(){
         TupleList tpl = new TupleList();
         Tuple t1 = new Tuple();
-        t1.tupleHeader = 3;
+        t1.tupleHeader = 5;
         t1.tuple = new Object[t1.tupleHeader];
         t1.tuple[0] = "a";
         t1.tuple[1] = 1;
         t1.tuple[2] = "b";
+        t1.tuple[3] = 3;
+        t1.tuple[4] = "e";
         Tuple t2 = new Tuple();
-        t2.tupleHeader = 3;
+        t2.tupleHeader = 5;
         t2.tuple = new Object[t2.tupleHeader];
         t2.tuple[0] = "d";
         t2.tuple[1] = 2;
         t2.tuple[2] = "e";
+        t2.tuple[3] = 2;
+        t2.tuple[4] = "v";
+
         tpl.addTuple(t1);
         tpl.addTuple(t2);
-        String[] attrname = {"attr2","attr1","attr3"};
-        int[] attrid = {1,0,2};
-        String[]attrtype = {"int","char","char"};
+        String[] attrname = {"attr2","attr1","attr3","attr5","attr4"};
+        int[] attrid = {1,0,2,4,3};
+        String[]attrtype = {"int","char","char","char","int"};
 
         PrintSelectResult(tpl,attrname,attrid,attrtype);
 
