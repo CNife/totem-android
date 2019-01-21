@@ -53,8 +53,8 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 //onStop();
-                trans.Test();
-               //trans.query(editText.getText().toString());
+                //trans.Test();
+               trans.query(editText.getText().toString());
             }
         });
 
