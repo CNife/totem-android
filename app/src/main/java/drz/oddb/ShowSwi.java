@@ -43,9 +43,9 @@ public class ShowSwi extends AppCompatActivity implements Serializable {
         for (int i = 0; i <= tabH; i++) {
             TableRow tableRow = new TableRow(this);
             if (i == 0) {
-                stemp1 = "attr";
-                stemp2 = "deputy";
-                stemp3 = "rule";
+                stemp1 = "    attr    ";
+                stemp2 = "    deputy    ";
+                stemp3 = "    rule    ";
 
             } else {
                 stemp1 = switchingT.switchingTable.get(i - 1).attr;
@@ -68,7 +68,7 @@ public class ShowSwi extends AppCompatActivity implements Serializable {
                 }
                 tv.setGravity(Gravity.CENTER);
                 tv.setBackgroundResource(R.drawable.tab_bg);
-                tv.setTextSize(50);
+                tv.setTextSize(28);
                 tableRow.addView(tv);
             }
             show_tab.addView(tableRow, new TableLayout.LayoutParams(M, W));

@@ -881,7 +881,7 @@ public class TransAction {
 
 
     }
-    public void test(){
+    public void PrintTab(){
         PrintTab(topt,switchingT,deputyt,biPointerT,classt);
     }
 }

@@ -49,7 +49,7 @@ public class ShowCla extends AppCompatActivity implements Serializable {
                 stemp2 = "classid";
                 stemp3 = "attrnum";
                 stemp4 = "attrid";
-                stemp5 = "attrnum";
+                stemp5 = "attrname";
                 stemp6 = "attrtype";
                 stemp7 = "classtype";
 
@@ -58,7 +58,7 @@ public class ShowCla extends AppCompatActivity implements Serializable {
                 oj2 = classT.classTable.get(i-1).classid;
                 oj3 = classT.classTable.get(i-1).attrnum;
                 oj4 = classT.classTable.get(i-1).attrid;
-                oj5 = classT.classTable.get(i-1).attrnum;
+                oj5 = classT.classTable.get(i-1).attrname;
                 oj6 = classT.classTable.get(i-1).attrtype;
                 oj7 = classT.classTable.get(i-1).classtype;
                 stemp1 = oj1.toString();
