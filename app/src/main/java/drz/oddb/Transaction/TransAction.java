@@ -5,7 +5,6 @@ import android.content.Intent;
 import android.os.Bundle;
 
 import java.io.ByteArrayInputStream;
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -14,13 +13,8 @@ import drz.oddb.Log.*;
 import drz.oddb.Memory.*;
 
 
-import drz.oddb.PrintResult;
-import drz.oddb.ShowBi;
-import drz.oddb.ShowCla;
-import drz.oddb.ShowDep;
-import drz.oddb.ShowObj;
-import drz.oddb.ShowSwi;
-import drz.oddb.ShowTable;
+import drz.oddb.show.PrintResult;
+import drz.oddb.show.ShowTable;
 import drz.oddb.Transaction.SystemTable.*;
 
 import drz.oddb.parse.*;

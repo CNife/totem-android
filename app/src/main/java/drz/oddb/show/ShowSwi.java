@@ -1,4 +1,4 @@
-package drz.oddb;
+package drz.oddb.show;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
@@ -12,6 +12,7 @@ import android.widget.TextView;
 
 import java.io.Serializable;
 
+import drz.oddb.R;
 import drz.oddb.Transaction.SystemTable.SwitchingTable;
 
 public class ShowSwi extends AppCompatActivity implements Serializable {

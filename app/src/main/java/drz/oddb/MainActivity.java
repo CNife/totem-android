@@ -91,32 +91,6 @@ public class MainActivity extends AppCompatActivity {
         Log.e("main","...onstart");
     }
 
-    //对输入框输入的内容进行检测，若格式不正确，则弹出对话框提示
-    /*根据需求添加，暂时不加入*/
-    /*@Override
-    public void onCheck(){
-        if(
-        //格式错误
-         ) {
-            AlertDialog.Builder dialog = new AlertDialog.Builder(MainActivity.this);
-            dialog.setTitle("Attention");
-            dialog.setMessage("Please enter the correct query content!");
-            dialog.setCancelable(false);
-            dialog.setPositiveButton("OK", new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialog, int which) {
-                }
-            });
-            dialog.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialog, int which) {
-                }
-            });
-            dialog.show_pressed();
-        }
-    }
-    */
-
     //点击exit_button退出程序
     public void showexitdialog(View v){
         //定义一个新对话框对象
@@ -147,13 +121,5 @@ public class MainActivity extends AppCompatActivity {
         exit_dialog0.show();
 
     }
-    /*@Override
-    public boolean onKeyDown(int keyCode, KeyEvent event) {
-        if (keyCode == KeyEvent.KEYCODE_BACK) {
-            moveTaskToBack(true);
-            return true;
-        }
-        return super.onKeyDown(keyCode, event);
-    }*/
 
 }

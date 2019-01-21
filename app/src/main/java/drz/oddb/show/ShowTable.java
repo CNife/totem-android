@@ -1,4 +1,4 @@
-package drz.oddb;
+package drz.oddb.show;
 
 import android.content.Context;
 import android.content.Intent;
@@ -11,12 +11,12 @@ import android.widget.ListView;
 
 import java.io.Serializable;
 
+import drz.oddb.R;
 import drz.oddb.Transaction.SystemTable.BiPointerTable;
 import drz.oddb.Transaction.SystemTable.ClassTable;
 import drz.oddb.Transaction.SystemTable.DeputyTable;
 import drz.oddb.Transaction.SystemTable.ObjectTable;
 import drz.oddb.Transaction.SystemTable.SwitchingTable;
-import drz.oddb.Transaction.TransAction;
 
 public class ShowTable extends AppCompatActivity implements Serializable {
     private String[] tables = new String[5];

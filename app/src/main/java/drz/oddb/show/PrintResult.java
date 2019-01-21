@@ -1,4 +1,4 @@
-package drz.oddb;
+package drz.oddb.show;
 
 import android.content.Intent;
 import android.graphics.drawable.Drawable;
@@ -11,6 +11,7 @@ import android.widget.TableRow;
 import android.widget.TextView;
 
 import drz.oddb.Memory.TupleList;
+import drz.oddb.R;
 
 
 public class PrintResult extends AppCompatActivity {
@@ -31,12 +32,7 @@ public class PrintResult extends AppCompatActivity {
      public void Print(TupleList tpl,String[] attrname,int[] attrid,String[] type){
 
         int tabCol  = attrid.length;
-         int tabH = tpl.tuplenum;
-        //Object[] tabCol = new Object[attrid.length];
-         //Object[] tabH = new Object[tpl.tuplenum];
-        //ArrayList<Object> tabCol = new ArrayList<Object>(attrid.length);
-        //ArrayList<Object> tabH = new ArrayList<Object>(tpl.tuplenum);
-
+        int tabH = tpl.tuplenum;
         int r;
         int c;
         String stemp;

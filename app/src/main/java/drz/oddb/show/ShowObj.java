@@ -1,4 +1,4 @@
-package drz.oddb;
+package drz.oddb.show;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -13,9 +13,10 @@ import android.widget.TextView;
 
 import java.io.Serializable;
 
-import drz.oddb.Transaction.SystemTable.BiPointerTable;
+import drz.oddb.R;
+import drz.oddb.Transaction.SystemTable.ObjectTable;
 
-public class ShowBi extends AppCompatActivity implements Serializable {
+public class ShowObj extends AppCompatActivity implements Serializable {
     private final int W = ViewGroup.LayoutParams.WRAP_CONTENT;
     private final int M = ViewGroup.LayoutParams.MATCH_PARENT;
     private TableLayout show_tab;
@@ -23,22 +24,22 @@ public class ShowBi extends AppCompatActivity implements Serializable {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        Log.d("ShowBi","oncreate");
+        Log.d("ShowObj","oncreate");
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.print_result);
 
         Intent intent = getIntent();
         Bundle bundle0 = intent.getExtras();
-        showBiTab((BiPointerTable) bundle0.getSerializable("BiPointerTable"));
+        showObjTab((ObjectTable)bundle0.getSerializable("ObjectTable"));
 
     }
-    private void showBiTab(BiPointerTable biPointerT){
+    private void showObjTab(ObjectTable topt){
         //ArrayAdapter<String> adapter = new ArrayAdapter<String>(ShowObj.this,android.R.layout.simple_list_item_1,objects);
         //ListView tableList = findViewById(R.id.tablelist);
         //tableList.setAdapter(adapter);
         int tabCol  = 4;
-        int tabH = biPointerT.biPointerTable.size();
+        int tabH = topt.objectTable.size();
         Object oj1,oj2,oj3,oj4;
         String stemp1,stemp2,stemp3,stemp4;
 
@@ -48,15 +49,15 @@ public class ShowBi extends AppCompatActivity implements Serializable {
             TableRow tableRow = new TableRow(this);
             if(i == 0){
                 stemp1 = "classid";
-                stemp2 = "objectid";
-                stemp3 = "deputyid";
-                stemp4 = "deputyobjectid";
+                stemp2 = "tupleid";
+                stemp3 = "blockid";
+                stemp4 = "offset";
             }
             else{
-                oj1 = biPointerT.biPointerTable.get(i-1).classid;
-                oj2 = biPointerT.biPointerTable.get(i-1).objectid;
-                oj3 = biPointerT.biPointerTable.get(i-1).deputyid;
-                oj4 = biPointerT.biPointerTable.get(i-1).deputyobjectid;
+                oj1 = topt.objectTable.get(i-1).classid;
+                oj2 = topt.objectTable.get(i-1).tupleid;
+                oj3 = topt.objectTable.get(i-1).blockid;
+                oj4 = topt.objectTable.get(i-1).offset;
                 stemp1 = oj1.toString();
                 stemp2 = oj2.toString();
                 stemp3 = oj3.toString();
@@ -73,10 +74,15 @@ public class ShowBi extends AppCompatActivity implements Serializable {
                 }
                 tv.setGravity(Gravity.CENTER);
                 tv.setBackgroundResource(R.drawable.tab_bg);
-                tv.setTextSize(20);
+                tv.setTextSize(28);
                 tableRow.addView(tv);
             }
             show_tab.addView(tableRow,new TableLayout.LayoutParams(M,W));
+
+
+            //objects.add(stemp1+" "+stemp2+" "+stemp3+" "+stemp4);
+            //String curObject = objects.get(i);
+            //Toast.makeText(ShowObj.this,curObject,Toast.LENGTH_LONG).show();
 
         }
 
