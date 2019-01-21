@@ -28,6 +28,7 @@ import drz.oddb.parse.*;
 public class TransAction {
     public TransAction(Context context) {
         this.context = context;
+        RedoRest();
     }
 
     Context context;
@@ -35,14 +36,13 @@ public class TransAction {
     LogManage log = new LogManage(mem);
 
 
-    LogTable redo = log.GetReDo();
     ObjectTable topt = mem.loadObjectTable();
     ClassTable classt = mem.loadClassTable();
     DeputyTable deputyt = mem.loadDeputyTable();
     BiPointerTable biPointerT = mem.loadBiPointerTable();
     SwitchingTable switchingT = mem.loadSwitchingTable();
-
-    public void SaveAll() {
+    public void SaveAll( )
+    {
         mem.saveObjectTable(topt);
         mem.saveClassTable(classt);
         mem.saveDeputyTable(deputyt);
@@ -108,7 +108,7 @@ public class TransAction {
 
             switch (Integer.parseInt(aa[0])) {
                 case parse.OPT_CREATE_ORIGINCLASS:
-                    //log.WriteLog(s);
+                    log.WriteLog(s);
                     CreateOriginClass(aa);
                     break;
                 case parse.OPT_CREATE_SELECTDEPUTY:
@@ -747,6 +747,11 @@ public class TransAction {
         mem.deleteTuple();
         return;
     }
+
+    private void UpateTuple(Tuple tuple,int blockid,int offset){
+        mem.UpateTuple(tuple,blockid,offset);
+    }
+
     private void PrintTab(ObjectTable topt,SwitchingTable switchingT,DeputyTable deputyt,BiPointerTable biPointerT,ClassTable classTable) {
         Intent intent = new Intent(context, ShowTable.class);
 
@@ -780,3 +785,4 @@ public class TransAction {
         PrintTab(topt,switchingT,deputyt,biPointerT,classt);
     }
 }
+

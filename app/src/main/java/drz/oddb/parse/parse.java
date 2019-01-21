@@ -11,6 +11,7 @@ public static final int OPT_INSERT                = 4;
 public static final int OPT_DELETE                = 5;
 public static final int OPT_SELECT_DERECTSELECT   = 6;
 public static final int OPT_SELECT_INDERECTSELECT = 7;
+public static final int OPT_CREATE_UPDATE         = 8;
 
         static Queue<String > st= new LinkedList<String>(); ;
   public static void main(String args[]) throws ParseException {
@@ -40,6 +41,7 @@ public static final int OPT_SELECT_INDERECTSELECT = 7;
         String select_s;
         String insert_s;
         String delete_s;
+        String update_s;
       if (jj_2_1(3)) {
         create_s = create();
                         sql_s = create_s;System.out.println(sql_s+"\u005cn");{if (true) return sql_s.split(",");}
@@ -55,6 +57,9 @@ public static final int OPT_SELECT_INDERECTSELECT = 7;
       } else if (jj_2_5(3)) {
         delete_s = delete();
                         sql_s = delete_s;System.out.println(sql_s+"\u005cn");{if (true) return sql_s.split(",");}
+      } else if (jj_2_6(3)) {
+        update_s = update();
+                         sql_s = update_s;System.out.println(sql_s+"\u005cn");{if (true) return sql_s.split(",");}
       } else {
         jj_consume_token(-1);
         throw new ParseException();
@@ -70,7 +75,7 @@ public static final int OPT_SELECT_INDERECTSELECT = 7;
     try {
         String create_s;
         int count;
-      if (jj_2_6(3)) {
+      if (jj_2_7(3)) {
         jj_consume_token(CREATE);
         count = originclass();
         jj_consume_token(SEMICOLON);
@@ -83,7 +88,7 @@ public static final int OPT_SELECT_INDERECTSELECT = 7;
 
       }
       {if (true) return create_s;}
-      } else if (jj_2_7(3)) {
+      } else if (jj_2_8(3)) {
         jj_consume_token(CREATE);
         count = selectdeputy();
         jj_consume_token(SEMICOLON);
@@ -159,7 +164,7 @@ public static final int OPT_SELECT_INDERECTSELECT = 7;
                    count++;st.add(vl);
       label_1:
       while (true) {
-        if (jj_2_8(3)) {
+        if (jj_2_9(3)) {
           ;
         } else {
           break label_1;
@@ -204,7 +209,7 @@ public static final int OPT_SELECT_INDERECTSELECT = 7;
     try {
     String select_s;
         int count;
-      if (jj_2_9(3)) {
+      if (jj_2_10(3)) {
         jj_consume_token(SELECT);
         count = directselect();
         jj_consume_token(SEMICOLON);
@@ -217,7 +222,7 @@ public static final int OPT_SELECT_INDERECTSELECT = 7;
 
       }
       {if (true) return select_s;}
-      } else if (jj_2_10(3)) {
+      } else if (jj_2_11(3)) {
         jj_consume_token(SELECT);
         count = indirectselect();
         jj_consume_token(SEMICOLON);
@@ -257,7 +262,7 @@ public static final int OPT_SELECT_INDERECTSELECT = 7;
                              st.add(attrtype_s); count++;
       label_2:
       while (true) {
-        if (jj_2_11(3)) {
+        if (jj_2_12(3)) {
           ;
         } else {
           break label_2;
@@ -347,12 +352,12 @@ public static final int OPT_SELECT_INDERECTSELECT = 7;
         String attr_s;
         String cond;
         Token s;
-      if (jj_2_12(3)) {
+      if (jj_2_13(3)) {
         attr_s = attr();
         jj_consume_token(EQUAL);
         s = jj_consume_token(INT);
                                          cond = attr_s+",=,"+s.image; {if (true) return cond;}
-      } else if (jj_2_13(3)) {
+      } else if (jj_2_14(3)) {
         attr_s = attr();
         jj_consume_token(EQUAL);
         s = jj_consume_token(STRING);
@@ -371,10 +376,10 @@ public static final int OPT_SELECT_INDERECTSELECT = 7;
     trace_call("value");
     try {
         Token s;
-      if (jj_2_14(3)) {
+      if (jj_2_15(3)) {
         s = jj_consume_token(INT);
                {if (true) return s.image;}
-      } else if (jj_2_15(3)) {
+      } else if (jj_2_16(3)) {
         s = jj_consume_token(STRING);
                    {if (true) return s.image;}
       } else {
@@ -399,7 +404,7 @@ public static final int OPT_SELECT_INDERECTSELECT = 7;
         int count = 0;
       attr_s = attr();
                      st.add(attr_s);count++;
-      if (jj_2_16(3)) {
+      if (jj_2_17(3)) {
         jj_consume_token(PLUS);
         value_s = value();
                                   plus = true;
@@ -412,7 +417,7 @@ public static final int OPT_SELECT_INDERECTSELECT = 7;
                        st.add(dattr_s);
       label_3:
       while (true) {
-        if (jj_2_17(3)) {
+        if (jj_2_18(3)) {
           ;
         } else {
           break label_3;
@@ -420,7 +425,7 @@ public static final int OPT_SELECT_INDERECTSELECT = 7;
         jj_consume_token(COMMA);
         attr_s = attr();
                                st.add(attr_s);count++;
-        if (jj_2_18(3)) {
+        if (jj_2_19(3)) {
           jj_consume_token(PLUS);
           value_s = value();
                                                                                        plus = true;
@@ -455,7 +460,7 @@ public static final int OPT_SELECT_INDERECTSELECT = 7;
                        st.add(cln);count++;
       label_4:
       while (true) {
-        if (jj_2_19(3)) {
+        if (jj_2_20(3)) {
           ;
         } else {
           break label_4;
@@ -476,6 +481,35 @@ public static final int OPT_SELECT_INDERECTSELECT = 7;
     throw new Error("Missing return statement in function");
     } finally {
       trace_return("indirectselect");
+    }
+  }
+
+  final public String update() throws ParseException {
+    trace_call("update");
+    try {
+        String cln;
+        String value_s;
+        String attr_s;
+        String cond;
+        String update_s;
+      jj_consume_token(UPDATE);
+             update_s = OPT_CREATE_UPDATE+",";
+      cln = classname();
+                     update_s += cln + ",";
+      jj_consume_token(SET);
+      attr_s = attr();
+                    update_s += attr_s+",";
+      jj_consume_token(EQUAL);
+      value_s = value();
+                      update_s += value_s+",";
+      jj_consume_token(WHERE);
+      cond = condition();
+                       update_s += cond;
+      jj_consume_token(SEMICOLON);
+               {if (true) return update_s;}
+    throw new Error("Missing return statement in function");
+    } finally {
+      trace_return("update");
     }
   }
 
@@ -612,45 +646,11 @@ public static final int OPT_SELECT_INDERECTSELECT = 7;
     finally { jj_save(18, xla); }
   }
 
-  private boolean jj_3_1() {
-    if (jj_3R_5()) return true;
-    return false;
-  }
-
-  private boolean jj_3_17() {
-    if (jj_scan_token(COMMA)) return true;
-    if (jj_3R_15()) return true;
-    Token xsp;
-    xsp = jj_scanpos;
-    if (jj_3_18()) jj_scanpos = xsp;
-    if (jj_scan_token(AS)) return true;
-    return false;
-  }
-
-  private boolean jj_3R_15() {
-    if (jj_scan_token(ID)) return true;
-    return false;
-  }
-
-  private boolean jj_3_16() {
-    if (jj_scan_token(PLUS)) return true;
-    if (jj_3R_12()) return true;
-    return false;
-  }
-
-  private boolean jj_3R_13() {
-    if (jj_3R_15()) return true;
-    Token xsp;
-    xsp = jj_scanpos;
-    if (jj_3_16()) jj_scanpos = xsp;
-    if (jj_scan_token(AS)) return true;
-    return false;
-  }
-
-  private boolean jj_3_8() {
-    if (jj_scan_token(COMMA)) return true;
-    if (jj_3R_12()) return true;
-    return false;
+  private boolean jj_2_20(int xla) {
+    jj_la = xla; jj_lastpos = jj_scanpos = token;
+    try { return !jj_3_20(); }
+    catch(LookaheadSuccess ls) { return true; }
+    finally { jj_save(19, xla); }
   }
 
   private boolean jj_3R_16() {
@@ -658,10 +658,96 @@ public static final int OPT_SELECT_INDERECTSELECT = 7;
     return false;
   }
 
-  private boolean jj_3R_18() {
+  private boolean jj_3_17() {
+    if (jj_scan_token(PLUS)) return true;
+    if (jj_3R_13()) return true;
+    return false;
+  }
+
+  private boolean jj_3R_14() {
+    if (jj_3R_16()) return true;
+    Token xsp;
+    xsp = jj_scanpos;
+    if (jj_3_17()) jj_scanpos = xsp;
+    if (jj_scan_token(AS)) return true;
+    return false;
+  }
+
+  private boolean jj_3_9() {
+    if (jj_scan_token(COMMA)) return true;
+    if (jj_3R_13()) return true;
+    return false;
+  }
+
+  private boolean jj_3R_17() {
+    if (jj_scan_token(ID)) return true;
+    return false;
+  }
+
+  private boolean jj_3R_19() {
     if (jj_scan_token(INSERT)) return true;
     if (jj_scan_token(INTO)) return true;
-    if (jj_3R_17()) return true;
+    if (jj_3R_18()) return true;
+    return false;
+  }
+
+  private boolean jj_3_11() {
+    if (jj_scan_token(SELECT)) return true;
+    if (jj_3R_15()) return true;
+    return false;
+  }
+
+  private boolean jj_3R_10() {
+    if (jj_scan_token(UPDATE)) return true;
+    if (jj_3R_18()) return true;
+    if (jj_scan_token(SET)) return true;
+    return false;
+  }
+
+  private boolean jj_3_8() {
+    if (jj_scan_token(CREATE)) return true;
+    if (jj_3R_12()) return true;
+    return false;
+  }
+
+  private boolean jj_3R_18() {
+    if (jj_scan_token(ID)) return true;
+    return false;
+  }
+
+  private boolean jj_3_16() {
+    if (jj_scan_token(STRING)) return true;
+    return false;
+  }
+
+  private boolean jj_3R_13() {
+    Token xsp;
+    xsp = jj_scanpos;
+    if (jj_3_15()) {
+    jj_scanpos = xsp;
+    if (jj_3_16()) return true;
+    }
+    return false;
+  }
+
+  private boolean jj_3_15() {
+    if (jj_scan_token(INT)) return true;
+    return false;
+  }
+
+  private boolean jj_3R_12() {
+    if (jj_scan_token(SELECTDEPUTY)) return true;
+    if (jj_3R_18()) return true;
+    return false;
+  }
+
+  private boolean jj_3R_7() {
+    Token xsp;
+    xsp = jj_scanpos;
+    if (jj_3_10()) {
+    jj_scanpos = xsp;
+    if (jj_3_11()) return true;
+    }
     return false;
   }
 
@@ -671,115 +757,73 @@ public static final int OPT_SELECT_INDERECTSELECT = 7;
     return false;
   }
 
+  private boolean jj_3R_5() {
+    Token xsp;
+    xsp = jj_scanpos;
+    if (jj_3_7()) {
+    jj_scanpos = xsp;
+    if (jj_3_8()) return true;
+    }
+    return false;
+  }
+
+  private boolean jj_3_14() {
+    if (jj_3R_16()) return true;
+    if (jj_scan_token(EQUAL)) return true;
+    if (jj_scan_token(STRING)) return true;
+    return false;
+  }
+
   private boolean jj_3_7() {
     if (jj_scan_token(CREATE)) return true;
     if (jj_3R_11()) return true;
     return false;
   }
 
-  private boolean jj_3R_17() {
-    if (jj_scan_token(ID)) return true;
-    return false;
-  }
-
-  private boolean jj_3_15() {
-    if (jj_scan_token(STRING)) return true;
-    return false;
-  }
-
-  private boolean jj_3R_12() {
-    Token xsp;
-    xsp = jj_scanpos;
-    if (jj_3_14()) {
-    jj_scanpos = xsp;
-    if (jj_3_15()) return true;
-    }
-    return false;
-  }
-
-  private boolean jj_3_14() {
-    if (jj_scan_token(INT)) return true;
-    return false;
-  }
-
-  private boolean jj_3R_11() {
-    if (jj_scan_token(SELECTDEPUTY)) return true;
-    if (jj_3R_17()) return true;
-    return false;
-  }
-
-  private boolean jj_3R_7() {
-    Token xsp;
-    xsp = jj_scanpos;
-    if (jj_3_9()) {
-    jj_scanpos = xsp;
-    if (jj_3_10()) return true;
-    }
-    return false;
-  }
-
-  private boolean jj_3_9() {
-    if (jj_scan_token(SELECT)) return true;
-    if (jj_3R_13()) return true;
-    return false;
-  }
-
-  private boolean jj_3R_5() {
-    Token xsp;
-    xsp = jj_scanpos;
-    if (jj_3_6()) {
-    jj_scanpos = xsp;
-    if (jj_3_7()) return true;
-    }
-    return false;
-  }
-
-  private boolean jj_3_6() {
-    if (jj_scan_token(CREATE)) return true;
-    if (jj_3R_10()) return true;
-    return false;
-  }
-
-  private boolean jj_3_13() {
-    if (jj_3R_15()) return true;
-    if (jj_scan_token(EQUAL)) return true;
-    if (jj_scan_token(STRING)) return true;
-    return false;
-  }
-
   private boolean jj_3R_8() {
+    if (jj_3R_19()) return true;
+    return false;
+  }
+
+  private boolean jj_3_20() {
+    if (jj_scan_token(CROSS)) return true;
     if (jj_3R_18()) return true;
     return false;
   }
 
-  private boolean jj_3_19() {
-    if (jj_scan_token(CROSS)) return true;
-    if (jj_3R_17()) return true;
-    return false;
-  }
-
-  private boolean jj_3_12() {
-    if (jj_3R_15()) return true;
+  private boolean jj_3_13() {
+    if (jj_3R_16()) return true;
     if (jj_scan_token(EQUAL)) return true;
     if (jj_scan_token(INT)) return true;
     return false;
   }
 
-  private boolean jj_3R_14() {
-    if (jj_3R_17()) return true;
+  private boolean jj_3R_15() {
+    if (jj_3R_18()) return true;
     Token xsp;
     while (true) {
       xsp = jj_scanpos;
-      if (jj_3_19()) { jj_scanpos = xsp; break; }
+      if (jj_3_20()) { jj_scanpos = xsp; break; }
     }
     if (jj_scan_token(DOT)) return true;
     return false;
   }
 
-  private boolean jj_3_11() {
+  private boolean jj_3_12() {
     if (jj_scan_token(COMMA)) return true;
-    if (jj_3R_15()) return true;
     if (jj_3R_16()) return true;
+    if (jj_3R_17()) return true;
+    return false;
+  }
+
+  private boolean jj_3_6() {
+    if (jj_3R_10()) return true;
+    return false;
+  }
+
+  private boolean jj_3R_11() {
+    if (jj_scan_token(CLASS)) return true;
+    if (jj_3R_18()) return true;
     return false;
   }
 
@@ -788,14 +832,14 @@ public static final int OPT_SELECT_INDERECTSELECT = 7;
     return false;
   }
 
-  private boolean jj_3R_10() {
-    if (jj_scan_token(CLASS)) return true;
-    if (jj_3R_17()) return true;
+  private boolean jj_3_4() {
+    if (jj_3R_8()) return true;
     return false;
   }
 
-  private boolean jj_3_4() {
-    if (jj_3R_8()) return true;
+  private boolean jj_3_19() {
+    if (jj_scan_token(PLUS)) return true;
+    if (jj_3R_13()) return true;
     return false;
   }
 
@@ -804,9 +848,17 @@ public static final int OPT_SELECT_INDERECTSELECT = 7;
     return false;
   }
 
-  private boolean jj_3_18() {
-    if (jj_scan_token(PLUS)) return true;
-    if (jj_3R_12()) return true;
+  private boolean jj_3R_9() {
+    if (jj_scan_token(DELETE)) return true;
+    if (jj_scan_token(FROM)) return true;
+    if (jj_3R_18()) return true;
+    return false;
+  }
+
+  private boolean jj_3R_6() {
+    if (jj_scan_token(DROP)) return true;
+    if (jj_scan_token(CLASS)) return true;
+    if (jj_3R_18()) return true;
     return false;
   }
 
@@ -815,17 +867,18 @@ public static final int OPT_SELECT_INDERECTSELECT = 7;
     return false;
   }
 
-  private boolean jj_3R_9() {
-    if (jj_scan_token(DELETE)) return true;
-    if (jj_scan_token(FROM)) return true;
-    if (jj_3R_17()) return true;
+  private boolean jj_3_1() {
+    if (jj_3R_5()) return true;
     return false;
   }
 
-  private boolean jj_3R_6() {
-    if (jj_scan_token(DROP)) return true;
-    if (jj_scan_token(CLASS)) return true;
-    if (jj_3R_17()) return true;
+  private boolean jj_3_18() {
+    if (jj_scan_token(COMMA)) return true;
+    if (jj_3R_16()) return true;
+    Token xsp;
+    xsp = jj_scanpos;
+    if (jj_3_19()) jj_scanpos = xsp;
+    if (jj_scan_token(AS)) return true;
     return false;
   }
 
@@ -848,7 +901,7 @@ public static final int OPT_SELECT_INDERECTSELECT = 7;
    private static void jj_la1_init_0() {
       jj_la1_0 = new int[] {};
    }
-  final private JJCalls[] jj_2_rtns = new JJCalls[19];
+  final private JJCalls[] jj_2_rtns = new JJCalls[20];
   private boolean jj_rescan = false;
   private int jj_gc = 0;
 
@@ -1034,7 +1087,7 @@ public static final int OPT_SELECT_INDERECTSELECT = 7;
   /** Generate ParseException. */
   public ParseException generateParseException() {
     jj_expentries.clear();
-    boolean[] la1tokens = new boolean[28];
+    boolean[] la1tokens = new boolean[30];
     if (jj_kind >= 0) {
       la1tokens[jj_kind] = true;
       jj_kind = -1;
@@ -1048,7 +1101,7 @@ public static final int OPT_SELECT_INDERECTSELECT = 7;
         }
       }
     }
-    for (int i = 0; i < 28; i++) {
+    for (int i = 0; i < 30; i++) {
       if (la1tokens[i]) {
         jj_expentry = new int[1];
         jj_expentry[0] = i;
@@ -1118,7 +1171,7 @@ public static final int OPT_SELECT_INDERECTSELECT = 7;
 
   private void jj_rescan_token() {
     jj_rescan = true;
-    for (int i = 0; i < 19; i++) {
+    for (int i = 0; i < 20; i++) {
     try {
       JJCalls p = jj_2_rtns[i];
       do {
@@ -1144,6 +1197,7 @@ public static final int OPT_SELECT_INDERECTSELECT = 7;
             case 16: jj_3_17(); break;
             case 17: jj_3_18(); break;
             case 18: jj_3_19(); break;
+            case 19: jj_3_20(); break;
           }
         }
         p = p.next;

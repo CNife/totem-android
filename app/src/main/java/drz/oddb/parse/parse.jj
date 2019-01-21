@@ -17,6 +17,7 @@ public static final int OPT_INSERT                = 4;
 public static final int OPT_DELETE                = 5;
 public static final int OPT_SELECT_DERECTSELECT   = 6;
 public static final int OPT_SELECT_INDERECTSELECT = 7;
+public static final int OPT_CREATE_UPDATE         = 8;
 
 	static Queue<String > st= new LinkedList<String>(); ;
   public static void main(String args[]) throws ParseException {
@@ -61,6 +62,8 @@ TOKEN:
 |<DOT:".">
 |<AS:"AS">
 |<PLUS:"+">
+|<UPDATE:"UPDATE">
+|<SET:"SET">
 }
 
 
@@ -84,6 +87,7 @@ String[] sql() :
 	String select_s;
 	String insert_s;
 	String delete_s;
+	String update_s;
 }
 {
    create_s = create() {sql_s = create_s;System.out.println(sql_s+"\n");return sql_s.split(","); }
@@ -91,6 +95,7 @@ String[] sql() :
    |select_s = select(){sql_s = select_s;System.out.println(sql_s+"\n");return sql_s.split(",");  }
    |insert_s = insert2(){sql_s = insert_s;System.out.println(sql_s+"\n");return sql_s.split(",");  }
    |delete_s = delete(){sql_s = delete_s;System.out.println(sql_s+"\n");return sql_s.split(",");  }
+   |update_s = update() {sql_s = update_s;System.out.println(sql_s+"\n");return sql_s.split(","); }
 }
 
 String create() :
@@ -338,4 +343,24 @@ int indirectselect() :
      cln = classname() {st.add(cln); }
      <WHERE>
      cond = condition() {st.add(cond); return count;}
+}
+
+String update():
+{
+	String cln;
+	String value_s;
+	String attr_s;
+	String cond;
+	String update_s;
+}
+{
+  <UPDATE> { update_s = OPT_CREATE_UPDATE+",";}
+  cln = classname() {update_s += cln + ","; }
+  <SET>
+  attr_s = attr() { update_s += attr_s+","; }
+  <EQUAL> 
+  value_s = value() { update_s += value_s+","; }
+  <WHERE>
+  cond = condition() { update_s += cond;}
+  <SEMICOLON> {return update_s;}
 }
