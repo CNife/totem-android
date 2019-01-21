@@ -56,6 +56,10 @@ public interface parseConstants {
   int AS = 26;
   /** RegularExpression Id. */
   int PLUS = 27;
+  /** RegularExpression Id. */
+  int UPDATE = 28;
+  /** RegularExpression Id. */
+  int SET = 29;
 
   /** Lexical state. */
   int DEFAULT = 0;
@@ -90,6 +94,8 @@ public interface parseConstants {
     "\".\"",
     "\"AS\"",
     "\"+\"",
+    "\"UPDATE\"",
+    "\"SET\"",
   };
 
 }

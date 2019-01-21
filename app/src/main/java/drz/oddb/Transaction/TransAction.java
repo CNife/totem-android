@@ -133,6 +133,9 @@ public class TransAction {
                 case parse.OPT_SELECT_INDERECTSELECT:
                     InDirectSelect(aa);
                     break;
+                case parse.OPT_CREATE_UPDATE:
+                    log.WriteLog(s);
+                    Update(aa);
                 default:
                     break;
             }
@@ -756,6 +759,8 @@ public class TransAction {
                 Tuple tuple = GetTuple(item.blockid,item.offset);
                 tuple.tuple[attrid] = value;
                 UpateTuple(tuple,item.blockid,item.offset);
+                Tuple tuple1 = GetTuple(item.blockid,item.offset);
+                UpateTuple(tuple1,item.blockid,item.offset);
             }
         }
 
@@ -768,33 +773,33 @@ public class TransAction {
         }
         for(BiPointerTableItem item1: biPointerT.biPointerTable) {
             if (item1.objectid == tupleid) {
-                int isexist = 0;
-                for (SwitchingTableItem item5 : switchingT.switchingTable) {
-                    String dattrname = null;
-                    String dswitchrule = null;
 
-                    if (item5.attr.equals(attrname)) {
-                        dattrname = item5.deputy;
-                        dswitchrule = item5.rule;
-                    }
-                    String dvalue = (Integer.parseInt(value)+dswitchrule).toString();
 
-                    int dattrid = 0;
-
-                    for(ClassTableItem item4:classt.classTable){
-                        if(item4.attrname.equals(dattrname)){
-                            dattrid = item4.attrid;
-                            isexist = 1;
+                for(ClassTableItem item4:classt.classTable){
+                    if(item4.classid==item1.deputyid){
+                        String dattrname = item4.attrname;
+                        int dattrid = item4.attrid;
+                        for (SwitchingTableItem item5 : switchingT.switchingTable) {
+                            String dswitchrule = null;
+                            String dvalue = null;
+                            if (item5.attr.equals(attrname) && item5.deputy.equals(dattrname)) {
+                                dvalue = value;
+                                if (Integer.parseInt(item5.rule) != 0) {
+                                    dswitchrule = item5.rule;
+                                    dvalue = Integer.toString(Integer.parseInt(dvalue) + Integer.parseInt(dswitchrule));
+                                }
+                                UpdatebyID(item1.deputyobjectid, dattrid, dvalue);
+                                break;
+                            }
                         }
                     }
-
                 }
             }
         }
 
     }
 
-        //更新迁移
+
 
 
 
@@ -827,7 +832,9 @@ public class TransAction {
         mem.deleteTuple();
         return;
     }
-    private void UpateTuple(Tuple tuple,int blockid,int offset){}
+    private void UpateTuple(Tuple tuple,int blockid,int offset){
+        mem.UpateTuple(tuple,blockid,offset);
+    }
 
 
     private void PrintObj(ObjectTable topt){
