@@ -1,5 +1,6 @@
 package drz.oddb.Transaction;
 
+import android.app.AlertDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
@@ -109,22 +110,27 @@ public class TransAction {
                 case parse.OPT_CREATE_ORIGINCLASS:
                     log.WriteLog(s);
                     CreateOriginClass(aa);
+                    new AlertDialog.Builder(context).setTitle("提示").setMessage("创建成功").setPositiveButton("确定",null).show();
                     break;
                 case parse.OPT_CREATE_SELECTDEPUTY:
                     log.WriteLog(s);
                     CreateSelectDeputy(aa);
+                    new AlertDialog.Builder(context).setTitle("提示").setMessage("创建成功").setPositiveButton("确定",null).show();
                     break;
                 case parse.OPT_DROP:
                     log.WriteLog(s);
                     Drop(aa);
+                    new AlertDialog.Builder(context).setTitle("提示").setMessage("删除成功").setPositiveButton("确定",null).show();
                     break;
                 case parse.OPT_INSERT:
                     log.WriteLog(s);
                     Insert(aa);
+                    new AlertDialog.Builder(context).setTitle("提示").setMessage("插入成功").setPositiveButton("确定",null).show();
                     break;
                 case parse.OPT_DELETE:
                     log.WriteLog(s);
                     Delete(aa);
+                    new AlertDialog.Builder(context).setTitle("提示").setMessage("删除成功").setPositiveButton("确定",null).show();
                     break;
                 case parse.OPT_SELECT_DERECTSELECT:
                     DirectSelect(aa);
@@ -135,6 +141,7 @@ public class TransAction {
                 case parse.OPT_CREATE_UPDATE:
                     log.WriteLog(s);
                     Update(aa);
+                    new AlertDialog.Builder(context).setTitle("提示").setMessage("更新成功").setPositiveButton("确定",null).show();
                 default:
                     break;
 
