@@ -1,16 +1,10 @@
 package drz.oddb.Log;
 
-import drz.oddb.Memory.MemManage;
-import drz.oddb.Transaction.SystemTable.BiPointerTable;
-import drz.oddb.Transaction.SystemTable.ClassTable;
-import drz.oddb.Transaction.SystemTable.DeputyTable;
-import drz.oddb.Transaction.SystemTable.ObjectTable;
-import drz.oddb.Transaction.SystemTable.SwitchingTable;
 import drz.oddb.Transaction.TransAction;
 
 public class LogManage {
 
-    final private int MAXSIZE=20;
+    final private int MAXSIZE=5;
     private int checkpoint=-1;
     private int logid=0;    //LogTable块id
     private TransAction trans;
@@ -66,6 +60,17 @@ public class LogManage {
 
             if(lognum<MAXSIZE){  //List写得下
                 LogT.logTable.add(LogItem);
+                if(lognum == (MAXSIZE-1)){
+                    trans.mem.saveLog(LogT);  //把当前的存入
+                    trans.mem.saveObjectTable(trans.topt);
+                    trans.mem.saveClassTable(trans.classt);
+                    trans.mem.saveDeputyTable(trans.deputyt);
+                    trans.mem.saveBiPointerTable(trans.biPointerT);
+                    trans.mem.saveSwitchingTable(trans.switchingT);
+                    while(!trans.mem.flush());
+                    while(!trans.mem.setLogCheck(LogT.logID));
+                    trans.mem.setCheckPoint(LogT.logID);
+                }
             }else{
 
                 trans.mem.saveLog(LogT);  //把当前的存入
