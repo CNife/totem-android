@@ -1,11 +1,11 @@
 package drz.oddb.Transaction;
 
+import android.app.AlertDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 
 import java.io.ByteArrayInputStream;
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -14,13 +14,8 @@ import drz.oddb.Log.*;
 import drz.oddb.Memory.*;
 
 
-import drz.oddb.PrintResult;
-import drz.oddb.ShowBi;
-import drz.oddb.ShowCla;
-import drz.oddb.ShowDep;
-import drz.oddb.ShowObj;
-import drz.oddb.ShowSwi;
-import drz.oddb.ShowTable;
+import drz.oddb.show.PrintResult;
+import drz.oddb.show.ShowTable;
 import drz.oddb.Transaction.SystemTable.*;
 
 import drz.oddb.parse.*;
@@ -115,22 +110,27 @@ public class TransAction {
                 case parse.OPT_CREATE_ORIGINCLASS:
                     log.WriteLog(s);
                     CreateOriginClass(aa);
+                    new AlertDialog.Builder(context).setTitle("提示").setMessage("创建成功").setPositiveButton("确定",null).show();
                     break;
                 case parse.OPT_CREATE_SELECTDEPUTY:
                     log.WriteLog(s);
                     CreateSelectDeputy(aa);
+                    new AlertDialog.Builder(context).setTitle("提示").setMessage("创建成功").setPositiveButton("确定",null).show();
                     break;
                 case parse.OPT_DROP:
                     log.WriteLog(s);
                     Drop(aa);
+                    new AlertDialog.Builder(context).setTitle("提示").setMessage("删除成功").setPositiveButton("确定",null).show();
                     break;
                 case parse.OPT_INSERT:
                     log.WriteLog(s);
                     Insert(aa);
+                    new AlertDialog.Builder(context).setTitle("提示").setMessage("插入成功").setPositiveButton("确定",null).show();
                     break;
                 case parse.OPT_DELETE:
                     log.WriteLog(s);
                     Delete(aa);
+                    new AlertDialog.Builder(context).setTitle("提示").setMessage("删除成功").setPositiveButton("确定",null).show();
                     break;
                 case parse.OPT_SELECT_DERECTSELECT:
                     DirectSelect(aa);
@@ -138,8 +138,13 @@ public class TransAction {
                 case parse.OPT_SELECT_INDERECTSELECT:
                     InDirectSelect(aa);
                     break;
+                case parse.OPT_CREATE_UPDATE:
+                    log.WriteLog(s);
+                    Update(aa);
+                    new AlertDialog.Builder(context).setTitle("提示").setMessage("更新成功").setPositiveButton("确定",null).show();
                 default:
                     break;
+
             }
         } catch (ParseException e) {
 
@@ -244,7 +249,7 @@ public class TransAction {
                                 //判断被置换的属性是否是代理类的
 
                                 for(ClassTableItem item8: classt.classTable){
-                                    if(item8.attrname.equals(item4.deputy)){
+                                    if(item8.attrname.equals(item4.deputy)&&Integer.parseInt(item4.rule)!=0){
                                         if(item8.classid==item.deputyid){
                                             int sw = Integer.parseInt(p[3+attrid1[l]]);
                                             ss[3+attrid1[l]] = new Integer(sw+Integer.parseInt(item4.rule)).toString();
@@ -574,7 +579,9 @@ public class TransAction {
                         //swi
                         if(Integer.parseInt(p[4+4*i]) == 1){
                             switchingT.switchingTable.add(new SwitchingTableItem(item.attrname,attrname[i],p[5+4*i]));
-
+                        }
+                        if(Integer.parseInt(p[4+4*i])==0){
+                            switchingT.switchingTable.add(new SwitchingTableItem(item.attrname,attrname[i],"0"));
                         }
                     break;
                 }
@@ -706,7 +713,96 @@ public class TransAction {
 
     }
 
-    /*
+    //UPDATE Song SET type = ‘jazz’WHERE songId = 100;
+    //OPT_CREATE_UPDATE，Song，type，“jazz”，songId，=，100
+    //0                  1     2      3        4      5  6
+    private void Update(String[] p){
+        String classname = p[1];
+        String attrname = p[2];
+        String cattrname = p[4];
+
+        int classid = 0;
+        int attrid = 0;
+        String attrtype = null;
+        int cattrid = 0;
+        String cattrtype = null;
+        for(ClassTableItem item :classt.classTable){
+            if (item.classname.equals(classname)){
+                classid = item.classid;
+                break;
+            }
+        }
+        for(ClassTableItem item1 :classt.classTable){
+            if (item1.classid==classid&&item1.attrname.equals(attrname)){
+                attrtype = item1.attrtype;
+                attrid = item1.attrid;
+            }
+        }
+        for(ClassTableItem item2 :classt.classTable){
+            if (item2.classid==classid&&item2.attrname.equals(cattrname)){
+                cattrtype = item2.attrtype;
+                cattrid = item2.attrid;
+            }
+        }
+
+
+
+        for(ObjectTableItem item3:topt.objectTable){
+            if(item3.classid == classid){
+                Tuple tuple = GetTuple(item3.blockid,item3.offset);
+                if(Condition(cattrtype,tuple,cattrid,p[6])){
+                    UpdatebyID(item3.tupleid,attrid,p[3].replace("\"",""));
+
+                }
+            }
+        }
+    }
+
+    private void UpdatebyID(int tupleid,int attrid,String value){
+        for(ObjectTableItem item: topt.objectTable){
+            if(item.tupleid ==tupleid){
+                Tuple tuple = GetTuple(item.blockid,item.offset);
+                tuple.tuple[attrid] = value;
+                UpateTuple(tuple,item.blockid,item.offset);
+                Tuple tuple1 = GetTuple(item.blockid,item.offset);
+                UpateTuple(tuple1,item.blockid,item.offset);
+            }
+        }
+
+        String attrname = null;
+        for(ClassTableItem item2: classt.classTable){
+            if (item2.attrid == attrid){
+                attrname = item2.attrname;
+                break;
+            }
+        }
+        for(BiPointerTableItem item1: biPointerT.biPointerTable) {
+            if (item1.objectid == tupleid) {
+
+
+                for(ClassTableItem item4:classt.classTable){
+                    if(item4.classid==item1.deputyid){
+                        String dattrname = item4.attrname;
+                        int dattrid = item4.attrid;
+                        for (SwitchingTableItem item5 : switchingT.switchingTable) {
+                            String dswitchrule = null;
+                            String dvalue = null;
+                            if (item5.attr.equals(attrname) && item5.deputy.equals(dattrname)) {
+                                dvalue = value;
+                                if (Integer.parseInt(item5.rule) != 0) {
+                                    dswitchrule = item5.rule;
+                                    dvalue = Integer.toString(Integer.parseInt(dvalue) + Integer.parseInt(dswitchrule));
+                                }
+                                UpdatebyID(item1.deputyobjectid, dattrid, dvalue);
+                                break;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+    }
 
 
 
@@ -718,7 +814,7 @@ public class TransAction {
 
 
 
-        */
+
 
 
     private class OandB{
@@ -786,7 +882,7 @@ public class TransAction {
 
 
     }
-    public void test(){
+    public void PrintTab(){
         PrintTab(topt,switchingT,deputyt,biPointerT,classt);
     }
 }

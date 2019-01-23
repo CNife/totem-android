@@ -1,4 +1,4 @@
-package drz.oddb;
+package drz.oddb.show;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -13,9 +13,10 @@ import android.widget.TextView;
 
 import java.io.Serializable;
 
-import drz.oddb.Transaction.SystemTable.DeputyTable;
+import drz.oddb.R;
+import drz.oddb.Transaction.SystemTable.ClassTable;
 
-public class ShowDep extends AppCompatActivity implements Serializable {
+public class ShowCla extends AppCompatActivity implements Serializable {
     private final int W = ViewGroup.LayoutParams.WRAP_CONTENT;
     private final int M = ViewGroup.LayoutParams.MATCH_PARENT;
     private TableLayout show_tab;
@@ -23,39 +24,51 @@ public class ShowDep extends AppCompatActivity implements Serializable {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        Log.d("ShowDep", "oncreate");
+        Log.d("ShowCla", "oncreate");
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.print_result);
 
         Intent intent = getIntent();
         Bundle bundle0 = intent.getExtras();
-        showDepTab((DeputyTable) bundle0.getSerializable("DeputyTable"));
+        showClaTab((ClassTable) bundle0.getSerializable("ClassTable"));
 
     }
 
-    private void showDepTab(DeputyTable deputyt) {
-        int tabCol = 3;
-        int tabH = deputyt.deputyTable.size();
-        Object oj1,oj2,oj3;
-        String stemp1, stemp2, stemp3;
+    private void showClaTab(ClassTable classT) {
+        int tabCol = 7;
+        int tabH = classT.classTable.size();
+        String stemp1,stemp2,stemp3,stemp4, stemp5, stemp6,stemp7;
+        Object oj1,oj2,oj3,oj4,oj5,oj6,oj7;
 
         show_tab = findViewById(R.id.rst_tab);
 
         for (int i = 0; i <= tabH; i++) {
             TableRow tableRow = new TableRow(this);
             if (i == 0) {
-                stemp1 = "originid";
-                stemp2 = "deputyid";
-                stemp3 = "deputyrule";
+                stemp1 = "classname";
+                stemp2 = "classid";
+                stemp3 = "attrnum";
+                stemp4 = "attrid";
+                stemp5 = "attrname";
+                stemp6 = "attrtype";
+                stemp7 = "classtype";
 
             } else {
-                oj1 = deputyt.deputyTable.get(i-1).originid;
-                oj2 = deputyt.deputyTable.get(i-1).deputyid;
-                oj3 = deputyt.deputyTable.get(i-1).deputyrule;
+                oj1 = classT.classTable.get(i-1).classname;
+                oj2 = classT.classTable.get(i-1).classid;
+                oj3 = classT.classTable.get(i-1).attrnum;
+                oj4 = classT.classTable.get(i-1).attrid;
+                oj5 = classT.classTable.get(i-1).attrname;
+                oj6 = classT.classTable.get(i-1).attrtype;
+                oj7 = classT.classTable.get(i-1).classtype;
                 stemp1 = oj1.toString();
                 stemp2 = oj2.toString();
                 stemp3 = oj3.toString();
+                stemp4 = oj4.toString();
+                stemp5 = oj5.toString();
+                stemp6 = oj6.toString();
+                stemp7 = oj7.toString();
             }
             for (int j = 0; j < tabCol; j++) {
                 TextView tv = new TextView(this);
@@ -68,6 +81,18 @@ public class ShowDep extends AppCompatActivity implements Serializable {
                         break;
                     case 2:
                         tv.setText(stemp3);
+                        break;
+                    case 3:
+                        tv.setText(stemp4);
+                        break;
+                    case 4:
+                        tv.setText(stemp5);
+                        break;
+                    case 5:
+                        tv.setText(stemp6);
+                        break;
+                    case 6:
+                        tv.setText(stemp7);
                         break;
 
                 }

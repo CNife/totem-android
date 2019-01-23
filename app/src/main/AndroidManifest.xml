@@ -23,7 +23,7 @@
             </intent-filter>
         </activity>
 
-        <activity android:name=".PrintResult"
+        <activity android:name=".show.PrintResult"
             android:label="Print Result">
             <intent-filter>
                 <action android:name="android.intent.action.PRINTRST"/>
@@ -32,36 +32,36 @@
         </activity>
 
         <activity
-            android:name=".ShowTable"
+            android:name=".show.ShowTable"
             android:label="ShowTable"
             android:theme="@style/AppTheme.NoActionBar" >
         </activity>
         <activity
-            android:name=".ShowObj"
+            android:name=".show.ShowObj"
             android:label="ShowObj"
             android:theme="@style/AppTheme.NoActionBar">
 
         </activity>
         <activity
-            android:name=".ShowSwi"
+            android:name=".show.ShowSwi"
             android:label="ShowSwi"
             android:theme="@style/AppTheme.NoActionBar">
 
         </activity>
         <activity
-            android:name=".ShowDep"
+            android:name=".show.ShowDep"
             android:label="ShowDep"
             android:theme="@style/AppTheme.NoActionBar">
 
         </activity>
         <activity
-            android:name=".ShowBi"
+            android:name=".show.ShowBi"
             android:label="ShowBi"
             android:theme="@style/AppTheme.NoActionBar">
 
         </activity>
         <activity
-            android:name=".ShowCla"
+            android:name=".show.ShowCla"
             android:label="ShowCla"
             android:theme="@style/AppTheme.NoActionBar">
 
