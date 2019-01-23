@@ -674,7 +674,7 @@ public class MemManage implements Serializable {
 
     //加载日志检查检查点
     public int loadCheck(){
-        int ret=0;
+        int ret=-1;
         File file=new File("/data/data/drz.oddb/Log/checklogid");
         if(!file.exists()){
             return -1;
