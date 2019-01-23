@@ -913,6 +913,7 @@ public class MemManage implements Serializable {
         return false;
     }
 
+    //编码字符串为byte
     private byte[] str2Bytes(String s){
         byte[] ret=new byte[attrstringlen];
         byte[] temp=s.getBytes();
@@ -932,6 +933,7 @@ public class MemManage implements Serializable {
         }
     }
 
+    //解码byte为字符串
     private String byte2str(byte[] b,int off,int len){
         String s;
         int k=0;
@@ -946,6 +948,7 @@ public class MemManage implements Serializable {
         return s;
     }
 
+    //编码int为byte
     private byte[] int2Bytes(int value, int len){
         byte[] b = new byte[len];
         for (int i = 0; i < len; i++) {
@@ -954,6 +957,7 @@ public class MemManage implements Serializable {
         return b;
     }
 
+    //解码byte为int
     private int bytes2Int(byte[] b, int start, int len) {
         int sum = 0;
         int end = start + len;
