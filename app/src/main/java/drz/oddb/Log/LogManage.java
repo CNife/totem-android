@@ -15,20 +15,10 @@ public class LogManage {
     private int logid=0;    //LogTable块id
     private TransAction trans;
     public LogTable LogT = new LogTable();   //存放执行层创建LogManage时写入的日志
-    private ObjectTable topt;
-    private ClassTable classt;
-    private DeputyTable deputyt;
-    private BiPointerTable biPointerT;
-    private  SwitchingTable switchingT;
 
     //构造方法
     public LogManage(TransAction trans){
         this.trans = trans;
-        this.topt = trans.topt;
-        this.classt = trans.classt;
-        this.deputyt = trans.deputyt;
-        this.biPointerT = trans.biPointerT;
-        this.switchingT = trans.switchingT;
         LogT.logID = GetCheck() + 1;       //为新块分配id->检查点+1
         logid = LogT.logID;
     }
@@ -79,11 +69,11 @@ public class LogManage {
             }else{
 
                 trans.mem.saveLog(LogT);  //把当前的存入
-                trans.mem.saveObjectTable(topt);
-                trans.mem.saveClassTable(classt);
-                trans.mem.saveDeputyTable(deputyt);
-                trans.mem.saveBiPointerTable(biPointerT);
-                trans.mem.saveSwitchingTable(switchingT);
+                trans.mem.saveObjectTable(trans.topt);
+                trans.mem.saveClassTable(trans.classt);
+                trans.mem.saveDeputyTable(trans.deputyt);
+                trans.mem.saveBiPointerTable(trans.biPointerT);
+                trans.mem.saveSwitchingTable(trans.switchingT);
                 while(!trans.mem.flush());
                 while(!trans.mem.setLogCheck(LogT.logID));
                 trans.mem.setCheckPoint(LogT.logID);
