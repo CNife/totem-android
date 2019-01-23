@@ -6,27 +6,29 @@ import drz.oddb.Transaction.SystemTable.ClassTable;
 import drz.oddb.Transaction.SystemTable.DeputyTable;
 import drz.oddb.Transaction.SystemTable.ObjectTable;
 import drz.oddb.Transaction.SystemTable.SwitchingTable;
+import drz.oddb.Transaction.TransAction;
 
 public class LogManage {
 
     final private int MAXSIZE=20;
     private int checkpoint=-1;
     private int logid=0;    //LogTable块id
-    private MemManage mem = null;
+    private TransAction trans;
     public LogTable LogT = new LogTable();   //存放执行层创建LogManage时写入的日志
     private ObjectTable topt;
     private ClassTable classt;
     private DeputyTable deputyt;
     private BiPointerTable biPointerT;
     private  SwitchingTable switchingT;
+
     //构造方法
-    public LogManage(MemManage mem){
-        this.mem = mem;
-        this.topt = mem.loadObjectTable();
-        this.classt = mem.loadClassTable();
-        this.deputyt = mem.loadDeputyTable();
-        this.biPointerT = mem.loadBiPointerTable();
-        this.switchingT = mem.loadSwitchingTable();
+    public LogManage(TransAction trans){
+        this.trans = trans;
+        this.topt = trans.topt;
+        this.classt = trans.classt;
+        this.deputyt = trans.deputyt;
+        this.biPointerT = trans.biPointerT;
+        this.switchingT = trans.switchingT;
         LogT.logID = GetCheck() + 1;       //为新块分配id->检查点+1
         logid = LogT.logID;
     }
@@ -44,7 +46,7 @@ public class LogManage {
 
     //得到检查点号
     private int GetCheck(){
-            int cpid = mem.loadCheck();
+            int cpid = trans.mem.loadCheck();
             return cpid;
     }
 
@@ -52,7 +54,7 @@ public class LogManage {
     public LogTable GetReDo(){
             LogTable ret = null;
             checkpoint = GetCheck();    //得到检查点id
-            ret = mem.loadLog(checkpoint+1);   //加载可能redo的日志
+            ret = trans.mem.loadLog(checkpoint+1);   //加载可能redo的日志
 
             if(ret != null){
                 int lognum = ret.logTable.size();    //有几条语句需要redo
@@ -76,15 +78,15 @@ public class LogManage {
                 LogT.logTable.add(LogItem);
             }else{
 
-                mem.saveLog(LogT);  //把当前的存入
-                mem.saveObjectTable(topt);
-                mem.saveClassTable(classt);
-                mem.saveDeputyTable(deputyt);
-                mem.saveBiPointerTable(biPointerT);
-                mem.saveSwitchingTable(switchingT);
-                while(!mem.flush());
-                while(!mem.setLogCheck(LogT.logID));
-                mem.setCheckPoint(LogT.logID);
+                trans.mem.saveLog(LogT);  //把当前的存入
+                trans.mem.saveObjectTable(topt);
+                trans.mem.saveClassTable(classt);
+                trans.mem.saveDeputyTable(deputyt);
+                trans.mem.saveBiPointerTable(biPointerT);
+                trans.mem.saveSwitchingTable(switchingT);
+                while(!trans.mem.flush());
+                while(!trans.mem.setLogCheck(LogT.logID));
+                trans.mem.setCheckPoint(LogT.logID);
 
                 init(); //新建一个日志块
                 LogT.logTable.add(LogItem);
