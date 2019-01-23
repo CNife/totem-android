@@ -27,15 +27,16 @@ public class TransAction {
     }
 
     Context context;
-    MemManage mem = new MemManage();
-    LogManage log = new LogManage(mem);
+    public MemManage mem = new MemManage();
 
+    public ObjectTable topt = mem.loadObjectTable();
+    public ClassTable classt = mem.loadClassTable();
+    public DeputyTable deputyt = mem.loadDeputyTable();
+    public BiPointerTable biPointerT = mem.loadBiPointerTable();
+    public SwitchingTable switchingT = mem.loadSwitchingTable();
 
-    ObjectTable topt = mem.loadObjectTable();
-    ClassTable classt = mem.loadClassTable();
-    DeputyTable deputyt = mem.loadDeputyTable();
-    BiPointerTable biPointerT = mem.loadBiPointerTable();
-    SwitchingTable switchingT = mem.loadSwitchingTable();
+    LogManage log = new LogManage(this);
+
     public void SaveAll( )
     {
         mem.saveObjectTable(topt);
