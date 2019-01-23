@@ -99,7 +99,7 @@ public class TransAction {
                 query(s);
             }
         }else{
-
+            return false;
         }
         return true;
     }
