@@ -1,35 +1,59 @@
-CREATE CLASS company (name char,age int, salary int);
-INSERT INTO company VALUES ("aa",20,1000);
-INSERT INTO company VALUES ("bb",30,8000);
-INSERT INTO company VALUES ("cc",30,8000);
-INSERT INTO company VALUES ("dd",20,1000);
-INSERT INTO company VALUES ("ee",20,1000);
-INSERT INTO company VALUES ("ff",30,1000);
+CREATE CLASS company ( name char,age int, salary int );
+INSERT INTO company ( name , age , salary ) VALUES ( "aa", 20 , 1000 );
+INSERT INTO company ( name , age , salary ) VALUES ( "bb",30,8000 );
+INSERT INTO company VALUES ( "aa",20,1000 );
+INSERT INTO company VALUES ( "bb",30,8000 );
+INSERT INTO company VALUES ( "cc",30,8000 );
+INSERT INTO company VALUES ( "dd",20,1000 );
+INSERT INTO company VALUES ( "ee",20,1000 );
+INSERT INTO company VALUES ( "ff",30,1000 );
 
 //虚属性
 //创建代理类
-CREATE SELECTDEPUTY nandb SELECT name AS n1,age+5 AS birth,salary AS s1 FROM company WHERE age=20;
+CREATE SELECTDEPUTY nandb SELECT name AS n1,(age+5) AS birth,salary AS s1 FROM company WHERE age=20;
 
-CREATE SELECTDEPUTY nands SELECT name AS n,salary+10 AS s FROM company WHERE salary=1000;
+CREATE SELECTDEPUTY nandb SELECT name AS n1,(age+5) AS birth,salary AS s1 FROM company WHERE age=20;
+
+CREATE SELECTDEPUTY nandb2 SELECT name AS n1,{(age+5*2)*2} AS birth,salary AS s1 FROM company WHERE age=20;
+
+//切换表达式 多列
+CREATE SELECTDEPUTY nandb3 SELECT name AS n1,{(age+5*2)*2+salary} AS birth,salary AS s1 FROM company WHERE age=20;
+
+CREATE SELECTDEPUTY nandb4 SELECT name AS n1,{salary+(age+5*2)*2} AS birth,salary AS s1 FROM company WHERE age=20;
+
+CREATE SELECTDEPUTY nands SELECT name AS n,(salary+10) AS s FROM company WHERE salary=3000;
 
 //更新迁移
 //增
-INSERT INTO company VALUES ("gg",20,3000);
+INSERT INTO company VALUES ( "gg",20,3000 );
 //删
 DELETE FROM company WHERE name="aa";
 //改
-UPDATE company SET salary=8000 WHERE name="gg";
+UPDATE company SET salary=1000 WHERE name="gg";
+UPDATE company SET age=30 WHERE name="gg";
 //查
 SELECT n1 AS names,birth AS births,s1 AS salarys FROM nandb WHERE n1="gg";
 
+SELECT n1 AS names,birth AS births,s1 AS salarys FROM nandb3 WHERE n1="gg";
+SELECT n1 AS names,birth AS births,s1 AS salarys FROM nandb4 WHERE n1="ee";
+
+SELECT n1 AS names,birth AS births,s1 AS salarys FROM nandb WHERE birth=25;
+
+SELECT name AS names,age AS ages,salary AS salarys FROM company WHERE name="gg";
+
+SELECT n AS names,s AS salarys FROM nands WHERE n="gg";
+SELECT n AS names,s AS salarys FROM nands WHERE s=3010;
+
 
 //跨类查询
-SELECT company -> nandb.n1 FROM company WHERE salary=1000;
+SELECT nands -> company -> nandb.n1 FROM nands WHERE s=3010;
+
+SELECT company -> nandb.n1 FROM company WHERE salary=3000;
 
 //删除类
 DROP CLASS nandb;
 //删除类（同时删除代理类）
-DROP CLASS company; 
+DROP CLASS company;
 
 
 

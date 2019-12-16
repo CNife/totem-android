@@ -35,23 +35,21 @@ public class ShowSwi extends AppCompatActivity implements Serializable {
     }
 
     private void showSwiTab(SwitchingTable switchingT) {
-        int tabCol = 3;
+        int tabCol = 2;
         int tabH = switchingT.switchingTable.size();
-        String stemp1, stemp2, stemp3;
+        String stemp1, stemp2;
 
         show_tab = findViewById(R.id.rst_tab);
 
         for (int i = 0; i <= tabH; i++) {
             TableRow tableRow = new TableRow(this);
             if (i == 0) {
-                stemp1 = "    attr    ";
-                stemp2 = "    deputy    ";
-                stemp3 = "    rule    ";
+                stemp1 = "    attrid    ";
+                stemp2 = "    rule    ";
 
             } else {
-                stemp1 = switchingT.switchingTable.get(i - 1).attr;
-                stemp2 = switchingT.switchingTable.get(i - 1).deputy;
-                stemp3 = switchingT.switchingTable.get(i - 1).rule;
+                stemp1 = String.valueOf(switchingT.switchingTable.get(i - 1).deputyId);
+                stemp2 = switchingT.switchingTable.get(i - 1).rule;
             }
             for (int j = 0; j < tabCol; j++) {
                 TextView tv = new TextView(this);
@@ -61,9 +59,6 @@ public class ShowSwi extends AppCompatActivity implements Serializable {
                         break;
                     case 1:
                         tv.setText(stemp2);
-                        break;
-                    case 2:
-                        tv.setText(stemp3);
                         break;
 
                 }

@@ -50,14 +50,16 @@ public class PrintResult extends AppCompatActivity {
                 }
                 else{
                     oj = tpl.tuplelist.get(r-1).tuple[c];
-                    switch (type[attrid[c]]){
-                        case "int":
-                            itemp = Integer.parseInt(oj.toString());
-                            tv.setText(itemp+"");
-                        case "char":
-                            stemp = oj.toString();
-                            tv.setText(stemp);
-                    }
+                    stemp = oj.toString();
+                    tv.setText(stemp);
+//                    switch (type[attrid[c]]){
+//                        case "int":
+//                            itemp = Integer.parseInt(oj.toString());
+//                            tv.setText(itemp+"");
+//                        case "char":
+//                            stemp = oj.toString();
+//                            tv.setText(stemp);
+//                    }
                 }
                 tv.setGravity(Gravity.CENTER);
                 tv.setBackgroundResource(R.drawable.tab_bg);

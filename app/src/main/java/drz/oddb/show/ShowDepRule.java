@@ -17,7 +17,7 @@ import drz.oddb.R;
 import drz.oddb.Transaction.SystemTable.DeputyRuleTable;
 import drz.oddb.Transaction.SystemTable.DeputyTable;
 
-public class ShowDep extends AppCompatActivity implements Serializable {
+public class ShowDepRule extends AppCompatActivity implements Serializable {
     private final int W = ViewGroup.LayoutParams.WRAP_CONTENT;
     private final int M = ViewGroup.LayoutParams.MATCH_PARENT;
     private TableLayout show_tab;
@@ -25,39 +25,36 @@ public class ShowDep extends AppCompatActivity implements Serializable {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        Log.d("ShowDep", "oncreate");
+        Log.d("ShowDepRule", "oncreate");
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.print_result);
 
         Intent intent = getIntent();
         Bundle bundle0 = intent.getExtras();
-        showDepTab((DeputyTable) bundle0.getSerializable("DeputyTable"));
+        showDepRuleTab((DeputyRuleTable) bundle0.getSerializable("DeputyRuleTable"));
 
     }
 
-    private void showDepTab(DeputyTable deputyt) {
-        int tabCol = 3;
-        int tabH = deputyt.deputyTable.size();
-        Object oj1,oj2, oj3;
-        String stemp1, stemp2, stemp3;
+    private void showDepRuleTab(DeputyRuleTable deputyrulet) {
+        int tabCol = 2;
+        int tabH = deputyrulet.deputyRuleTable.size();
+        Object oj1,oj2;
+        String stemp1, stemp2;
 
         show_tab = findViewById(R.id.rst_tab);
 
         for (int i = 0; i <= tabH; i++) {
             TableRow tableRow = new TableRow(this);
             if (i == 0) {
-                stemp1 = "originid";
-                stemp2 = "deputyid";
-                stemp3 = "deputyrule";
+                stemp1 = "deputyruleid";
+                stemp2 = "deputyrule";
 
             } else {
-                oj1 = deputyt.deputyTable.get(i-1).originid;
-                oj2 = deputyt.deputyTable.get(i-1).deputyid;
-                oj3 = deputyt.deputyTable.get(i-1).ruleid;
+                oj1 = deputyrulet.deputyRuleTable.get(i-1).ruleid;
+                oj2 = deputyrulet.deputyRuleTable.get(i-1).deputyrule;
                 stemp1 = oj1.toString();
                 stemp2 = oj2.toString();
-                stemp3 = oj3.toString();
             }
             for (int j = 0; j < tabCol; j++) {
                 TextView tv = new TextView(this);
@@ -67,9 +64,6 @@ public class ShowDep extends AppCompatActivity implements Serializable {
                         break;
                     case 1:
                         tv.setText(stemp2);
-                        break;
-                    case 2:
-                        tv.setText(stemp3);
                         break;
 
                 }

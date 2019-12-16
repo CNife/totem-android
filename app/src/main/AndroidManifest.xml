@@ -66,6 +66,18 @@
             android:theme="@style/AppTheme.NoActionBar">
 
         </activity>
+        <activity
+            android:name=".show.ShowDepRule"
+            android:label="ShowDepRule"
+            android:theme="@style/AppTheme.NoActionBar">
+
+        </activity>
+        <activity
+            android:name=".show.ShowAtt"
+            android:label="ShowAtt"
+            android:theme="@style/AppTheme.NoActionBar">
+
+        </activity>
     </application>
 
 

@@ -18,7 +18,7 @@ import drz.oddb.Transaction.SystemTable.*;
 import drz.oddb.Transaction.SystemTable.ObjectTable;
 
 public class MemManage implements Serializable {
-    final private int attrstringlen=8; //属性最大字符串长度为8Byte
+    final private int attrstringlen=32; //属性最大字符串长度为8Byte
     final private int bufflength=1000;//缓冲区大小为1000个块
     final private int blocklength=8*1024;//块大小为8KB
 
@@ -27,6 +27,7 @@ public class MemManage implements Serializable {
     private boolean[] buffuse=new boolean[bufflength];//缓冲区可用状态表，true为可用
     private int blockmaxnum=-1;//最大的块号
     private int[] blockspace=new int[10];//块空闲空间信息
+    private List<Integer> cleanList = new ArrayList<>();		//构建干净页链表
 
 
     public MemManage(){
@@ -69,12 +70,15 @@ public class MemManage implements Serializable {
         }else{
             try {
                 FileInputStream input = new FileInputStream(switab);
-                byte buff[] = new byte[3*attrstringlen];
-                while (input.read(buff, 0, 3*attrstringlen) != -1) {
+                byte[] x=new byte[4];
+                if(input.read(x,0,4)!=-1){
+                    ret.maxid=bytes2Int(x,0,4);
+                }
+                byte buff[] = new byte[attrstringlen+4];
+                while (input.read(buff, 0, attrstringlen+4) != -1) {
                     temp = new SwitchingTableItem();
-                    temp.attr = byte2str(buff, 0, attrstringlen);
-                    temp.deputy = byte2str(buff, attrstringlen, attrstringlen);
-                    temp.rule = byte2str(buff, attrstringlen*2, attrstringlen);
+                    temp.deputyId = bytes2Int(buff, 0, 4);
+                    temp.rule = byte2str(buff, 4, attrstringlen);
                     ret.switchingTable.add(temp);
                 }
                 input.close();
@@ -103,10 +107,10 @@ public class MemManage implements Serializable {
         }
         try {
             BufferedOutputStream output=new BufferedOutputStream(new FileOutputStream(switab));
+            byte[] maxi=int2Bytes(tab.maxid,4);
+            output.write(maxi,0,maxi.length);
             for(int i=0;i<tab.switchingTable.size();i++){
-                byte[] s1=str2Bytes(tab.switchingTable.get(i).attr);
-                output.write(s1,0,s1.length);
-                byte[] s2=str2Bytes(tab.switchingTable.get(i).deputy);
+                byte[] s2=int2Bytes(tab.switchingTable.get(i).deputyId,4);
                 output.write(s2,0,s2.length);
                 byte[] s3=str2Bytes(tab.switchingTable.get(i).rule);
                 output.write(s3,0,s3.length);
@@ -198,15 +202,12 @@ public class MemManage implements Serializable {
         }else {
             try {
                 FileInputStream input = new FileInputStream(deputytab);
-                byte buff[] = new byte[8+3*attrstringlen];
-                while (input.read(buff, 0, 8+attrstringlen*3) != -1) {
+                byte buff[] = new byte[12];
+                while (input.read(buff, 0, 12) != -1) {
                     temp = new DeputyTableItem();
-                    temp.deputyrule=new String[3];
                     temp.originid = bytes2Int(buff, 0, 4);
                     temp.deputyid = bytes2Int(buff, 4, 4);
-                    temp.deputyrule[0] = byte2str(buff, 8, attrstringlen);
-                    temp.deputyrule[1] = byte2str(buff, 8+attrstringlen, attrstringlen);
-                    temp.deputyrule[2] = byte2str(buff, 8+attrstringlen*2, attrstringlen);
+                    temp.ruleid = bytes2Int(buff, 8, 4);
                     ret.deputyTable.add(temp);
                 }
                 input.close();
@@ -241,12 +242,75 @@ public class MemManage implements Serializable {
                 output.write(i1,0,i1.length);
                 byte[] i2=int2Bytes(tab.deputyTable.get(i).deputyid,4);
                 output.write(i2,0,i2.length);
-                byte[] s1=str2Bytes(tab.deputyTable.get(i).deputyrule[0]);
+                byte[] i3=int2Bytes(tab.deputyTable.get(i).ruleid,4);
+                output.write(i3,0,i3.length);
+            }
+            output.flush();
+            output.close();
+            return true;
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+
+    //加载DetupyRule表
+    public DeputyRuleTable loadDeputyRuleTable(){
+        DeputyRuleTable ret = new DeputyRuleTable();
+        DeputyRuleTableItem temp;
+        File deputytab=new File("/data/data/drz.oddb/transaction/deputyruletable");
+        if(!deputytab.exists()){
+            return ret;
+        }else {
+            try {
+                FileInputStream input = new FileInputStream(deputytab);
+                byte[] x=new byte[4];
+                if(input.read(x,0,4)!=-1){
+                    ret.maxid=bytes2Int(x,0,4);
+                }
+                byte buff[] = new byte[4+attrstringlen];
+                while (input.read(buff, 0, 4+attrstringlen) != -1) {
+                    temp = new DeputyRuleTableItem();
+                    temp.ruleid = bytes2Int(buff, 0, 4);
+                    temp.deputyrule = byte2str(buff, 4, attrstringlen);
+                    ret.deputyRuleTable.add(temp);
+                }
+                input.close();
+            } catch (FileNotFoundException e) {
+                e.printStackTrace();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            return ret;
+        }
+    }
+
+    //存DeputyRule表
+    public boolean saveDeputyRuleTable(DeputyRuleTable tab){
+        File deputytab=new File("/data/data/drz.oddb/transaction/deputyruletable");
+        if(!deputytab.exists()){
+            File path=deputytab.getParentFile();
+            if(!path.exists()){
+                if(path.mkdirs())System.out.println("创建路径/data/data/drz.oddb/transaction/成功！");
+            }
+            try {
+                if(deputytab.createNewFile())System.out.println("创建文件/data/data/drz.oddb/transaction/deputyruletable成功！");
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
+        }
+        try {
+            BufferedOutputStream output=new BufferedOutputStream(new FileOutputStream(deputytab));
+            byte[] maxi=int2Bytes(tab.maxid,4);
+            output.write(maxi,0,maxi.length);
+            for(int i=0;i<tab.deputyRuleTable.size();i++){
+                byte[] i1=int2Bytes(tab.deputyRuleTable.get(i).ruleid,4);
+                output.write(i1,0,i1.length);
+                byte[] s1=str2Bytes(tab.deputyRuleTable.get(i).deputyrule);
                 output.write(s1,0,s1.length);
-                byte[] s2=str2Bytes(tab.deputyTable.get(i).deputyrule[1]);
-                output.write(s2,0,s2.length);
-                byte[] s3=str2Bytes(tab.deputyTable.get(i).deputyrule[2]);
-                output.write(s3,0,s3.length);
             }
             output.flush();
             output.close();
@@ -273,16 +337,13 @@ public class MemManage implements Serializable {
                 if(input.read(x,0,4)!=-1){
                     ret.maxid=bytes2Int(x,0,4);
                 }
-                byte[] buff = new byte[12+attrstringlen*4];
-                while (input.read(buff, 0, 12+attrstringlen*4) != -1) {
+                byte[] buff = new byte[12+attrstringlen];
+                while (input.read(buff, 0, 12+attrstringlen) != -1) {
                     temp = new ClassTableItem();
                     temp.classname = byte2str(buff, 0, attrstringlen);
                     temp.classid = bytes2Int(buff, attrstringlen, 4);
                     temp.attrnum = bytes2Int(buff, attrstringlen+4, 4);
-                    temp.attrid = bytes2Int(buff, attrstringlen+8, 4);
-                    temp.attrname = byte2str(buff, attrstringlen+12, attrstringlen);
-                    temp.attrtype = byte2str(buff, attrstringlen*2+12, attrstringlen);
-                    temp.classtype=byte2str(buff,attrstringlen*3+12,attrstringlen);
+                    temp.classtype=bytes2Int(buff,attrstringlen+8,4);
                     ret.classTable.add(temp);
                 }
             } catch (FileNotFoundException e) {
@@ -293,6 +354,7 @@ public class MemManage implements Serializable {
             return ret;
         }
     }
+
 
     //存Class表
     public boolean saveClassTable(ClassTable tab){
@@ -323,14 +385,8 @@ public class MemManage implements Serializable {
                 output.write(i1,0,i1.length);
                 byte[] i2=int2Bytes(tab.classTable.get(i).attrnum,4);
                 output.write(i2,0,i2.length);
-                byte[] i3=int2Bytes(tab.classTable.get(i).attrid,4);
+                byte[] i3=int2Bytes(tab.classTable.get(i).classtype,4);
                 output.write(i3,0,i3.length);
-                byte[] s2=str2Bytes(tab.classTable.get(i).attrname);
-                output.write(s2,0,s2.length);
-                byte[] s3=str2Bytes(tab.classTable.get(i).attrtype);
-                output.write(s3,0,s3.length);
-                byte[] s4=str2Bytes(tab.classTable.get(i).classtype);
-                output.write(s4,0,s4.length);
             }
             output.flush();
             output.close();
@@ -343,6 +399,87 @@ public class MemManage implements Serializable {
             e.printStackTrace();
         }
         return false;
+    }
+
+
+    //存Attribute表
+    public boolean saveAttributeTable(AttributeTable tab){
+        File classtab=new File("/data/data/drz.oddb/transaction/attributetable");
+        if(!classtab.exists()){
+            File path=classtab.getParentFile();
+            System.out.println(path.getAbsolutePath());
+            if(!path.exists()){
+                if(path.mkdirs())System.out.println("创建路径/data/data/drz.oddb/transaction/成功！");
+            }
+            try {
+                if(classtab.createNewFile())System.out.println("创建路径/data/data/drz.oddb/transaction/attributetable成功！");
+                System.out.println("创建文件成功！");
+            } catch (IOException e) {
+                System.out.println("创建文件失败！");
+                e.printStackTrace();
+            }
+        }
+        try {
+            BufferedOutputStream output=new BufferedOutputStream(new FileOutputStream(classtab));
+            byte[] maxi=int2Bytes(tab.maxid,4);
+            output.write(maxi,0,maxi.length);
+            System.out.println(tab.attributeTable.size());
+            for(int i=0;i<tab.attributeTable.size();i++){
+                byte[] i1=int2Bytes(tab.attributeTable.get(i).classid,4);
+                output.write(i1,0,i1.length);
+                byte[] i2=int2Bytes(tab.attributeTable.get(i).isdeputy,4);
+                output.write(i2,0,i2.length);
+                byte[] i3=int2Bytes(tab.attributeTable.get(i).attrid,4);
+                output.write(i3,0,i3.length);
+                byte[] s2=str2Bytes(tab.attributeTable.get(i).attrname);
+                output.write(s2,0,s2.length);
+                byte[] s3=str2Bytes(tab.attributeTable.get(i).attrtype);
+                output.write(s3,0,s3.length);
+            }
+            output.flush();
+            output.close();
+            return true;
+        } catch (FileNotFoundException e) {
+            System.out.println("文件未找到！");
+            e.printStackTrace();
+        } catch (IOException e) {
+            System.out.println("文件未正常写入！");
+            e.printStackTrace();
+        }
+        return false;
+    }
+
+    //加载Attribute表
+    public AttributeTable loadAttributeTable(){
+        AttributeTable ret = new AttributeTable();
+        AttributeTableItem temp;
+        File classtab=new File("/data/data/drz.oddb/transaction/attributetable");
+        if(!classtab.exists()){
+            return ret;
+        }else {
+            try {
+                FileInputStream input = new FileInputStream(classtab);
+                byte[] x=new byte[4];
+                if(input.read(x,0,4)!=-1){
+                    ret.maxid=bytes2Int(x,0,4);
+                }
+                byte[] buff = new byte[12+attrstringlen*2];
+                while (input.read(buff, 0, 12+attrstringlen*2) != -1) {
+                    temp = new AttributeTableItem();
+                    temp.classid = bytes2Int(buff, 0, 4);
+                    temp.isdeputy = bytes2Int(buff, 4, 4);
+                    temp.attrid = bytes2Int(buff, 8, 4);
+                    temp.attrname = byte2str(buff, 12, attrstringlen);
+                    temp.attrtype = byte2str(buff, attrstringlen+12, attrstringlen);
+                    ret.attributeTable.add(temp);
+                }
+            } catch (FileNotFoundException e) {
+                e.printStackTrace();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            return ret;
+        }
     }
 
     //加载Object表
@@ -484,6 +621,8 @@ public class MemManage implements Serializable {
             spacestart=spacestart+4;
             spaceend=spaceend-tuplelength;
             p.flag=true;
+            if(cleanList.contains(p.buf_id))
+                cleanList.remove(p.buf_id);
             byte[] hea=int2Bytes(t.tupleHeader,4);
             for(int i=0;i<4;i++){
                 MemBuff.put(p.buf_id*blocklength+spaceend+i,hea[i]);
@@ -514,6 +653,8 @@ public class MemManage implements Serializable {
             int spacetart=12;
             int spaceend=blocklength-tuplelength;
             p.flag=true;
+            if(cleanList.contains(p.buf_id))
+                cleanList.remove(p.buf_id);
             byte[] hea=int2Bytes(t.tupleHeader,4);
             for(int i=0;i<4;i++){
                 MemBuff.put(p.buf_id*blocklength+spaceend+i,hea[i]);
@@ -705,7 +846,9 @@ public class MemManage implements Serializable {
 
     //存块
     private boolean save(buffPointer blockpointer){
-        File file=new File("/data/data/drz.oddb/Memory/"+blockpointer.blockNum);
+        if(!blockpointer.flag)
+            return true;
+        File file=new File("/data/data/drz.oddb/Memory/data");
         if(!file.exists()){
             File path=file.getParentFile();
             if(!path.exists()){
@@ -729,7 +872,7 @@ public class MemManage implements Serializable {
             for(int i=0;i<blocklength;i++){
                 buff[i]=MemBuff.get(offset*blocklength+i);
             }
-            output.write(buff,0,blocklength);
+            output.write(buff,blockpointer.blockNum*blocklength,blocklength);
             output.flush();
             output.close();
             return true;
@@ -745,12 +888,26 @@ public class MemManage implements Serializable {
     private buffPointer load(int block){
         buffPointer Free=new buffPointer();
         if(BuffPointerList.size()==bufflength) {
-            if(save(BuffPointerList.get(bufflength-1))){
-                buffuse[BuffPointerList.get(bufflength-1).buf_id]=true;
-                BuffPointerList.remove(bufflength-1);
+            if(cleanList.size()>0.3 * bufflength){
+                if(save(BuffPointerList.get(cleanList.get(0)))){
+                    buffuse[BuffPointerList.get(cleanList.get(0)).buf_id]=true;
+                    BuffPointerList.remove(cleanList.get(0));
+                    cleanList.remove(0);
+                }
+            }else {
+                for(int i = 0; i < bufflength * 0.4; i++){
+                    if(save(BuffPointerList.get(cleanList.get(i)))){
+                        buffuse[BuffPointerList.get(cleanList.get(i)).buf_id]=true;
+                    }
+                }
+                BuffPointerList.clear();
             }
+//            if(save(BuffPointerList.get(bufflength-1))){
+//                buffuse[BuffPointerList.get(bufflength-1).buf_id]=true;
+//                BuffPointerList.remove(bufflength-1);
+//            }
         }
-        File file=new File("/data/data/drz.oddb/Memory/"+block);
+        File file=new File("/data/data/drz.oddb/Memory/data");
         if(file.exists()){
             Free.blockNum=block;
             Free.flag=false;
@@ -758,6 +915,7 @@ public class MemManage implements Serializable {
                 if(buffuse[i]){
                     Free.buf_id=i;
                     buffuse[i]=false;
+                    cleanList.add(i);
                     break;
                 }
             }
@@ -765,7 +923,7 @@ public class MemManage implements Serializable {
             try {
                 FileInputStream input=new FileInputStream(file);
                 byte[] temp=new byte[blocklength];
-                input.read(temp);
+                input.read(temp,block*blocklength,blocklength);
                 for(int i=0;i<blocklength;i++){
                     MemBuff.put(offset+i,temp[i]);
                 }
@@ -795,10 +953,24 @@ public class MemManage implements Serializable {
     private buffPointer creatBlock(){
         buffPointer newblockpointer=new buffPointer();
         if(BuffPointerList.size()==bufflength) {
-            if(save(BuffPointerList.get(bufflength-1))){
-                buffuse[BuffPointerList.get(bufflength-1).buf_id]=true;
-                BuffPointerList.remove(bufflength-1);
+            if(cleanList.size()>0){
+                if(save(BuffPointerList.get(cleanList.get(0)))){
+                    buffuse[BuffPointerList.get(cleanList.get(0)).buf_id]=true;
+                    BuffPointerList.remove(cleanList.get(0));
+                    cleanList.remove(0);
+                }
+            }else {
+                for(int i = 0; i < bufflength; i++){
+                    if(save(BuffPointerList.get(cleanList.get(i)))){
+                        buffuse[BuffPointerList.get(cleanList.get(i)).buf_id]=true;
+                    }
+                }
+                BuffPointerList.clear();
             }
+//            if(save(BuffPointerList.get(bufflength-1))){
+//                buffuse[BuffPointerList.get(bufflength-1).buf_id]=true;
+//                BuffPointerList.remove(bufflength-1);
+//            }
         }
         for(int i=0;i<bufflength;i++){
             if(buffuse[i]){
@@ -821,6 +993,8 @@ public class MemManage implements Serializable {
         }
         newblockpointer.blockNum=blockmaxnum;
         newblockpointer.flag=true;
+        if(cleanList.contains(newblockpointer.buf_id))
+            cleanList.remove(newblockpointer.buf_id);
         byte[] header=new byte[8];
         byte[] start=int2Bytes(8,4);
         byte[] end=int2Bytes(blocklength,4);

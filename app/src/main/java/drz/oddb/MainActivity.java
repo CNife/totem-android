@@ -44,7 +44,8 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         //播放BGM
-        startService(music);
+        //startService(music);
+
 
         //查询按钮
         Button button = findViewById(R.id.button);
@@ -75,6 +76,17 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View v) {
                 //onStop();
                 trans.PrintTab();
+            }
+        });
+
+        Button button2 =findViewById(R.id.button2);
+
+        button2.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                //onStop();
+                //trans.Test();
+                editText.setText("");
             }
         });
     }

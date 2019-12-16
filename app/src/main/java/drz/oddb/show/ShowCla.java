@@ -14,6 +14,7 @@ import android.widget.TextView;
 import java.io.Serializable;
 
 import drz.oddb.R;
+import drz.oddb.Transaction.SystemTable.AttributeTable;
 import drz.oddb.Transaction.SystemTable.ClassTable;
 
 public class ShowCla extends AppCompatActivity implements Serializable {
@@ -36,10 +37,10 @@ public class ShowCla extends AppCompatActivity implements Serializable {
     }
 
     private void showClaTab(ClassTable classT) {
-        int tabCol = 7;
+        int tabCol = 4;
         int tabH = classT.classTable.size();
-        String stemp1,stemp2,stemp3,stemp4, stemp5, stemp6,stemp7;
-        Object oj1,oj2,oj3,oj4,oj5,oj6,oj7;
+        String stemp1,stemp2,stemp3,stemp4;
+        Object oj1,oj2,oj3,oj4;
 
         show_tab = findViewById(R.id.rst_tab);
 
@@ -49,26 +50,17 @@ public class ShowCla extends AppCompatActivity implements Serializable {
                 stemp1 = "classname";
                 stemp2 = "classid";
                 stemp3 = "attrnum";
-                stemp4 = "attrid";
-                stemp5 = "attrname";
-                stemp6 = "attrtype";
-                stemp7 = "classtype";
+                stemp4 = "classtype";
 
             } else {
                 oj1 = classT.classTable.get(i-1).classname;
                 oj2 = classT.classTable.get(i-1).classid;
                 oj3 = classT.classTable.get(i-1).attrnum;
-                oj4 = classT.classTable.get(i-1).attrid;
-                oj5 = classT.classTable.get(i-1).attrname;
-                oj6 = classT.classTable.get(i-1).attrtype;
-                oj7 = classT.classTable.get(i-1).classtype;
+                oj4 = classT.classTable.get(i-1).classtype;
                 stemp1 = oj1.toString();
                 stemp2 = oj2.toString();
                 stemp3 = oj3.toString();
                 stemp4 = oj4.toString();
-                stemp5 = oj5.toString();
-                stemp6 = oj6.toString();
-                stemp7 = oj7.toString();
             }
             for (int j = 0; j < tabCol; j++) {
                 TextView tv = new TextView(this);
@@ -85,16 +77,6 @@ public class ShowCla extends AppCompatActivity implements Serializable {
                     case 3:
                         tv.setText(stemp4);
                         break;
-                    case 4:
-                        tv.setText(stemp5);
-                        break;
-                    case 5:
-                        tv.setText(stemp6);
-                        break;
-                    case 6:
-                        tv.setText(stemp7);
-                        break;
-
                 }
                 tv.setGravity(Gravity.CENTER);
                 tv.setBackgroundResource(R.drawable.tab_bg);

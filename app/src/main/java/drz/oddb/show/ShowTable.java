@@ -12,14 +12,16 @@ import android.widget.ListView;
 import java.io.Serializable;
 
 import drz.oddb.R;
+import drz.oddb.Transaction.SystemTable.AttributeTable;
 import drz.oddb.Transaction.SystemTable.BiPointerTable;
 import drz.oddb.Transaction.SystemTable.ClassTable;
+import drz.oddb.Transaction.SystemTable.DeputyRuleTable;
 import drz.oddb.Transaction.SystemTable.DeputyTable;
 import drz.oddb.Transaction.SystemTable.ObjectTable;
 import drz.oddb.Transaction.SystemTable.SwitchingTable;
 
 public class ShowTable extends AppCompatActivity implements Serializable {
-    private String[] tables = new String[5];
+    private String[] tables = new String[7];
     Context context;
 
 
@@ -34,8 +36,10 @@ public class ShowTable extends AppCompatActivity implements Serializable {
         final ObjectTable topt = (ObjectTable) bundle0.getSerializable("ObjectTable");
         final SwitchingTable switchingT = (SwitchingTable)bundle0.getSerializable("SwitchingTable");
         final DeputyTable deputyt = (DeputyTable)bundle0.getSerializable("DeputyTable");
+        final DeputyRuleTable deputyrulet = (DeputyRuleTable)bundle0.getSerializable("DeputyRuleTable");
         final BiPointerTable biPointerT = (BiPointerTable)bundle0.getSerializable("BiPointerTable");
         final ClassTable classTable = (ClassTable)bundle0.getSerializable("ClassTable");
+        final AttributeTable attributeTable = (AttributeTable)bundle0.getSerializable("AttributeTable");
 
         ArrayAdapter<String> adapter = new ArrayAdapter<String>(ShowTable.this,android.R.layout.simple_list_item_1,tables);
         ListView tableList = (ListView)findViewById(R.id.tablelist);
@@ -68,6 +72,12 @@ public class ShowTable extends AppCompatActivity implements Serializable {
                        printCla(classTable);
                         break;
                     }
+                    case 5:{
+                        printDepR(deputyrulet);
+                    }
+                    case 6:{
+                        printAtt(attributeTable);
+                    }
                 }
             }
         });
@@ -79,6 +89,8 @@ public class ShowTable extends AppCompatActivity implements Serializable {
         tables[2]="DeputyTable";
         tables[3]="BiPointerTable";
         tables[4]="ClassTable";
+        tables[5]="DeputyRuleTable";
+        tables[6]="AttributeTable";
     }
 
     private void printObj(ObjectTable topt){
@@ -122,6 +134,24 @@ public class ShowTable extends AppCompatActivity implements Serializable {
 
         Bundle bundle0 = new Bundle();
         bundle0.putSerializable("ClassTable",classTable);
+        intent.putExtras(bundle0);
+        startActivity(intent);
+    }
+
+    private void printDepR(DeputyRuleTable deputyRuleTable){
+        Intent intent = new Intent(ShowTable.this, ShowDepRule.class);
+
+        Bundle bundle0 = new Bundle();
+        bundle0.putSerializable("DeputyRuleTable",deputyRuleTable);
+        intent.putExtras(bundle0);
+        startActivity(intent);
+    }
+
+    private void printAtt(AttributeTable attributeTable){
+        Intent intent = new Intent(ShowTable.this, ShowAtt.class);
+
+        Bundle bundle0 = new Bundle();
+        bundle0.putSerializable("AttributeTable",attributeTable);
         intent.putExtras(bundle0);
         startActivity(intent);
     }
